@@ -619,43 +619,209 @@ A proposed repository structure is:
 
 ```text
 wasteinfoAI/
-├── android-app/
-│   ├── app/
-│   ├── vision/
-│   ├── executorch/
-│   ├── audio/
-│   ├── maps/
-│   └── local-storage/
 │
-├── ai/
-│   ├── vision/
-│   ├── model-export/
-│   ├── prompts/
-│   └── evaluation/
-│
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   ├── auth/
-│   │   ├── reports/
-│   │   ├── hotspots/
-│   │   ├── assignments/
-│   │   └── database/
-│   └── tests/
-│
-├── data/
-│   ├── waste-categories/
-│   └── local-rules/
-│
-├── docs/
-│   ├── architecture.md
-│   ├── model-evaluation.md
-│   └── deployment.md
-│
-├── tests/
+├── README.md
 ├── .gitignore
-├── LICENSE
-└── README.md
+├── .env.example
+├── docker-compose.yml
+│
+├── android/                           # PHASES 1–6, 9–10
+│   ├── settings.gradle.kts
+│   ├── build.gradle.kts
+│   ├── gradle.properties
+│   └── app/
+│       ├── build.gradle.kts
+│       ├── proguard-rules.pro
+│       └── src/
+│           ├── main/
+│           │   ├── AndroidManifest.xml
+│           │   │
+│           │   ├── assets/
+│           │   │   ├── vision/
+│           │   │   │   └── waste_classifier.pte
+│           │   │   ├── llm/
+│           │   │   └── rules/
+│           │   │       └── disposal_rules.json
+│           │   │
+│           │   ├── java/com/wasteinfoai/
+│           │   │   ├── MainActivity.kt
+│           │   │   ├── WasteInfoAIApp.kt
+│           │   │   │
+│           │   │   ├── core/
+│           │   │   │   ├── common/
+│           │   │   │   ├── constants/
+│           │   │   │   ├── permissions/
+│           │   │   │   ├── navigation/
+│           │   │   │   └── util/
+│           │   │   │
+│           │   │   ├── data/
+│           │   │   │   ├── local/
+│           │   │   │   │   ├── WasteDatabase.kt
+│           │   │   │   │   ├── dao/
+│           │   │   │   │   └── entity/
+│           │   │   │   ├── remote/
+│           │   │   │   │   ├── ApiService.kt
+│           │   │   │   │   └── ApiClient.kt
+│           │   │   │   └── repository/
+│           │   │   │
+│           │   │   ├── ai/
+│           │   │   │   ├── vision/
+│           │   │   │   │   ├── WasteClassifier.kt
+│           │   │   │   │   ├── ImagePreprocessor.kt
+│           │   │   │   │   └── ClassificationResult.kt
+│           │   │   │   ├── llm/
+│           │   │   │   │   ├── LlamaEngine.kt
+│           │   │   │   │   ├── PromptBuilder.kt
+│           │   │   │   │   └── AssistantService.kt
+│           │   │   │   └── rules/
+│           │   │   │       ├── DisposalRuleEngine.kt
+│           │   │   │       └── SafetyGuard.kt
+│           │   │   │
+│           │   │   ├── camera/
+│           │   │   │   ├── CameraScreen.kt
+│           │   │   │   ├── CameraViewModel.kt
+│           │   │   │   └── ImagePicker.kt
+│           │   │   │
+│           │   │   ├── audio/
+│           │   │   │   └── TextToSpeechManager.kt
+│           │   │   │
+│           │   │   ├── features/
+│           │   │   │   ├── auth/
+│           │   │   │   ├── home/
+│           │   │   │   ├── scan/
+│           │   │   │   ├── history/
+│           │   │   │   ├── assistant/
+│           │   │   │   ├── reports/
+│           │   │   │   ├── map/
+│           │   │   │   ├── tasks/
+│           │   │   │   └── dashboards/
+│           │   │   │
+│           │   │   ├── sync/
+│           │   │   │   ├── SyncWorker.kt
+│           │   │   │   └── SyncScheduler.kt
+│           │   │   │
+│           │   │   └── ui/
+│           │   │       ├── theme/
+│           │   │       ├── components/
+│           │   │       └── screens/
+│           │   │
+│           │   ├── res/
+│           │   └── test/
+│           │
+│           └── androidTest/
+│
+├── ml/                                # PHASES 3–4
+│   ├── README.md
+│   ├── requirements.txt
+│   ├── configs/
+│   │   └── classifier_config.yaml
+│   ├── data/
+│   │   ├── raw/
+│   │   ├── processed/
+│   │   └── splits/
+│   ├── notebooks/
+│   │   ├── 01_dataset_exploration.ipynb
+│   │   └── 02_model_evaluation.ipynb
+│   ├── src/
+│   │   ├── data/
+│   │   │   ├── prepare_dataset.py
+│   │   │   └── split_dataset.py
+│   │   ├── training/
+│   │   │   ├── train_classifier.py
+│   │   │   └── evaluate_classifier.py
+│   │   ├── inference/
+│   │   │   └── predict.py
+│   │   └── export/
+│   │       ├── export_model.py
+│   │       └── validate_export.py
+│   ├── labels/
+│   │   └── class_names.json
+│   ├── checkpoints/                  # Generated locally; do not commit
+│   ├── exported/                     # Generated locally; do not commit
+│   └── reports/
+│       └── evaluation_summary.json
+│
+├── backend/                           # PHASES 7–8
+│   ├── requirements.txt
+│   ├── alembic.ini
+│   ├── Dockerfile
+│   ├── alembic/
+│   │   ├── env.py
+│   │   └── versions/
+│   │
+│   ├── app/
+│   │   ├── main.py
+│   │   ├── api/
+│   │   │   └── v1/
+│   │   │       ├── auth.py
+│   │   │       ├── users.py
+│   │   │       ├── reports.py
+│   │   │       ├── hotspots.py
+│   │   │       ├── tasks.py
+│   │   │       └── rules.py
+│   │   │
+│   │   ├── core/
+│   │   │   ├── config.py
+│   │   │   ├── security.py
+│   │   │   └── permissions.py
+│   │   │
+│   │   ├── database/
+│   │   │   ├── session.py
+│   │   │   └── base.py
+│   │   │
+│   │   ├── models/
+│   │   │   ├── user.py
+│   │   │   ├── report.py
+│   │   │   ├── task.py
+│   │   │   ├── evidence.py
+│   │   │   └── audit_log.py
+│   │   │
+│   │   ├── schemas/
+│   │   │   ├── auth.py
+│   │   │   ├── user.py
+│   │   │   ├── report.py
+│   │   │   └── task.py
+│   │   │
+│   │   ├── services/
+│   │   │   ├── report_service.py
+│   │   │   ├── hotspot_service.py
+│   │   │   ├── task_service.py
+│   │   │   └── sync_service.py
+│   │   │
+│   │   └── storage/
+│   │       └── media_storage.py
+│   │
+│   └── tests/
+│       ├── test_auth.py
+│       ├── test_reports.py
+│       ├── test_tasks.py
+│       └── test_sync.py
+│
+├── database/                          # PHASE 7
+│   ├── init/
+│   └── seeds/
+│       └── development_rules.sql
+│
+├── docs/                              # PHASES 1–12
+│   ├── architecture.md
+│   ├── system_workflow.md
+│   ├── api_documentation.md
+│   ├── database_schema.md
+│   ├── ai_model_card.md
+│   ├── offline_strategy.md
+│   ├── security_and_privacy.md
+│   ├── test_plan.md
+│   ├── technical_report.md
+│   └── demo_script.md
+│
+├── scripts/
+│   ├── setup_dev.ps1
+│   ├── train_model.ps1
+│   └── run_backend.ps1
+│
+└── .github/
+    └── workflows/
+        └── tests.yml
 ```
 
 This is a proposed structure and can be adapted to the actual repository implementation.
