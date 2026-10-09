@@ -549,14 +549,14 @@ The final stack should be selected based on the target Arm device and the compet
 
 | Component | Candidate technology |
 |---|---|
-| Android application | Kotlin or Flutter |
-| Computer vision | PyTorch, OpenCV, lightweight vision model |
+| Android application | Kotlin + Jetpack Compose |
+| Computer vision | PyTorch + MobileNetV3-Small, OpenCV, lightweight vision model |
 | Language model | Compatible Llama-family model |
 | On-device LLM runtime | ExecuTorch |
 | CPU execution backend | XNNPACK, where supported |
 | Local storage | SQLite |
-| Backend API | FastAPI, if required |
-| Server database | PostgreSQL, if required |
+| Backend API | FastAPI |
+| Server database | PostgreSQL  |
 | Mapping | Compatible map SDK and routing service |
 | Audio output | Android TextToSpeech or a supported offline engine |
 | Version control | Git and GitHub |
