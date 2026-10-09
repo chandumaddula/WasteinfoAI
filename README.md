@@ -585,7 +585,7 @@ The project is under development. The steps below describe the intended setup pr
 **1. Clone the repository**
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
+git clone https://github.com/chandumaddula/WasteinfoAI.git
 cd wasteinfoAI
 ```
 
