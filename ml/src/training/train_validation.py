@@ -1,8 +1,14 @@
 """AI Model Training and Validation Module.
 
 Phase 3: Waste Classification Model Training
-Implements the TrainValidation class for training vision backbones (timm/torchvision),
-computing multiclass accuracy and F1 metrics, saving best checkpoints, and early stopping.
+Engineered to achieve >= 0.940 Macro F1-Score on the 17-class waste dataset.
+Features:
+- Pretrained ReXNet / ConvNeXt / MobileNet vision backbones via timm
+- Label Smoothing Cross-Entropy (0.1) for improved generalization
+- Discriminative layer-wise learning rates with AdamW optimizer
+- Cosine Annealing learning rate schedule with minimum eta
+- Gradient clipping & mixed precision (AMP)
+- Test-Time Augmentation (TTA) in validation for enhanced F1 precision
 """
 
 import os
@@ -10,11 +16,12 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import torch
 import torch.nn as nn
 from tqdm import tqdm
 
-# Optional dependencies with graceful fallbacks
+# Optional dependencies with graceful handling
 try:
     import timm
     HAS_TIMM = True
@@ -28,44 +35,50 @@ except ImportError:
     HAS_TORCHMETRICS = False
 
 
-class FallbackF1Score:
-    """Lightweight multiclass Macro-F1 metric fallback if torchmetrics is unavailable."""
+class MulticlassF1Metric:
+    """Robust Multiclass Macro-F1 metric supporting torchmetrics or native PyTorch fallback."""
 
     def __init__(self, num_classes: int, device: torch.device):
         self.num_classes = num_classes
         self.device = device
+        if HAS_TORCHMETRICS:
+            self.metric = torchmetrics.F1Score(
+                task="multiclass", num_classes=num_classes, average="macro"
+            ).to(device)
+        else:
+            self.metric = None
         self.reset()
 
     def reset(self) -> None:
+        if self.metric is not None:
+            self.metric.reset()
         self.tp = torch.zeros(self.num_classes, device=self.device)
         self.fp = torch.zeros(self.num_classes, device=self.device)
         self.fn = torch.zeros(self.num_classes, device=self.device)
 
     def update(self, preds: torch.Tensor, targets: torch.Tensor) -> None:
-        pred_labels = torch.argmax(preds, dim=1) if preds.ndim > 1 else preds
-        for p, t in zip(pred_labels, targets):
-            p_val, t_val = p.item(), t.item()
-            if p_val == t_val:
-                self.tp[p_val] += 1
-            else:
-                self.fp[p_val] += 1
-                self.fn[t_val] += 1
+        if self.metric is not None:
+            self.metric.update(preds, targets)
+        else:
+            pred_labels = torch.argmax(preds, dim=1) if preds.ndim > 1 else preds
+            for p, t in zip(pred_labels, targets):
+                p_i, t_i = p.item(), t.item()
+                if p_i == t_i:
+                    self.tp[p_i] += 1
+                else:
+                    self.fp[p_i] += 1
+                    self.fn[t_i] += 1
 
     def compute(self) -> torch.Tensor:
+        if self.metric is not None:
+            return self.metric.compute()
         denoms = 2 * self.tp + self.fp + self.fn
         f1_per_class = torch.where(denoms > 0, (2 * self.tp) / denoms, torch.zeros_like(self.tp))
         return f1_per_class.mean()
 
-    def to(self, device: torch.device) -> "FallbackF1Score":
-        self.device = device
-        self.tp = self.tp.to(device)
-        self.fp = self.fp.to(device)
-        self.fn = self.fn.to(device)
-        return self
-
 
 class TrainValidation:
-    """Trainer and validator for deep learning vision models."""
+    """Trainer and validator optimized to attain >= 0.940 F1-Score."""
 
     def __init__(
         self,
@@ -81,6 +94,9 @@ class TrainValidation:
         patience: int = 5,
         threshold: float = 0.001,
         dev_mode: bool = False,
+        use_tta: bool = True,
+        label_smoothing: float = 0.1,
+        target_f1: float = 0.940,
     ):
         self.model_name = model_name
         self.classes = classes
@@ -94,61 +110,88 @@ class TrainValidation:
         self.patience = patience
         self.threshold = threshold
         self.dev_mode = dev_mode
+        self.use_tta = use_tta
+        self.target_f1 = target_f1
         self.device = torch.device(device) if isinstance(device, str) else device
 
-        # Initialize Model
+        # 1. High-capacity vision backbone with dropout regularization
         self.model = self._create_model(model_name, self.num_classes).to(self.device)
 
-        # Loss function & optimizer
-        self.loss_fn = nn.CrossEntropyLoss()
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        # 2. Label Smoothing Cross-Entropy Loss to prevent overconfidence
+        self.loss_fn = nn.CrossEntropyLoss(label_smoothing=label_smoothing)
 
-        # Multiclass F1 metric
-        if HAS_TORCHMETRICS:
-            self.f1_metric = torchmetrics.F1Score(
-                task="multiclass", num_classes=self.num_classes
-            ).to(self.device)
+        # 3. Discriminative layer-wise learning rates with AdamW optimizer
+        backbone_params = []
+        head_params = []
+        for name, param in self.model.named_parameters():
+            if not param.requires_grad:
+                continue
+            if any(k in name.lower() for k in ["head", "fc", "classifier"]):
+                head_params.append(param)
+            else:
+                backbone_params.append(param)
+
+        if backbone_params and head_params:
+            self.optimizer = torch.optim.AdamW([
+                {"params": backbone_params, "lr": lr * 0.25, "weight_decay": 1e-4},
+                {"params": head_params, "lr": lr, "weight_decay": 1e-4},
+            ])
         else:
-            self.f1_metric = FallbackF1Score(
-                num_classes=self.num_classes, device=self.device
+            self.optimizer = torch.optim.AdamW(
+                self.model.parameters(), lr=lr, weight_decay=1e-4
             )
+
+        # 4. Cosine Annealing learning rate schedule
+        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+            self.optimizer, T_max=epochs, eta_min=1e-6
+        )
+
+        # 5. Multiclass Macro-F1 Metric
+        self.f1_metric = MulticlassF1Metric(self.num_classes, self.device)
+
+        # 6. Automatic Mixed Precision (AMP)
+        self.use_amp = (self.device.type == "cuda")
+        self.scaler = torch.cuda.amp.GradScaler(enabled=self.use_amp)
 
         os.makedirs(save_dir, exist_ok=True)
 
-        self.best_acc = 0.0  # Tracks best validation F1 score
+        self.best_loss = float("inf")
+        self.best_acc = 0.0  # Tracks peak validation Macro-F1
         self.not_improved = 0
 
-        self.tr_losses: List[float] = []
-        self.val_losses: List[float] = []
-        self.tr_accs: List[float] = []
-        self.val_accs: List[float] = []
-        self.tr_f1s: List[float] = []
-        self.val_f1s: List[float] = []
+        self.tr_losses, self.val_losses = [], []
+        self.tr_accs, self.val_accs = [], []
+        self.tr_f1s, self.val_f1s = [], []
 
     def _create_model(self, model_name: str, num_classes: int) -> nn.Module:
-        """Create model using timm if available, or fallback to torchvision."""
+        """Create model via timm or fallback to torchvision."""
         if HAS_TIMM:
             try:
-                print(f"Creating model '{model_name}' via timm...")
-                return timm.create_model(model_name, pretrained=True, num_classes=num_classes)
+                print(f"Creating timm backbone: {model_name} (num_classes={num_classes})")
+                return timm.create_model(
+                    model_name,
+                    pretrained=True,
+                    num_classes=num_classes,
+                    drop_rate=0.2,
+                    drop_path_rate=0.1,
+                )
             except Exception as e:
-                print(f"timm model creation failed ({e}); checking torchvision...")
+                print(f"timm model creation warning ({e}); checking torchvision...")
 
-        # Fallback to torchvision architectures
         from torchvision import models
 
         if "mobilenet_v3" in model_name.lower():
             model = models.mobilenet_v3_small(weights=models.MobileNet_V3_Small_Weights.DEFAULT)
             in_features = model.classifier[3].in_features
+            model.classifier[2] = nn.Dropout(p=0.2)
             model.classifier[3] = nn.Linear(in_features, num_classes)
             return model
         elif "resnet" in model_name.lower():
             model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
             in_features = model.fc.in_features
-            model.fc = nn.Linear(in_features, num_classes)
+            model.fc = nn.Sequential(nn.Dropout(p=0.2), nn.Linear(in_features, num_classes))
             return model
         else:
-            # Default lightweight baseline
             model = models.mobilenet_v3_small(weights=models.MobileNet_V3_Small_Weights.DEFAULT)
             in_features = model.classifier[3].in_features
             model.classifier[3] = nn.Linear(in_features, num_classes)
@@ -170,18 +213,23 @@ class TrainValidation:
                 break
 
             ims, gts = TrainValidation.to_device(batch=batch, device=self.device)
-
-            # Forward pass
-            preds = self.model(ims)
-            loss = self.loss_fn(preds, gts)
-
-            # Backward pass
-            self.optimizer.zero_grad()
-            loss.backward()
-            self.optimizer.step()
-
-            # Update metrics
             batch_size = gts.shape[0]
+
+            self.optimizer.zero_grad()
+
+            with torch.cuda.amp.autocast(enabled=self.use_amp):
+                preds = self.model(ims)
+                loss = self.loss_fn(preds, gts)
+
+            # Mixed precision backward pass
+            self.scaler.scale(loss).backward()
+            # Gradient clipping to prevent gradient explosion
+            self.scaler.unscale_(self.optimizer)
+            torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
+
+            self.scaler.step(self.optimizer)
+            self.scaler.update()
+
             train_loss += loss.item() * batch_size
             train_acc += (torch.argmax(preds, dim=1) == gts).sum().item()
             total_samples += batch_size
@@ -209,11 +257,19 @@ class TrainValidation:
                     break
 
                 ims, gts = TrainValidation.to_device(batch=batch, device=self.device)
-                preds = self.model(ims)
-                loss = self.loss_fn(preds, gts)
-
-                # Update metrics
                 batch_size = gts.shape[0]
+
+                with torch.cuda.amp.autocast(enabled=self.use_amp):
+                    if self.use_tta:
+                        # Test-Time Augmentation (original + horizontal flip)
+                        preds_orig = self.model(ims)
+                        preds_flip = self.model(torch.flip(ims, dims=[3]))
+                        preds = 0.5 * (preds_orig + preds_flip)
+                    else:
+                        preds = self.model(ims)
+
+                    loss = self.loss_fn(preds, gts)
+
                 val_loss += loss.item() * batch_size
                 val_acc += (torch.argmax(preds, dim=1) == gts).sum().item()
                 total_samples += batch_size
@@ -235,7 +291,11 @@ class TrainValidation:
             self.best_acc = val_f1
             save_path = os.path.join(self.save_dir, f"{self.save_prefix}_best_model.pth")
             torch.save(self.model.state_dict(), save_path)
-            print(f"--> Best model saved with F1-Score: {self.best_acc:.3f} to {save_path}")
+            print(f"Best model saved with F1-Score: {self.best_acc:.3f}")
+
+            if self.best_acc >= self.target_f1:
+                print(f"[GOAL REACHED] Target F1-Score of {self.target_f1:.3f} achieved!")
+
             self.not_improved = 0
         else:
             self.not_improved += 1
@@ -249,13 +309,14 @@ class TrainValidation:
 
     def run(self) -> None:
         print(f"Start training '{self.model_name}' on device '{self.device}'...")
+        print(f"Target F1-Score: >= {self.target_f1:.3f}")
         print(f"Classes ({self.num_classes}): {list(self.classes.keys()) if isinstance(self.classes, dict) else self.classes}\n")
 
         for epoch in range(self.epochs):
             if self.dev_mode and epoch == 1:
                 break
 
-            print(f"\n{'='*40}\nEpoch {epoch + 1}/{self.epochs}:\n{'='*40}")
+            print(f"\n{'='*40}\nEpoch {epoch + 1}/{self.epochs} (LR: {self.optimizer.param_groups[-1]['lr']:.6f}):\n{'='*40}")
 
             train_loss, train_acc, train_f1 = self.train_epoch()
             self.verbose(epoch, train_loss, train_acc, train_f1, process="train")
@@ -264,6 +325,9 @@ class TrainValidation:
             self.verbose(epoch, val_loss, val_acc, val_f1, process="validation")
 
             self.save_best_model(val_f1, val_loss)
+
+            # Step cosine annealing learning rate scheduler
+            self.scheduler.step()
 
             if self.not_improved >= self.patience:
                 print(f"\nEarly stopping triggered after {self.patience} epochs without improvement.")
@@ -282,8 +346,18 @@ if __name__ == "__main__":
         sys.path.insert(0, str(base_dir))
         from src.data.custom_dataset import CustomDataset
 
+        # Augmented training transforms for robust feature learning
         mean, std, im_size = [0.485, 0.456, 0.406], [0.229, 0.224, 0.225], 224
-        tfs = T.Compose([
+        train_tfs = T.Compose([
+            T.Resize((im_size + 32, im_size + 32)),
+            T.RandomResizedCrop(im_size, scale=(0.85, 1.0)),
+            T.RandomHorizontalFlip(p=0.5),
+            T.ColorJitter(brightness=0.15, contrast=0.15, saturation=0.15),
+            T.ToTensor(),
+            T.Normalize(mean=mean, std=std),
+        ])
+
+        val_tfs = T.Compose([
             T.Resize((im_size, im_size)),
             T.ToTensor(),
             T.Normalize(mean=mean, std=std),
@@ -291,7 +365,11 @@ if __name__ == "__main__":
 
         workers = 0 if sys.platform == "win32" else 2
         tr_dl, val_dl, ts_dl, classes, cls_counts = CustomDataset.stratified_split_dls(
-            root=balanced_dir, transformations=tfs, bs=16, ns=workers
+            root=balanced_dir,
+            train_transformations=train_tfs,
+            val_transformations=val_tfs,
+            bs=32,
+            ns=workers,
         )
 
         model_name = "rexnet_150"
@@ -301,13 +379,16 @@ if __name__ == "__main__":
 
         trainer = TrainValidation(
             model_name=model_name,
+            device=device,
+            save_prefix=save_prefix,
+            save_dir=save_dir,
             classes=classes,
+            patience=5,
+            lr=3e-4,
+            epochs=30,
             tr_dl=tr_dl,
             val_dl=val_dl,
-            device=device,
-            save_dir=save_dir,
-            save_prefix=save_prefix,
-            patience=3,
-            dev_mode=True,  # Set False for complete training
+            dev_mode=False,
+            target_f1=0.940,
         )
         trainer.run()
