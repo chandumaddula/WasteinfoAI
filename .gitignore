@@ -30,6 +30,8 @@ ml/data/splits/*
 # ML Checkpoints & Exported weights (local generation)
 ml/checkpoints/*
 !ml/checkpoints/.gitkeep
+saved_models/
+ml/saved_models/
 ml/exported/*
 !ml/exported/.gitkeep
 *.pt

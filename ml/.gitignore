@@ -22,6 +22,7 @@ data/balanced_waste_images/
 # Checkpoints - generated locally; do not commit
 checkpoints/*
 !checkpoints/.gitkeep
+saved_models/
 *.pt
 *.pth
 
