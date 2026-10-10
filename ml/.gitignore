@@ -1,0 +1,33 @@
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Datasets - large media kept outside Git
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/splits/*
+!data/splits/.gitkeep
+data/balanced_waste_images/
+
+# Checkpoints - generated locally; do not commit
+checkpoints/*
+!checkpoints/.gitkeep
+*.pt
+*.pth
+
+# Exported runtime artifacts - generated locally; do not commit
+exported/*
+!exported/.gitkeep
+*.pte
+*.onnx
+*.bin

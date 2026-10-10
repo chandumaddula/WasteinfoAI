@@ -1,0 +1,2 @@
+# Placeholder to track ml/data/splits directory in git
+# Contains train/, val/, and test/ subdirectories after running split_dataset.py.

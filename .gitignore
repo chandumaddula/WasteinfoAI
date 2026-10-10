@@ -1,0 +1,42 @@
+# Environment & Cache
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.ipynb_checkpoints/
+.env
+
+# Android & Gradle
+local.properties
+.gradle/
+build/
+android/.gradle/
+android/**/build/
+android/.idea/
+*.hprof
+
+# ML Datasets (keep large data outside Git)
+ml/data/balanced_waste_images/
+ml/data/raw/*
+!ml/data/raw/.gitkeep
+ml/data/processed/*
+!ml/data/processed/.gitkeep
+ml/data/splits/*
+!ml/data/splits/.gitkeep
+
+# ML Checkpoints & Exported weights (local generation)
+ml/checkpoints/*
+!ml/checkpoints/.gitkeep
+ml/exported/*
+!ml/exported/.gitkeep
+*.pt
+*.pth
+*.task
+
+# Databases & logs
+*.sqlite3
+*.db
+backend/.pytest_cache/
