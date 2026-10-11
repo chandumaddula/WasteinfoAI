@@ -1,0 +1,28 @@
+# Local development PostgreSQL for wasteinfoAI.
+# Run from the project root:
+#   docker compose --env-file backend/.env up -d db
+# Credentials come from backend/.env (copy backend/.env.example); nothing secret is committed.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: wasteinfoai-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-wasteinfoai}
+      POSTGRES_USER: ${POSTGRES_USER:-wasteinfoai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in backend/.env and pass --env-file backend/.env}
+    ports:
+      # Development only: bound to loopback so it is not reachable from other machines.
+      # Host port (default 5432) -> container port 5432. Remove this mapping in production.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - wasteinfoai_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  wasteinfoai_pgdata:
