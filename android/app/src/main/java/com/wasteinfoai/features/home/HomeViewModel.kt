@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 
 data class HomeUiState(
     val userRole: String = "RESIDENT",
+    val userCategory: String = "Households",
     val userEmail: String = "",
     val recentScans: List<ScanHistoryEntity> = emptyList(),
     val pendingSyncCount: Int = 0,
@@ -32,13 +33,15 @@ class HomeViewModel(
 
     val uiState: StateFlow<HomeUiState> = combine(
         sessionManager.roleState,
+        sessionManager.categoryState,
         sessionManager.emailState,
         scanRepository.getScanHistory(),
         reportRepository.getAllReportsFlow()
-    ) { role, email, scans, reports ->
+    ) { role, category, email, scans, reports ->
         val pendingCount = reports.count { it.syncStatus == SyncState.PENDING_SYNC }
         HomeUiState(
             userRole = role,
+            userCategory = category,
             userEmail = email,
             recentScans = scans.take(5),
             pendingSyncCount = pendingCount,

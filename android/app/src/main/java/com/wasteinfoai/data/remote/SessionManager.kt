@@ -19,6 +19,7 @@ class SessionManager(context: Context) {
         private const val KEY_EMAIL = "user_email"
         private const val KEY_ROLE = "user_role"
         private const val KEY_DISPLAY_NAME = "display_name"
+        private const val KEY_CATEGORY = "user_category"
     }
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -28,6 +29,9 @@ class SessionManager(context: Context) {
 
     private val _roleState = MutableStateFlow(prefs.getString(KEY_ROLE, "RESIDENT") ?: "RESIDENT")
     val roleState: StateFlow<String> = _roleState.asStateFlow()
+
+    private val _categoryState = MutableStateFlow(prefs.getString(KEY_CATEGORY, "Households") ?: "Households")
+    val categoryState: StateFlow<String> = _categoryState.asStateFlow()
 
     private val _emailState = MutableStateFlow(prefs.getString(KEY_EMAIL, "") ?: "")
     val emailState: StateFlow<String> = _emailState.asStateFlow()
@@ -39,18 +43,30 @@ class SessionManager(context: Context) {
 
     fun getRole(): String = prefs.getString(KEY_ROLE, "RESIDENT") ?: "RESIDENT"
 
+    fun getCategory(): String = prefs.getString(KEY_CATEGORY, "Households") ?: "Households"
+
     fun getUserId(): String? = prefs.getString(KEY_USER_ID, null)
 
     fun getDisplayName(): String = prefs.getString(KEY_DISPLAY_NAME, "") ?: ""
 
-    fun saveSession(token: String, user: UserResponse) {
-        prefs.edit()
+    fun setCategory(category: String) {
+        prefs.edit().putString(KEY_CATEGORY, category).apply()
+        _categoryState.value = category
+    }
+
+    fun saveSession(token: String, user: UserResponse, category: String? = null) {
+        val editor = prefs.edit()
             .putString(KEY_TOKEN, token)
             .putString(KEY_USER_ID, user.id)
             .putString(KEY_EMAIL, user.email)
             .putString(KEY_ROLE, user.role)
             .putString(KEY_DISPLAY_NAME, user.displayName ?: user.fullName ?: user.email)
-            .apply()
+        
+        if (category != null) {
+            editor.putString(KEY_CATEGORY, category)
+            _categoryState.value = category
+        }
+        editor.apply()
 
         _tokenState.value = token
         _roleState.value = user.role
@@ -66,6 +82,7 @@ class SessionManager(context: Context) {
         prefs.edit().clear().apply()
         _tokenState.value = null
         _roleState.value = "RESIDENT"
+        _categoryState.value = "Households"
         _emailState.value = ""
     }
 }

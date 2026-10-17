@@ -4,7 +4,16 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 sealed class Screen(val route: String) {
+    data object Splash : Screen("splash")
+    data object CategorySelection : Screen("category_selection")
+    data object CategoryAuth : Screen("category_auth?category={category}") {
+        fun createRoute(category: String = "Households"): String {
+            val encoded = URLEncoder.encode(category, StandardCharsets.UTF_8.toString())
+            return "category_auth?category=$encoded"
+        }
+    }
     data object Home : Screen("home")
+    data object IndustryDashboard : Screen("industry_dashboard")
     data object Camera : Screen("camera")
     data object History : Screen("history")
     data object Map : Screen("map")

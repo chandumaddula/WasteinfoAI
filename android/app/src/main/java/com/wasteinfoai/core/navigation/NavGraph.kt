@@ -26,6 +26,10 @@ import com.wasteinfoai.features.reports.CreateReportScreen
 import com.wasteinfoai.features.reports.CreateReportViewModel
 import com.wasteinfoai.features.scan.ScanResultScreen
 import com.wasteinfoai.features.scan.ScanResultViewModel
+import com.wasteinfoai.features.dashboards.IndustryDashboardScreen
+import com.wasteinfoai.features.onboarding.CategoryAuthScreen
+import com.wasteinfoai.features.onboarding.CategorySelectionScreen
+import com.wasteinfoai.features.onboarding.SplashScreen
 import com.wasteinfoai.features.tasks.WorkerTasksScreen
 import com.wasteinfoai.features.tasks.WorkerTasksViewModel
 import java.net.URLDecoder
@@ -38,9 +42,82 @@ fun AppNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        startDestination = Screen.Splash.route
     ) {
-        // Home Dashboard
+        // 1. App Startup: Logo and WasteinfoAI Representation
+        composable(Screen.Splash.route) {
+            SplashScreen(
+                onNavigateToCategorySelection = {
+                    navController.navigate(Screen.CategorySelection.route)
+                },
+                onQuickScan = {
+                    navController.navigate(Screen.Camera.route)
+                }
+            )
+        }
+
+        // 2. Category Selection Screen (Industries, Municipal worker, Households, Other)
+        composable(Screen.CategorySelection.route) {
+            CategorySelectionScreen(
+                initialSelectedCategory = container.sessionManager.getCategory(),
+                onCategorySelected = { category ->
+                    navController.navigate(Screen.CategoryAuth.createRoute(category.id))
+                },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // 3. Category-Based Authentication Screen
+        composable(
+            route = Screen.CategoryAuth.route,
+            arguments = listOf(navArgument("category") { type = NavType.StringType; defaultValue = "Households" })
+        ) { backStackEntry ->
+            val cat = URLDecoder.decode(backStackEntry.arguments?.getString("category") ?: "Households", StandardCharsets.UTF_8.toString())
+            val vm = rememberViewModel {
+                LoginViewModel(
+                    authRepository = container.authRepository,
+                    sessionManager = container.sessionManager
+                )
+            }
+            CategoryAuthScreen(
+                categoryName = cat,
+                viewModel = vm,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToDashboard = { selectedCat ->
+                    val target = when (selectedCat.lowercase()) {
+                        "municipal worker", "municipal_worker" -> Screen.Tasks.route
+                        "industries", "industry" -> Screen.IndustryDashboard.route
+                        "other" -> Screen.ReviewerDashboard.route
+                        else -> Screen.Home.route
+                    }
+                    navController.navigate(target) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // 4. Dedicated Industry Dashboard
+        composable(Screen.IndustryDashboard.route) {
+            IndustryDashboardScreen(
+                sessionManager = container.sessionManager,
+                onNavigateToCamera = { navController.navigate(Screen.Camera.route) },
+                onNavigateToCreateReport = {
+                    navController.navigate(Screen.CreateReport.createRoute("Hazardous Waste"))
+                },
+                onNavigateToMap = { navController.navigate(Screen.Map.route) },
+                onNavigateToAssistant = {
+                    navController.navigate(Screen.Assistant.createRoute("Industrial Waste & Compliance"))
+                },
+                onNavigateToHistory = { navController.navigate(Screen.History.route) },
+                onNavigateToCategorySelection = {
+                    navController.navigate(Screen.CategorySelection.route)
+                },
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // Home Dashboard (Households / Resident Dashboard)
         composable(Screen.Home.route) {
             val vm = rememberViewModel {
                 HomeViewModel(
@@ -60,7 +137,9 @@ fun AppNavGraph(
                 onNavigateToTasks = { navController.navigate(Screen.Tasks.route) },
                 onNavigateToReviewer = { navController.navigate(Screen.ReviewerDashboard.route) },
                 onNavigateToAdmin = { navController.navigate(Screen.AdminDashboard.route) },
-                onNavigateToLogin = { navController.navigate(Screen.Login.route) }
+                onNavigateToLogin = { navController.navigate(Screen.Login.route) },
+                onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) },
+                onNavigateToIndustry = { navController.navigate(Screen.IndustryDashboard.route) }
             )
         }
 
@@ -173,7 +252,10 @@ fun AppNavGraph(
             val vm = rememberViewModel { WorkerTasksViewModel(container.taskRepository) }
             WorkerTasksScreen(
                 viewModel = vm,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToCamera = { navController.navigate(Screen.Camera.route) },
+                onNavigateToMap = { navController.navigate(Screen.Map.route) },
+                onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) }
             )
         }
 
@@ -182,7 +264,8 @@ fun AppNavGraph(
             val vm = rememberViewModel { ReviewerDashboardViewModel(container.reportRepository) }
             ReviewerDashboardScreen(
                 viewModel = vm,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) }
             )
         }
 
@@ -191,7 +274,8 @@ fun AppNavGraph(
             val vm = rememberViewModel { AdminDashboardViewModel(container.reportRepository) }
             AdminDashboardScreen(
                 viewModel = vm,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) }
             )
         }
 

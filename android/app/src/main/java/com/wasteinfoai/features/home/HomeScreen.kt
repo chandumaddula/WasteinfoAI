@@ -37,7 +37,9 @@ fun HomeScreen(
     onNavigateToTasks: () -> Unit,
     onNavigateToReviewer: () -> Unit,
     onNavigateToAdmin: () -> Unit,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToCategorySelection: () -> Unit = {},
+    onNavigateToIndustry: (() -> Unit)? = null
 ) {
     val state by viewModel.uiState.collectAsState()
     var showRoleDialog by remember { mutableStateOf(false) }
@@ -71,7 +73,7 @@ fun HomeScreen(
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                         ) {
                             Text(
-                                text = state.userRole,
+                                text = state.userCategory.uppercase(),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -222,6 +224,14 @@ fun HomeScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (onNavigateToIndustry != null) {
+                        RoleDashboardRow(
+                            title = "Industrial Waste Portal",
+                            icon = Icons.Default.Factory,
+                            subtitle = "Bulk waste manifests, hazard logs & compliance",
+                            onClick = onNavigateToIndustry
+                        )
+                    }
                     if (state.userRole in listOf("SANITATION_WORKER", "ADMIN")) {
                         RoleDashboardRow(
                             title = "Sanitation Worker Tasks",
@@ -321,8 +331,17 @@ fun HomeScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { showRoleDialog = false }) {
-                    Text("Close")
+                Row {
+                    TextButton(onClick = {
+                        showRoleDialog = false
+                        onNavigateToCategorySelection()
+                    }) {
+                        Text("Switch Category")
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    TextButton(onClick = { showRoleDialog = false }) {
+                        Text("Close")
+                    }
                 }
             }
         )

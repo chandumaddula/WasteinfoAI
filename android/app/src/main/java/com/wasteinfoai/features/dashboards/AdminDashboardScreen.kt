@@ -1,5 +1,6 @@
 package com.wasteinfoai.features.dashboards
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,7 +18,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AdminDashboardScreen(
     viewModel: AdminDashboardViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToCategorySelection: (() -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -31,6 +33,23 @@ fun AdminDashboardScreen(
                     }
                 },
                 actions = {
+                    if (onNavigateToCategorySelection != null) {
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier
+                                .clickable { onNavigateToCategorySelection() }
+                                .padding(end = 4.dp)
+                        ) {
+                            Text(
+                                text = "OTHER / ADMIN",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
                     IconButton(onClick = { viewModel.loadMetrics() }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")
                     }

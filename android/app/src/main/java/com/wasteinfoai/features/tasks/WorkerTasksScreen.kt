@@ -18,11 +18,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wasteinfoai.data.local.entity.TaskEntity
 
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkerTasksScreen(
     viewModel: WorkerTasksViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToCamera: (() -> Unit)? = null,
+    onNavigateToMap: (() -> Unit)? = null,
+    onNavigateToCategorySelection: (() -> Unit)? = null
 ) {
     val tasks by viewModel.tasksFlow.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
@@ -33,13 +39,34 @@ fun WorkerTasksScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Sanitation Worker Tasks") },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("Municipal Tasks", fontWeight = FontWeight.Bold)
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
+                    if (onNavigateToCategorySelection != null) {
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier
+                                .clickable { onNavigateToCategorySelection() }
+                                .padding(end = 4.dp)
+                        ) {
+                            Text(
+                                text = "MUNICIPAL",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
                     IconButton(onClick = { viewModel.refreshTasks() }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")
                     }
@@ -52,6 +79,39 @@ fun WorkerTasksScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
+            // Quick Operational Shortcuts Row
+            if (onNavigateToCamera != null || onNavigateToMap != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    if (onNavigateToCamera != null) {
+                        OutlinedButton(
+                            onClick = onNavigateToCamera,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Default.CameraAlt, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Scan Waste")
+                        }
+                    }
+                    if (onNavigateToMap != null) {
+                        Button(
+                            onClick = onNavigateToMap,
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Default.Map, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("Hotspot Map")
+                        }
+                    }
+                }
+            }
+
             if (uiState.errorMessage != null) {
                 Surface(
                     color = MaterialTheme.colorScheme.secondaryContainer,

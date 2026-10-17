@@ -60,6 +60,7 @@ fun LoginScreen(
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Text("Email: ${uiState.email}", style = MaterialTheme.typography.bodyMedium)
+                        Text("Active Category: ${uiState.category}", style = MaterialTheme.typography.bodyMedium)
                         Text("Active Role: ${uiState.role}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(16.dp))
                         OutlinedButton(
