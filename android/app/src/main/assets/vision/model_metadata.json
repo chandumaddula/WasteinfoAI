@@ -1,0 +1,44 @@
+{
+  "model_name": "wasteinfoAI-rexnet150",
+  "architecture": "rexnet_150",
+  "runtime": "executorch",
+  "input_shape": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "num_classes": 17,
+  "classes": [
+    "Battery",
+    "cardboard",
+    "glass",
+    "Keyboard",
+    "metal",
+    "Microwave",
+    "Mobile",
+    "Mouse",
+    "organic",
+    "paper",
+    "PCB",
+    "plastic",
+    "Player",
+    "Printer",
+    "Television",
+    "trash",
+    "Washing Machine"
+  ],
+  "size_bytes": 31731232
+}
