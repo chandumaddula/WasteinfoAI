@@ -34,7 +34,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
@@ -300,8 +299,9 @@ private fun ImageReviewContent(
     onConfirm: () -> Unit,
 ) {
     // Decoding happens on a background dispatcher at preview resolution, never on the UI thread.
-    val preview by produceState<PreviewResult>(PreviewResult.Loading, image.file) {
-        value = withContext(Dispatchers.IO) {
+    var preview by remember(image.file) { mutableStateOf<PreviewResult>(PreviewResult.Loading) }
+    LaunchedEffect(image.file) {
+        preview = withContext(Dispatchers.IO) {
             ImageDecoding.decodeOriented(image.file, ImageDecoding.PREVIEW_MAX_DIMENSION)
                 ?.let { PreviewResult.Ready(it.asImageBitmap()) }
                 ?: PreviewResult.Failed
