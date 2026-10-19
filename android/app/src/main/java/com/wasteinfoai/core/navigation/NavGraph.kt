@@ -44,24 +44,9 @@ fun AppNavGraph(
         navController = navController,
         startDestination = Screen.Splash.route
     ) {
-        // 1. App Startup: Logo, Session Check & WasteinfoAI Representation
+        // 1. App Startup: Logo, Get Started & Quick Scan
         composable(Screen.Splash.route) {
             SplashScreen(
-                isLoggedIn = container.sessionManager.isLoggedIn,
-                userRole = container.sessionManager.getRole(),
-                userCategory = container.sessionManager.getCategory(),
-                onNavigateToDashboard = { roleOrCat ->
-                    val target = when (roleOrCat.lowercase()) {
-                        "municipal worker", "municipal_worker", "sanitation_worker" -> Screen.Tasks.route
-                        "industries", "industry", "institution" -> Screen.IndustryDashboard.route
-                        "other", "reviewer" -> Screen.ReviewerDashboard.route
-                        "admin" -> Screen.AdminDashboard.route
-                        else -> Screen.Home.route
-                    }
-                    navController.navigate(target) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
-                    }
-                },
                 onNavigateToCategorySelection = {
                     navController.navigate(Screen.CategorySelection.route)
                 },

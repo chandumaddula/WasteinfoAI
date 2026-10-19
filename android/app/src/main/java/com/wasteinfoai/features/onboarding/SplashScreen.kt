@@ -30,10 +30,6 @@ import com.wasteinfoai.core.theme.MintAccent
 
 @Composable
 fun SplashScreen(
-    isLoggedIn: Boolean = false,
-    userRole: String = "RESIDENT",
-    userCategory: String = "Households",
-    onNavigateToDashboard: ((String) -> Unit)? = null,
     onNavigateToCategorySelection: () -> Unit,
     onQuickScan: () -> Unit
 ) {
@@ -195,63 +191,29 @@ fun SplashScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                if (isLoggedIn && onNavigateToDashboard != null) {
-                    Button(
-                        onClick = { onNavigateToDashboard(userRole.ifBlank { userCategory }) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MintAccent,
-                            contentColor = EmeraldDark
-                        ),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
-                    ) {
-                        Text(
-                            text = "Open $userCategory Dashboard",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-
-                    TextButton(
-                        onClick = onNavigateToCategorySelection,
-                        colors = ButtonDefaults.textButtonColors(contentColor = Color.White.copy(alpha = 0.85f))
-                    ) {
-                        Text("Switch Profile / Change Category")
-                    }
-                } else {
-                    Button(
-                        onClick = onNavigateToCategorySelection,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MintAccent,
-                            contentColor = EmeraldDark
-                        ),
-                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
-                    ) {
-                        Text(
-                            text = "Get Started",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                Button(
+                    onClick = onNavigateToCategorySelection,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MintAccent,
+                        contentColor = EmeraldDark
+                    ),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
+                ) {
+                    Text(
+                        text = "Get Started",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
 
                 OutlinedButton(
