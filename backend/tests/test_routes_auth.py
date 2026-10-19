@@ -43,12 +43,14 @@ def test_register_endpoint(client_with_db):
     assert "password" not in body
     assert "password_hash" not in body
 
-    # Duplicate registration
-    r2 = client_with_db.post(
+    # Registration with full name
+    r3 = client_with_db.post(
         "/api/v1/auth/register",
-        json={"email": "newbie@example.com", "password": "anotherpassword"},
+        json={"email": "chandu@example.com", "password": "securepassword123", "full_name": "Chandu Maddula"},
     )
-    assert r2.status_code == 409
+    assert r3.status_code == 201
+    assert r3.json()["full_name"] == "Chandu Maddula"
+    assert r3.json()["display_name"] == "Chandu"
 
 
 def test_token_issuance_and_authentication(client_with_db, db_session):

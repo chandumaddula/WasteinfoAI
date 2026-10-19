@@ -17,7 +17,7 @@ from app.core.auth import (
 )
 from app.database.session import get_db
 from app.models.user import User, UserRole
-from app.schemas.user import LoginRequest, TokenResponse, UserCreate, UserResponse
+from app.schemas.user import LoginRequest, RegisterRequest, TokenResponse, UserCreate, UserResponse
 
 router = APIRouter()
 
@@ -72,7 +72,7 @@ def login_for_token(
     description="Create a new resident user account. Client-supplied roles are ignored; users always start as RESIDENT.",
 )
 def register_user(
-    payload: LoginRequest,
+    payload: RegisterRequest,
     full_name: str | None = None,
     display_name: str | None = None,
     db: Session = Depends(get_db),
@@ -86,13 +86,15 @@ def register_user(
         )
 
     pw_hash = hash_password(payload.password) if payload.password else None
+    resolved_full_name = payload.full_name or full_name
+    resolved_display_name = payload.display_name or display_name or (resolved_full_name.split()[0] if resolved_full_name else email_clean.split("@")[0])
     user = User(
         id=str(uuid.uuid4()),
         email=email_clean,
         password_hash=pw_hash,
         role=UserRole.RESIDENT,  # Never trust client role
-        full_name=full_name,
-        display_name=display_name or email_clean.split("@")[0],
+        full_name=resolved_full_name,
+        display_name=resolved_display_name,
         is_active=True,
     )
     db.add(user)

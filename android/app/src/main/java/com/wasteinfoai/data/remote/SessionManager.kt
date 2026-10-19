@@ -97,13 +97,38 @@ class SessionManager(context: Context) {
         _emailState.value = user.email
     }
 
+    fun registerLocalAccount(email: String, password: String?, fullName: String?, category: String, role: String) {
+        val cleanEmail = email.trim().lowercase()
+        prefs.edit()
+            .putString("local_acc_${cleanEmail}_pwd", password ?: "")
+            .putString("local_acc_${cleanEmail}_name", fullName ?: cleanEmail.substringBefore("@"))
+            .putString("local_acc_${cleanEmail}_category", category)
+            .putString("local_acc_${cleanEmail}_role", role)
+            .apply()
+    }
+
+    fun hasLocalAccount(email: String): Boolean {
+        val cleanEmail = email.trim().lowercase()
+        return prefs.contains("local_acc_${cleanEmail}_pwd")
+    }
+
+    fun verifyLocalAccount(email: String, password: String?): Boolean {
+        val cleanEmail = email.trim().lowercase()
+        val storedPwd = prefs.getString("local_acc_${cleanEmail}_pwd", null) ?: return true
+        if (storedPwd.isBlank()) return true
+        return storedPwd == (password ?: "")
+    }
+
     fun saveLocalSession(email: String, category: String, role: String) {
+        val cleanEmail = email.trim().lowercase()
+        val savedName = prefs.getString("local_acc_${cleanEmail}_name", null)
+        val displayName = savedName ?: email.substringBefore("@").replaceFirstChar { it.uppercase() }
         val localUser = UserResponse(
             id = "local_${System.currentTimeMillis()}",
             email = email.ifBlank { "guest@wasteinfo.ai" },
             role = role,
-            fullName = email.substringBefore("@").replaceFirstChar { it.uppercase() },
-            displayName = email.substringBefore("@").replaceFirstChar { it.uppercase() },
+            fullName = displayName,
+            displayName = displayName,
             isActive = true
         )
         saveSession(

@@ -42,6 +42,10 @@ class LoginViewModel(
         _uiState.value = _uiState.value.copy(serverUrl = sessionManager.getServerUrl())
     }
 
+    fun clearMessages() {
+        _uiState.value = _uiState.value.copy(errorMessage = null, successMessage = null)
+    }
+
     private fun resolveDefaultRole(category: String): String = when (category.lowercase()) {
         "municipal worker", "municipal_worker" -> "SANITATION_WORKER"
         "industries", "industry" -> "INSTITUTION"
@@ -50,14 +54,15 @@ class LoginViewModel(
     }
 
     fun login(email: String, pass: String, category: String = "Households", onDone: (() -> Unit)? = null) {
-        if (email.isBlank()) {
+        val cleanEmail = email.trim()
+        if (cleanEmail.isBlank()) {
             _uiState.value = _uiState.value.copy(errorMessage = "Email / Identifier is required")
             return
         }
         val defaultRole = resolveDefaultRole(category)
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-            val res = authRepository.login(email, pass.ifBlank { null })
+            val res = authRepository.login(cleanEmail, pass.ifBlank { null })
             when (res) {
                 is Resource.Success -> {
                     sessionManager.setCategory(category)
@@ -68,6 +73,7 @@ class LoginViewModel(
                         email = res.data.email,
                         role = res.data.role.ifBlank { defaultRole },
                         category = category,
+                        errorMessage = null,
                         successMessage = "Logged in successfully as ${res.data.role}"
                     )
                     onDone?.invoke()
@@ -80,14 +86,24 @@ class LoginViewModel(
                         res.message?.contains("10.0.2.2", ignoreCase = true) == true
 
                     if (isConnectionError) {
-                        // Offline / Standalone Fallback: authenticate locally so the user is never blocked
-                        sessionManager.saveLocalSession(email, category, defaultRole)
+                        // Offline / Standalone Fallback: authenticate locally
+                        if (sessionManager.hasLocalAccount(cleanEmail)) {
+                            if (!sessionManager.verifyLocalAccount(cleanEmail, pass)) {
+                                _uiState.value = _uiState.value.copy(
+                                    isLoading = false,
+                                    errorMessage = "Invalid password for this account."
+                                )
+                                return@launch
+                            }
+                        }
+                        sessionManager.saveLocalSession(cleanEmail, category, defaultRole)
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             isLoggedIn = true,
-                            email = email,
+                            email = cleanEmail,
                             role = defaultRole,
                             category = category,
+                            errorMessage = null,
                             successMessage = "Server unreachable. Running in Local Mode."
                         )
                         onDone?.invoke()
@@ -100,28 +116,61 @@ class LoginViewModel(
         }
     }
 
-    fun register(email: String, pass: String, category: String = "Households", onDone: (() -> Unit)? = null) {
-        if (email.isBlank()) {
-            _uiState.value = _uiState.value.copy(errorMessage = "Email / Identifier is required")
+    fun register(
+        fullName: String,
+        email: String,
+        pass: String,
+        confirmPass: String,
+        category: String = "Households",
+        onSuccess: ((registeredEmail: String) -> Unit)? = null
+    ) {
+        val cleanName = fullName.trim()
+        val cleanEmail = email.trim()
+
+        if (cleanName.isBlank()) {
+            _uiState.value = _uiState.value.copy(errorMessage = "Full Name is required for registration")
             return
         }
+        if (cleanName.length < 2) {
+            _uiState.value = _uiState.value.copy(errorMessage = "Full Name must be at least 2 characters")
+            return
+        }
+        if (cleanEmail.isBlank()) {
+            _uiState.value = _uiState.value.copy(errorMessage = "Email Address is required")
+            return
+        }
+        val emailPattern = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+        if (!emailPattern.matches(cleanEmail)) {
+            _uiState.value = _uiState.value.copy(errorMessage = "Please enter a valid email address (e.g. name@domain.com)")
+            return
+        }
+        if (pass.length < 6) {
+            _uiState.value = _uiState.value.copy(errorMessage = "Password must be at least 6 characters")
+            return
+        }
+        if (pass != confirmPass) {
+            _uiState.value = _uiState.value.copy(errorMessage = "Passwords do not match. Please verify both password fields.")
+            return
+        }
+
         val defaultRole = resolveDefaultRole(category)
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-            val res = authRepository.register(email, pass.ifBlank { null })
+            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null, successMessage = null)
+            val res = authRepository.register(cleanEmail, pass.ifBlank { null }, cleanName)
             when (res) {
                 is Resource.Success -> {
-                    sessionManager.setCategory(category)
-                    sessionManager.setDevRoleOverride(res.data.role.ifBlank { defaultRole })
+                    // Registration succeeded. Do NOT log in automatically.
+                    // Switch to login mode so user enters their credentials.
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        isLoggedIn = true,
-                        email = res.data.email,
+                        isLoggedIn = false,
+                        email = cleanEmail,
                         role = res.data.role.ifBlank { defaultRole },
                         category = category,
-                        successMessage = "Account created and logged in!"
+                        errorMessage = null,
+                        successMessage = "Account created successfully! Please sign in with your credentials to open dashboard."
                     )
-                    onDone?.invoke()
+                    onSuccess?.invoke(cleanEmail)
                 }
                 is Resource.Error -> {
                     val isConnectionError = res.cause != null ||
@@ -131,17 +180,18 @@ class LoginViewModel(
                         res.message?.contains("10.0.2.2", ignoreCase = true) == true
 
                     if (isConnectionError) {
-                        // Offline / Standalone Fallback: register locally
-                        sessionManager.saveLocalSession(email, category, defaultRole)
+                        // Offline registration fallback: save credentials locally
+                        sessionManager.registerLocalAccount(cleanEmail, pass, cleanName, category, defaultRole)
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            isLoggedIn = true,
-                            email = email,
+                            isLoggedIn = false,
+                            email = cleanEmail,
                             role = defaultRole,
                             category = category,
-                            successMessage = "Server unreachable. Account created locally."
+                            errorMessage = null,
+                            successMessage = "Account registered locally (offline mode). Please sign in with your password."
                         )
-                        onDone?.invoke()
+                        onSuccess?.invoke(cleanEmail)
                     } else {
                         _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = res.message)
                     }
@@ -150,6 +200,18 @@ class LoginViewModel(
             }
         }
     }
+
+    fun register(email: String, pass: String, category: String = "Households", onDone: (() -> Unit)? = null) {
+        register(
+            fullName = email.substringBefore("@").replaceFirstChar { it.uppercase() },
+            email = email,
+            pass = pass,
+            confirmPass = pass,
+            category = category,
+            onSuccess = { onDone?.invoke() }
+        )
+    }
+
 
     fun loginDemo(category: String, onDone: () -> Unit) {
         val (email, role) = when (category.lowercase()) {

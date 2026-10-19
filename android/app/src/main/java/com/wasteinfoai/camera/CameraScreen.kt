@@ -3,26 +3,46 @@ package com.wasteinfoai.camera
 import android.view.Surface
 import androidx.annotation.StringRes
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
+import java.util.concurrent.Executors
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
@@ -147,7 +167,43 @@ private fun CameraPreviewContent(
     var cameraBound by remember { mutableStateOf(false) }
     val currentOnUnavailable by rememberUpdatedState(onCameraUnavailable)
 
-    // Binds Preview + ImageCapture to the host lifecycle and releases the camera when this
+    val detector = remember { OpencvObjectDetector() }
+    val analyzerExecutor = remember { Executors.newSingleThreadExecutor() }
+    var detectedBox by remember {
+        mutableStateOf(
+            DetectedObjectBox(
+                left = 0.18f,
+                top = 0.22f,
+                right = 0.82f,
+                bottom = 0.68f,
+                hasTarget = false,
+                label = "SCANNING OBJECT..."
+            )
+        )
+    }
+
+    val imageAnalysis = remember {
+        ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+            .build()
+            .apply {
+                setAnalyzer(analyzerExecutor) { imageProxy ->
+                    try {
+                        val result = detector.analyzeFrame(imageProxy)
+                        previewView.post {
+                            detectedBox = result
+                        }
+                    } catch (e: Exception) {
+                        // ignore dropped frames
+                    } finally {
+                        imageProxy.close()
+                    }
+                }
+            }
+    }
+
+    // Binds Preview + ImageCapture + ImageAnalysis to the host lifecycle and releases the camera when this
     // composable leaves the composition (review screen, error, navigation away).
     DisposableEffect(lifecycleOwner) {
         val owner = lifecycleOwner
@@ -176,7 +232,7 @@ private fun CameraPreviewContent(
                     }
                     val preview = Preview.Builder().build().also { it.setSurfaceProvider(previewView.surfaceProvider) }
                     cameraProvider.unbindAll()
-                    cameraProvider.bindToLifecycle(owner, selector, preview, imageCapture)
+                    cameraProvider.bindToLifecycle(owner, selector, preview, imageCapture, imageAnalysis)
                     cameraBound = true
                 } catch (e: Exception) {
                     cameraBound = false
@@ -189,6 +245,7 @@ private fun CameraPreviewContent(
             disposed = true
             cameraBound = false
             provider?.unbindAll()
+            analyzerExecutor.shutdown()
         }
     }
 
@@ -215,6 +272,14 @@ private fun CameraPreviewContent(
 
     Box(Modifier.fillMaxSize()) {
         AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize())
+
+        // Real-time OpenCV indication Green color bounded box on the object
+        ObjectBoundingBoxOverlay(
+            box = detectedBox,
+            isCapturing = isCapturing,
+            modifier = Modifier.fillMaxSize()
+        )
+
         TextButton(
             onClick = onClose,
             modifier = Modifier.align(Alignment.TopStart).statusBarsPadding().padding(8.dp),
@@ -234,6 +299,152 @@ private fun CameraPreviewContent(
         }
     }
 }
+
+/**
+ * Green color bounded box overlay on the scanned object powered by OpenCV analysis.
+ * Displays high-visibility green corner reticles, boundary outline, animated laser scanning beam,
+ * and an OpenCV object detection HUD status badge.
+ */
+@Composable
+private fun ObjectBoundingBoxOverlay(
+    box: DetectedObjectBox,
+    isCapturing: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val animLeft by animateFloatAsState(targetValue = box.left, animationSpec = tween(120), label = "left")
+    val animTop by animateFloatAsState(targetValue = box.top, animationSpec = tween(120), label = "top")
+    val animRight by animateFloatAsState(targetValue = box.right, animationSpec = tween(120), label = "right")
+    val animBottom by animateFloatAsState(targetValue = box.bottom, animationSpec = tween(120), label = "bottom")
+
+    val infiniteTransition = rememberInfiniteTransition(label = "scanPulse")
+    val scanProgress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1800, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "scanProgress"
+    )
+
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.65f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(900, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseAlpha"
+    )
+
+    val primaryGreen = Color(0xFF00E676)
+    val cornerGreen = if (isCapturing) Color(0xFFB9F6CA) else Color(0xFF00E676)
+
+    BoxWithConstraints(modifier = modifier) {
+        val widthPx = constraints.maxWidth.toFloat()
+        val heightPx = constraints.maxHeight.toFloat()
+
+        val leftPx = animLeft * widthPx
+        val topPx = animTop * heightPx
+        val rightPx = animRight * widthPx
+        val bottomPx = animBottom * heightPx
+
+        val boxWidth = (rightPx - leftPx).coerceAtLeast(10f)
+        val boxHeight = (bottomPx - topPx).coerceAtLeast(10f)
+
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            // 1. Subtle green translucent background fill inside the bounded box
+            drawRect(
+                color = primaryGreen.copy(alpha = if (box.hasTarget) 0.08f else 0.04f),
+                topLeft = Offset(leftPx, topPx),
+                size = Size(boxWidth, boxHeight)
+            )
+
+            // 2. Continuous green boundary rectangle
+            drawRect(
+                color = primaryGreen.copy(alpha = 0.65f * pulseAlpha),
+                topLeft = Offset(leftPx, topPx),
+                size = Size(boxWidth, boxHeight),
+                style = Stroke(width = 2.dp.toPx())
+            )
+
+            // 3. Prominent green corner targeting brackets
+            val cornerLength = 26.dp.toPx().coerceAtMost(minOf(boxWidth, boxHeight) * 0.35f)
+            val cornerStroke = 4.dp.toPx()
+
+            // Top-Left corner
+            drawLine(cornerGreen, Offset(leftPx, topPx), Offset(leftPx + cornerLength, topPx), strokeWidth = cornerStroke)
+            drawLine(cornerGreen, Offset(leftPx, topPx), Offset(leftPx, topPx + cornerLength), strokeWidth = cornerStroke)
+
+            // Top-Right corner
+            drawLine(cornerGreen, Offset(rightPx, topPx), Offset(rightPx - cornerLength, topPx), strokeWidth = cornerStroke)
+            drawLine(cornerGreen, Offset(rightPx, topPx), Offset(rightPx, topPx + cornerLength), strokeWidth = cornerStroke)
+
+            // Bottom-Left corner
+            drawLine(cornerGreen, Offset(leftPx, bottomPx), Offset(leftPx + cornerLength, bottomPx), strokeWidth = cornerStroke)
+            drawLine(cornerGreen, Offset(leftPx, bottomPx), Offset(leftPx, bottomPx - cornerLength), strokeWidth = cornerStroke)
+
+            // Bottom-Right corner
+            drawLine(cornerGreen, Offset(rightPx, bottomPx), Offset(rightPx - cornerLength, bottomPx), strokeWidth = cornerStroke)
+            drawLine(cornerGreen, Offset(rightPx, bottomPx), Offset(rightPx, bottomPx - cornerLength), strokeWidth = cornerStroke)
+
+            // 4. Center reticle crosshair
+            val cx = leftPx + boxWidth / 2f
+            val cy = topPx + boxHeight / 2f
+            val chLength = 8.dp.toPx()
+            drawLine(primaryGreen.copy(alpha = 0.7f), Offset(cx - chLength, cy), Offset(cx + chLength, cy), strokeWidth = 1.5.dp.toPx())
+            drawLine(primaryGreen.copy(alpha = 0.7f), Offset(cx, cy - chLength), Offset(cx, cy + chLength), strokeWidth = 1.5.dp.toPx())
+
+            // 5. Active scanning laser beam across the bounding box
+            val scanY = topPx + boxHeight * scanProgress
+            drawLine(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        primaryGreen.copy(alpha = 0f),
+                        primaryGreen.copy(alpha = 0.9f),
+                        primaryGreen.copy(alpha = 0f)
+                    ),
+                    startX = leftPx,
+                    endX = rightPx
+                ),
+                start = Offset(leftPx, scanY),
+                end = Offset(rightPx, scanY),
+                strokeWidth = 2.5.dp.toPx()
+            )
+        }
+
+        // 6. Modern HUD indicator badge over the bounded box
+        val density = LocalDensity.current
+        val badgeX = with(density) { leftPx.toDp() }
+        val badgeY = with(density) { (topPx - 32.dp.toPx()).coerceAtLeast(16.dp.toPx()).toDp() }
+
+        Box(
+            modifier = Modifier
+                .offset(x = badgeX, y = badgeY)
+                .background(Color.Black.copy(alpha = 0.75f), RoundedCornerShape(6.dp))
+                .border(1.dp, primaryGreen.copy(alpha = 0.8f), RoundedCornerShape(6.dp))
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(if (box.hasTarget) primaryGreen else Color(0xFFFFB300))
+                )
+                Text(
+                    text = if (isCapturing) "CAPTURING OBJECT..." else "OPENCV: ${box.label}",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+
 
 @Composable
 private fun CaptureButton(enabled: Boolean, loading: Boolean, onClick: () -> Unit) {

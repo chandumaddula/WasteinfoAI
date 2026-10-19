@@ -144,3 +144,37 @@ class LoginRequest(BaseModel):
         description="User's password (verified if user has password configured)",
         examples=["secure-password-123"]
     )
+
+
+class RegisterRequest(BaseModel):
+    """Request schema for self-registration following application rules."""
+
+    model_config = ConfigDict(
+        str_strip_whitespace=True,
+        from_attributes=True,
+    )
+
+    email: str = Field(
+        ...,
+        pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+        max_length=255,
+        description="User's email address",
+        examples=["user@example.com"]
+    )
+    password: Optional[str] = Field(
+        None,
+        description="User's password",
+        examples=["secure-password-123"]
+    )
+    full_name: Optional[str] = Field(
+        None,
+        max_length=128,
+        description="User's full name",
+        examples=["John Doe"]
+    )
+    display_name: Optional[str] = Field(
+        None,
+        max_length=64,
+        description="User's preferred display name",
+        examples=["johndoe"]
+    )

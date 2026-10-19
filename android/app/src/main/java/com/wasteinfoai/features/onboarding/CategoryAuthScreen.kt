@@ -35,11 +35,20 @@ fun CategoryAuthScreen(
     val category = remember(categoryName) { UserCategory.fromId(categoryName) }
     val uiState by viewModel.uiState.collectAsState()
 
+    var fullNameInput by remember { mutableStateOf("") }
     var identifierInput by remember { mutableStateOf("") }
     var passwordInput by remember { mutableStateOf("") }
+    var confirmPasswordInput by remember { mutableStateOf("") }
     var extraFieldInput by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
     var isRegisterMode by remember { mutableStateOf(false) }
+    var localError by remember { mutableStateOf<String?>(null) }
+
+    val isFullNameValid = fullNameInput.trim().length >= 2
+    val isEmailValid = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$").matches(identifierInput.trim())
+    val isPasswordValid = passwordInput.length >= 6
+    val isConfirmValid = confirmPasswordInput.isNotEmpty() && confirmPasswordInput == passwordInput
 
     var showServerDialog by remember { mutableStateOf(false) }
 
@@ -219,11 +228,74 @@ fun CategoryAuthScreen(
                         fontWeight = FontWeight.Bold
                     )
 
+                    Text(
+                        text = if (isRegisterMode) {
+                            "Complete the registration rule requirements to set up your account. You will then sign in using these credentials."
+                        } else {
+                            "Enter your credentials to access your ${category.title} dashboard."
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    // Success Feedback Banner (e.g. After Registration)
+                    if (!isRegisterMode && uiState.successMessage != null) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = uiState.successMessage!!,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
+                    }
+
+                    // Registration Form: Full Name field
+                    if (isRegisterMode) {
+                        OutlinedTextField(
+                            value = fullNameInput,
+                            onValueChange = {
+                                fullNameInput = it
+                                localError = null
+                            },
+                            label = { Text("Full Name *") },
+                            placeholder = { Text("e.g. Chandu Maddula") },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = null
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                    }
+
                     // Primary Identifier (Email or Worker ID)
                     OutlinedTextField(
                         value = identifierInput,
-                        onValueChange = { identifierInput = it },
-                        label = { Text(category.idFieldLabel) },
+                        onValueChange = {
+                            identifierInput = it
+                            localError = null
+                        },
+                        label = { Text(if (isRegisterMode) "${category.idFieldLabel} *" else category.idFieldLabel) },
                         placeholder = { Text(category.idFieldPlaceholder) },
                         leadingIcon = {
                             Icon(
@@ -243,7 +315,7 @@ fun CategoryAuthScreen(
                                 value = extraFieldInput,
                                 onValueChange = { extraFieldInput = it },
                                 label = { Text("Facility / Unit Name (Optional)") },
-                                placeholder = { Text("e.g. Sector 4 Chemical Processing Plant") },
+                                placeholder = { Text("e.g. Sector 4 Processing Plant") },
                                 leadingIcon = { Icon(Icons.Default.LocationCity, contentDescription = null) },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
@@ -268,9 +340,12 @@ fun CategoryAuthScreen(
                     // Password Field
                     OutlinedTextField(
                         value = passwordInput,
-                        onValueChange = { passwordInput = it },
-                        label = { Text("Password / Access Key") },
-                        placeholder = { Text("Enter your credentials") },
+                        onValueChange = {
+                            passwordInput = it
+                            localError = null
+                        },
+                        label = { Text(if (isRegisterMode) "Password * (min. 6 characters)" else "Password / Access Key") },
+                        placeholder = { Text(if (isRegisterMode) "Enter a secure password" else "Enter your credentials") },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                         trailingIcon = {
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -286,33 +361,173 @@ fun CategoryAuthScreen(
                         shape = RoundedCornerShape(12.dp)
                     )
 
-                    if (uiState.errorMessage != null) {
-                        Text(
-                            text = uiState.errorMessage!!,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
+                    // Registration Form: Confirm Password field
+                    if (isRegisterMode) {
+                        OutlinedTextField(
+                            value = confirmPasswordInput,
+                            onValueChange = {
+                                confirmPasswordInput = it
+                                localError = null
+                            },
+                            label = { Text("Confirm Password *") },
+                            placeholder = { Text("Re-enter password to confirm") },
+                            leadingIcon = { Icon(Icons.Default.LockReset, contentDescription = null) },
+                            trailingIcon = {
+                                IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                                    Icon(
+                                        imageVector = if (confirmPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                        contentDescription = if (confirmPasswordVisible) "Hide password" else "Show password"
+                                    )
+                                }
+                            },
+                            visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            shape = RoundedCornerShape(12.dp)
                         )
+
+                        // Registration Rules Guide Card
+                        Surface(
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = "Registration Rule Requirements:",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = if (isFullNameValid) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+                                        contentDescription = null,
+                                        tint = if (isFullNameValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                        modifier = Modifier.size(15.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("Full name entered (at least 2 letters)", style = MaterialTheme.typography.labelSmall)
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = if (isEmailValid) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+                                        contentDescription = null,
+                                        tint = if (isEmailValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                        modifier = Modifier.size(15.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("Valid email address (e.g. name@domain.com)", style = MaterialTheme.typography.labelSmall)
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = if (isPasswordValid) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+                                        contentDescription = null,
+                                        tint = if (isPasswordValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                        modifier = Modifier.size(15.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("Password minimum 6 characters", style = MaterialTheme.typography.labelSmall)
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = if (isConfirmValid) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+                                        contentDescription = null,
+                                        tint = if (isConfirmValid) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                                        modifier = Modifier.size(15.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("Both passwords match", style = MaterialTheme.typography.labelSmall)
+                                }
+                            }
+                        }
                     }
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    // Error Message Display
+                    val activeError = localError ?: uiState.errorMessage
+                    if (activeError != null) {
+                        Surface(
+                            color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.7f),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ErrorOutline,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = activeError,
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     // Primary Auth Button
                     Button(
                         onClick = {
-                            val emailToUse = identifierInput.ifBlank {
-                                if (isRegisterMode) "user@${category.id.lowercase().replace(" ", "")}.com"
-                                else "demo@wasteinfo.ai"
-                            }
                             if (isRegisterMode) {
+                                if (!isFullNameValid) {
+                                    localError = "Please enter your full name (minimum 2 characters)"
+                                    return@Button
+                                }
+                                if (identifierInput.trim().isBlank()) {
+                                    localError = "Email Address is required"
+                                    return@Button
+                                }
+                                if (!isEmailValid) {
+                                    localError = "Please enter a valid email address (e.g. name@domain.com)"
+                                    return@Button
+                                }
+                                if (!isPasswordValid) {
+                                    localError = "Password must be at least 6 characters"
+                                    return@Button
+                                }
+                                if (!isConfirmValid) {
+                                    localError = "Passwords do not match. Please verify your password confirmation."
+                                    return@Button
+                                }
+                                localError = null
                                 viewModel.register(
-                                    email = emailToUse,
+                                    fullName = fullNameInput,
+                                    email = identifierInput,
                                     pass = passwordInput,
+                                    confirmPass = confirmPasswordInput,
                                     category = category.id,
-                                    onDone = { onNavigateToDashboard(category.id) }
+                                    onSuccess = { registeredEmail ->
+                                        // Give access to login form after registration
+                                        isRegisterMode = false
+                                        localError = null
+                                        passwordInput = ""
+                                        confirmPasswordInput = ""
+                                    }
                                 )
                             } else {
+                                if (identifierInput.trim().isBlank()) {
+                                    localError = "Please enter your ${category.idFieldLabel}"
+                                    return@Button
+                                }
+                                if (passwordInput.isBlank()) {
+                                    localError = "Please enter your password"
+                                    return@Button
+                                }
+                                localError = null
                                 viewModel.login(
-                                    email = emailToUse,
+                                    email = identifierInput,
                                     pass = passwordInput,
                                     category = category.id,
                                     onDone = { onNavigateToDashboard(category.id) }
@@ -332,15 +547,28 @@ fun CategoryAuthScreen(
                             )
                         } else {
                             Text(
-                                text = if (isRegisterMode) "Register & Open Dashboard" else "Log In to ${category.title} Dashboard",
+                                text = if (isRegisterMode) "Register Account" else "Log In to ${category.title} Dashboard",
                                 fontWeight = FontWeight.Bold
                             )
                         }
                     }
 
-                    // Register toggle
+                    if (isRegisterMode) {
+                        Text(
+                            text = "You will be prompted to Log In immediately after registration.",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    }
+
+                    // Register / Sign In toggle
                     TextButton(
-                        onClick = { isRegisterMode = !isRegisterMode },
+                        onClick = {
+                            isRegisterMode = !isRegisterMode
+                            localError = null
+                            viewModel.clearMessages()
+                        },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text(
@@ -350,6 +578,7 @@ fun CategoryAuthScreen(
                     }
                 }
             }
+
 
             // Quick Instant Access / Demo Button
             Card(

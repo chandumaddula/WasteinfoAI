@@ -7,6 +7,13 @@ data class LoginRequest(
     @SerializedName("password") val password: String? = null
 )
 
+data class RegisterRequest(
+    @SerializedName("email") val email: String,
+    @SerializedName("password") val password: String? = null,
+    @SerializedName("full_name") val fullName: String? = null,
+    @SerializedName("display_name") val displayName: String? = null
+)
+
 data class TokenResponse(
     @SerializedName("token") val token: String,
     @SerializedName("expires_at") val expiresAt: String

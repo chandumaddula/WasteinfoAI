@@ -4,6 +4,7 @@ import com.wasteinfoai.core.common.Resource
 import com.wasteinfoai.data.remote.ApiService
 import com.wasteinfoai.data.remote.SessionManager
 import com.wasteinfoai.data.remote.dto.LoginRequest
+import com.wasteinfoai.data.remote.dto.RegisterRequest
 import com.wasteinfoai.data.remote.dto.UserResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -40,14 +41,24 @@ class AuthRepository(
         }
     }
 
-    suspend fun register(email: String, password: String?): Resource<UserResponse> = withContext(Dispatchers.IO) {
+    suspend fun register(
+        email: String,
+        password: String?,
+        fullName: String? = null
+    ): Resource<UserResponse> = withContext(Dispatchers.IO) {
         try {
-            val regRes = apiService.register(LoginRequest(email = email, password = password))
+            val regRes = apiService.register(
+                RegisterRequest(
+                    email = email.trim(),
+                    password = password?.ifBlank { null },
+                    fullName = fullName?.trim()?.ifBlank { null },
+                    displayName = fullName?.trim()?.split(" ")?.firstOrNull() ?: email.substringBefore("@")
+                )
+            )
             if (regRes.isSuccessful && regRes.body() != null) {
-                login(email, password)
+                Resource.Success(regRes.body()!!)
             } else if (regRes.code() == 409) {
-                // User already exists on backend: smoothly sign in!
-                login(email, password)
+                Resource.Error("An account with this email already exists. Please log in.")
             } else {
                 Resource.Error("Registration failed: ${regRes.message()} (${regRes.code()})")
             }
