@@ -174,58 +174,77 @@ fun DashboardSideDrawer(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Workspace Dashboards
-                    DrawerSectionHeader("WORKSPACE DASHBOARDS")
+                    // Active Workspace Dashboard
+                    DrawerSectionHeader("WORKSPACE DASHBOARD")
 
-                    DrawerItem(
-                        icon = Icons.Default.Home,
-                        label = "Households Dashboard",
-                        isSelected = currentRoute == Screen.Home.route,
-                        onClick = {
-                            coroutineScope.launch { drawerState.close() }
-                            onNavigate(Screen.Home.route)
-                        }
-                    )
+                    val normCat = userCategory.lowercase()
+                    val normRole = userRole.uppercase()
 
-                    DrawerItem(
-                        icon = Icons.Default.Factory,
-                        label = "Industrial Portal",
-                        isSelected = currentRoute == Screen.IndustryDashboard.route,
-                        onClick = {
-                            coroutineScope.launch { drawerState.close() }
-                            onNavigate(Screen.IndustryDashboard.route)
-                        }
-                    )
+                    val isHousehold = normCat.contains("household") || normRole == "RESIDENT"
+                    val isWorker = normCat.contains("worker") || normCat.contains("sanitation") || normRole == "SANITATION_WORKER"
+                    val isIndustry = normCat.contains("industr") || normRole == "INSTITUTION"
+                    val isReviewer = normCat.contains("reviewer") || normCat.contains("other") || normRole == "REVIEWER"
+                    val isAdmin = normRole == "ADMIN"
 
-                    DrawerItem(
-                        icon = Icons.Default.Engineering,
-                        label = "Municipal Worker Tasks",
-                        isSelected = currentRoute == Screen.Tasks.route,
-                        onClick = {
-                            coroutineScope.launch { drawerState.close() }
-                            onNavigate(Screen.Tasks.route)
-                        }
-                    )
+                    if (isHousehold) {
+                        DrawerItem(
+                            icon = Icons.Default.Home,
+                            label = "Households Dashboard",
+                            isSelected = currentRoute == Screen.Home.route,
+                            onClick = {
+                                coroutineScope.launch { drawerState.close() }
+                                onNavigate(Screen.Home.route)
+                            }
+                        )
+                    }
 
-                    DrawerItem(
-                        icon = Icons.Default.Shield,
-                        label = "Reviewer & Audit Portal",
-                        isSelected = currentRoute == Screen.ReviewerDashboard.route,
-                        onClick = {
-                            coroutineScope.launch { drawerState.close() }
-                            onNavigate(Screen.ReviewerDashboard.route)
-                        }
-                    )
+                    if (isIndustry) {
+                        DrawerItem(
+                            icon = Icons.Default.Factory,
+                            label = "Industrial Portal",
+                            isSelected = currentRoute == Screen.IndustryDashboard.route,
+                            onClick = {
+                                coroutineScope.launch { drawerState.close() }
+                                onNavigate(Screen.IndustryDashboard.route)
+                            }
+                        )
+                    }
 
-                    DrawerItem(
-                        icon = Icons.Default.AdminPanelSettings,
-                        label = "City Administrator",
-                        isSelected = currentRoute == Screen.AdminDashboard.route,
-                        onClick = {
-                            coroutineScope.launch { drawerState.close() }
-                            onNavigate(Screen.AdminDashboard.route)
-                        }
-                    )
+                    if (isWorker) {
+                        DrawerItem(
+                            icon = Icons.Default.Engineering,
+                            label = "Municipal Worker Tasks",
+                            isSelected = currentRoute == Screen.Tasks.route,
+                            onClick = {
+                                coroutineScope.launch { drawerState.close() }
+                                onNavigate(Screen.Tasks.route)
+                            }
+                        )
+                    }
+
+                    if (isReviewer) {
+                        DrawerItem(
+                            icon = Icons.Default.Shield,
+                            label = "Reviewer & Audit Portal",
+                            isSelected = currentRoute == Screen.ReviewerDashboard.route,
+                            onClick = {
+                                coroutineScope.launch { drawerState.close() }
+                                onNavigate(Screen.ReviewerDashboard.route)
+                            }
+                        )
+                    }
+
+                    if (isAdmin) {
+                        DrawerItem(
+                            icon = Icons.Default.AdminPanelSettings,
+                            label = "City Administrator",
+                            isSelected = currentRoute == Screen.AdminDashboard.route,
+                            onClick = {
+                                coroutineScope.launch { drawerState.close() }
+                                onNavigate(Screen.AdminDashboard.route)
+                            }
+                        )
+                    }
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp))
 
@@ -288,6 +307,16 @@ fun DashboardSideDrawer(
                     DrawerSectionHeader("SYSTEM & NETWORK")
 
                     DrawerItem(
+                        icon = Icons.Default.AccountCircle,
+                        label = "User Profile",
+                        isSelected = currentRoute == Screen.Login.route,
+                        onClick = {
+                            coroutineScope.launch { drawerState.close() }
+                            onNavigate(Screen.Login.route)
+                        }
+                    )
+
+                    DrawerItem(
                         icon = Icons.Default.Public,
                         label = "Server & Internet Settings",
                         subtitle = if (serverUrl.contains("10.0.2.2")) "Emulator (10.0.2.2)" else serverUrl,
@@ -299,18 +328,8 @@ fun DashboardSideDrawer(
                     )
 
                     DrawerItem(
-                        icon = Icons.Default.SwapHoriz,
-                        label = "Switch Category / Profile",
-                        isSelected = false,
-                        onClick = {
-                            coroutineScope.launch { drawerState.close() }
-                            onNavigate(Screen.CategorySelection.route)
-                        }
-                    )
-
-                    DrawerItem(
                         icon = Icons.AutoMirrored.Filled.Logout,
-                        label = "Log Out / Switch Account",
+                        label = "Log Out",
                         isSelected = false,
                         iconTint = MaterialTheme.colorScheme.error,
                         onClick = {

@@ -45,10 +45,10 @@ fun HomeScreen(
     onNavigateToAdmin: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onNavigateToCategorySelection: () -> Unit = {},
-    onNavigateToIndustry: (() -> Unit)? = null
+    onNavigateToIndustry: (() -> Unit)? = null,
+    onLogout: (() -> Unit)? = null
 ) {
     val state by viewModel.uiState.collectAsState()
-    var showRoleDialog by remember { mutableStateOf(false) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
@@ -73,7 +73,7 @@ fun HomeScreen(
                 }
             }
         },
-        onLogout = onNavigateToLogin
+        onLogout = { onLogout?.invoke() ?: onNavigateToLogin() }
     ) {
         Scaffold(
             topBar = {
@@ -96,13 +96,11 @@ fun HomeScreen(
                         }
                     },
                 actions = {
-                    // Role Badge
+                    // Role Badge (Static indicator)
                     Surface(
                         shape = RoundedCornerShape(16.dp),
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier
-                            .clickable { showRoleDialog = true }
-                            .padding(end = 8.dp)
+                        modifier = Modifier.padding(end = 8.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -113,11 +111,6 @@ fun HomeScreen(
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = null,
-                                modifier = Modifier.size(16.dp)
                             )
                         }
                     }
@@ -251,46 +244,40 @@ fun HomeScreen(
                 }
             }
 
-            // Role-specific Shortcuts
-            item {
-                Text(
-                    "Role Dashboards",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    if (onNavigateToIndustry != null) {
-                        RoleDashboardRow(
-                            title = "Industrial Waste Portal",
-                            icon = Icons.Default.Factory,
-                            subtitle = "Bulk waste manifests, hazard logs & compliance",
-                            onClick = onNavigateToIndustry
-                        )
-                    }
-                    if (state.userRole in listOf("SANITATION_WORKER", "ADMIN")) {
-                        RoleDashboardRow(
-                            title = "Sanitation Worker Tasks",
-                            icon = Icons.Default.Assignment,
-                            subtitle = "View assigned cleanups & update status",
-                            onClick = onNavigateToTasks
-                        )
-                    }
-                    if (state.userRole in listOf("REVIEWER", "ADMIN")) {
-                        RoleDashboardRow(
-                            title = "Reviewer Verification Dashboard",
-                            icon = Icons.Default.RateReview,
-                            subtitle = "Verify, reject, or duplicate citizen reports",
-                            onClick = onNavigateToReviewer
-                        )
-                    }
-                    if (state.userRole == "ADMIN") {
-                        RoleDashboardRow(
-                            title = "Administrator Operational Overview",
-                            icon = Icons.Default.AdminPanelSettings,
-                            subtitle = "Full system analytics & management",
-                            onClick = onNavigateToAdmin
-                        )
+            // Role-specific Shortcuts (Only for staff / admin roles)
+            if (state.userRole != "RESIDENT" && state.userRole in listOf("SANITATION_WORKER", "REVIEWER", "ADMIN")) {
+                item {
+                    Text(
+                        "Administrative Shortcuts",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        if (state.userRole in listOf("SANITATION_WORKER", "ADMIN")) {
+                            RoleDashboardRow(
+                                title = "Sanitation Worker Tasks",
+                                icon = Icons.Default.Assignment,
+                                subtitle = "View assigned cleanups & update status",
+                                onClick = onNavigateToTasks
+                            )
+                        }
+                        if (state.userRole in listOf("REVIEWER", "ADMIN")) {
+                            RoleDashboardRow(
+                                title = "Reviewer Verification Dashboard",
+                                icon = Icons.Default.RateReview,
+                                subtitle = "Verify, reject, or duplicate citizen reports",
+                                onClick = onNavigateToReviewer
+                            )
+                        }
+                        if (state.userRole == "ADMIN") {
+                            RoleDashboardRow(
+                                title = "Administrator Operational Overview",
+                                icon = Icons.Default.AdminPanelSettings,
+                                subtitle = "Full system analytics & management",
+                                onClick = onNavigateToAdmin
+                            )
+                        }
                     }
                 }
             }
@@ -334,53 +321,6 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
-    }
-
-    if (showRoleDialog) {
-        AlertDialog(
-            onDismissRequest = { showRoleDialog = false },
-            title = { Text("Switch Active Role") },
-            text = {
-                Column {
-                    listOf("RESIDENT", "SANITATION_WORKER", "REVIEWER", "ADMIN").forEach { role ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    viewModel.setRole(role)
-                                    showRoleDialog = false
-                                }
-                                .padding(vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = (state.userRole == role),
-                                onClick = {
-                                    viewModel.setRole(role)
-                                    showRoleDialog = false
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(role, fontWeight = if (state.userRole == role) FontWeight.Bold else FontWeight.Normal)
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                Row {
-                    TextButton(onClick = {
-                        showRoleDialog = false
-                        onNavigateToCategorySelection()
-                    }) {
-                        Text("Switch Category")
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                    TextButton(onClick = { showRoleDialog = false }) {
-                        Text("Close")
-                    }
-                }
-            }
-        )
     }
     }
 }

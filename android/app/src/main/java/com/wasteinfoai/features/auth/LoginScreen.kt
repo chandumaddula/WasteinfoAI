@@ -23,7 +23,8 @@ import androidx.compose.ui.unit.dp
 fun LoginScreen(
     viewModel: LoginViewModel,
     onNavigateBack: () -> Unit,
-    onNavigateToDashboard: ((String) -> Unit)? = null
+    onNavigateToDashboard: ((String) -> Unit)? = null,
+    onLogoutSuccess: (() -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var fullNameInput by remember { mutableStateOf("") }
@@ -126,7 +127,10 @@ fun LoginScreen(
                                 }
                             }
                             OutlinedButton(
-                                onClick = { viewModel.logout() },
+                                onClick = {
+                                    viewModel.logout()
+                                    onLogoutSuccess?.invoke()
+                                },
                                 colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
                                 shape = RoundedCornerShape(10.dp)
                             ) {
@@ -449,42 +453,6 @@ fun LoginScreen(
                     }
                 }
 
-            }
-
-            // Quick Role Switcher for Development & Testing
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("Role Switcher & Quick Navigation", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                    Text("Select a role to preview its customized dashboard and workflows:", style = MaterialTheme.typography.bodySmall)
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    listOf("RESIDENT", "SANITATION_WORKER", "INSTITUTION", "REVIEWER", "ADMIN").forEach { r ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    viewModel.switchRole(r)
-                                    onNavigateToDashboard?.invoke(r)
-                                }
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            RadioButton(
-                                selected = uiState.role == r,
-                                onClick = {
-                                    viewModel.switchRole(r)
-                                    onNavigateToDashboard?.invoke(r)
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(r, fontWeight = if (uiState.role == r) FontWeight.Bold else FontWeight.Normal)
-                        }
-                    }
-                }
             }
         }
     }

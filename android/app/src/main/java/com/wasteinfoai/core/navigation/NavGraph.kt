@@ -114,7 +114,13 @@ fun AppNavGraph(
                 onNavigateToCategorySelection = {
                     navController.navigate(Screen.CategorySelection.route)
                 },
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onLogout = {
+                    container.sessionManager.clearSession()
+                    navController.navigate(Screen.Splash.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -141,7 +147,13 @@ fun AppNavGraph(
                 onNavigateToAdmin = { navController.navigate(Screen.AdminDashboard.route) },
                 onNavigateToLogin = { navController.navigate(Screen.Login.route) },
                 onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) },
-                onNavigateToIndustry = { navController.navigate(Screen.IndustryDashboard.route) }
+                onNavigateToIndustry = null,
+                onLogout = {
+                    container.sessionManager.clearSession()
+                    navController.navigate(Screen.Splash.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -258,7 +270,13 @@ fun AppNavGraph(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToCamera = { navController.navigate(Screen.Camera.route) },
                 onNavigateToMap = { navController.navigate(Screen.Map.route) },
-                onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) }
+                onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) },
+                onLogout = {
+                    container.sessionManager.clearSession()
+                    navController.navigate(Screen.Splash.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -269,7 +287,13 @@ fun AppNavGraph(
                 viewModel = vm,
                 sessionManager = container.sessionManager,
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) }
+                onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) },
+                onLogout = {
+                    container.sessionManager.clearSession()
+                    navController.navigate(Screen.Splash.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -280,7 +304,13 @@ fun AppNavGraph(
                 viewModel = vm,
                 sessionManager = container.sessionManager,
                 onNavigateBack = { navController.popBackStack() },
-                onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) }
+                onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) },
+                onLogout = {
+                    container.sessionManager.clearSession()
+                    navController.navigate(Screen.Splash.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
             )
         }
 
@@ -305,6 +335,12 @@ fun AppNavGraph(
                     }
                     navController.navigate(target) {
                         popUpTo(Screen.Home.route) { inclusive = false }
+                    }
+                },
+                onLogoutSuccess = {
+                    container.sessionManager.clearSession()
+                    navController.navigate(Screen.Splash.route) {
+                        popUpTo(0) { inclusive = true }
                     }
                 }
             )

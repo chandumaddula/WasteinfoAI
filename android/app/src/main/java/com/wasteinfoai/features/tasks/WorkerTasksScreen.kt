@@ -34,7 +34,8 @@ fun WorkerTasksScreen(
     onNavigateBack: () -> Unit,
     onNavigateToCamera: (() -> Unit)? = null,
     onNavigateToMap: (() -> Unit)? = null,
-    onNavigateToCategorySelection: (() -> Unit)? = null
+    onNavigateToCategorySelection: (() -> Unit)? = null,
+    onLogout: (() -> Unit)? = null
 ) {
     val tasks by viewModel.tasksFlow.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
@@ -65,22 +66,18 @@ fun WorkerTasksScreen(
                         }
                     },
                 actions = {
-                    if (onNavigateToCategorySelection != null) {
-                        Surface(
-                            shape = RoundedCornerShape(16.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier
-                                .clickable { onNavigateToCategorySelection() }
-                                .padding(end = 4.dp)
-                        ) {
-                            Text(
-                                text = "MUNICIPAL",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.padding(end = 4.dp)
+                    ) {
+                        Text(
+                            text = "MUNICIPAL",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
                     }
                     IconButton(onClick = { viewModel.refreshTasks() }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")
@@ -292,7 +289,7 @@ fun WorkerTasksScreen(
                     else -> onNavigateBack()
                 }
             },
-            onLogout = onNavigateBack,
+            onLogout = { onLogout?.invoke() ?: onNavigateBack() },
             content = content
         )
     } else {

@@ -26,7 +26,8 @@ fun AdminDashboardScreen(
     viewModel: AdminDashboardViewModel,
     sessionManager: SessionManager? = null,
     onNavigateBack: () -> Unit,
-    onNavigateToCategorySelection: (() -> Unit)? = null
+    onNavigateToCategorySelection: (() -> Unit)? = null,
+    onLogout: (() -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -49,22 +50,18 @@ fun AdminDashboardScreen(
                         }
                     },
                 actions = {
-                    if (onNavigateToCategorySelection != null) {
-                        Surface(
-                            shape = RoundedCornerShape(16.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier
-                                .clickable { onNavigateToCategorySelection() }
-                                .padding(end = 4.dp)
-                        ) {
-                            Text(
-                                text = "OTHER / ADMIN",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.padding(end = 4.dp)
+                    ) {
+                        Text(
+                            text = "OTHER / ADMIN",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
                     }
                     IconButton(onClick = { viewModel.loadMetrics() }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")
@@ -211,7 +208,7 @@ fun AdminDashboardScreen(
                     else -> onNavigateBack()
                 }
             },
-            onLogout = onNavigateBack,
+            onLogout = { onLogout?.invoke() ?: onNavigateBack() },
             content = content
         )
     } else {

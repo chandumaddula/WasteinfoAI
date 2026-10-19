@@ -27,7 +27,8 @@ fun ReviewerDashboardScreen(
     viewModel: ReviewerDashboardViewModel,
     sessionManager: SessionManager? = null,
     onNavigateBack: () -> Unit,
-    onNavigateToCategorySelection: (() -> Unit)? = null
+    onNavigateToCategorySelection: (() -> Unit)? = null,
+    onLogout: (() -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var reportToReject by remember { mutableStateOf<ReportResponse?>(null) }
@@ -52,22 +53,18 @@ fun ReviewerDashboardScreen(
                         }
                     },
                 actions = {
-                    if (onNavigateToCategorySelection != null) {
-                        Surface(
-                            shape = RoundedCornerShape(16.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier
-                                .clickable { onNavigateToCategorySelection() }
-                                .padding(end = 4.dp)
-                        ) {
-                            Text(
-                                text = "OTHER / REVIEWER",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
+                    Surface(
+                        shape = RoundedCornerShape(16.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.padding(end = 4.dp)
+                    ) {
+                        Text(
+                            text = "OTHER / REVIEWER",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
                     }
                     IconButton(onClick = { viewModel.loadPendingReports() }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")
@@ -263,7 +260,7 @@ fun ReviewerDashboardScreen(
                     else -> onNavigateBack()
                 }
             },
-            onLogout = onNavigateBack,
+            onLogout = { onLogout?.invoke() ?: onNavigateBack() },
             content = content
         )
     } else {

@@ -39,7 +39,8 @@ fun IndustryDashboardScreen(
     onNavigateToAssistant: () -> Unit,
     onNavigateToHistory: () -> Unit,
     onNavigateToCategorySelection: () -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onLogout: (() -> Unit)? = null
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -89,26 +90,15 @@ fun IndustryDashboardScreen(
                     Surface(
                         shape = RoundedCornerShape(16.dp),
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier
-                            .clickable { onNavigateToCategorySelection() }
-                            .padding(end = 8.dp)
+                        modifier = Modifier.padding(end = 8.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                        Text(
+                            text = "INDUSTRIES",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                        ) {
-                            Text(
-                                text = "INDUSTRIES",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                            Icon(
-                                imageVector = Icons.Default.SwapHoriz,
-                                contentDescription = "Switch Category",
-                                modifier = Modifier.size(16.dp).padding(start = 4.dp)
-                            )
-                        }
+                        )
                     }
                     IconButton(onClick = { showLogoutDialog = true }) {
                         Icon(Icons.Default.AccountCircle, contentDescription = "Account")
@@ -319,18 +309,15 @@ fun IndustryDashboardScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    showLogoutDialog = false
-                    onNavigateToCategorySelection()
-                }) {
-                    Text("Switch Category")
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text("Close")
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     sessionManager.clearSession()
                     showLogoutDialog = false
-                    onNavigateToCategorySelection()
+                    onLogout?.invoke() ?: onNavigateToCategorySelection()
                 }) {
                     Text("Log Out", color = MaterialTheme.colorScheme.error)
                 }
