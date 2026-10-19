@@ -44,9 +44,24 @@ fun AppNavGraph(
         navController = navController,
         startDestination = Screen.Splash.route
     ) {
-        // 1. App Startup: Logo and WasteinfoAI Representation
+        // 1. App Startup: Logo, Session Check & WasteinfoAI Representation
         composable(Screen.Splash.route) {
             SplashScreen(
+                isLoggedIn = container.sessionManager.isLoggedIn,
+                userRole = container.sessionManager.getRole(),
+                userCategory = container.sessionManager.getCategory(),
+                onNavigateToDashboard = { roleOrCat ->
+                    val target = when (roleOrCat.lowercase()) {
+                        "municipal worker", "municipal_worker", "sanitation_worker" -> Screen.Tasks.route
+                        "industries", "industry", "institution" -> Screen.IndustryDashboard.route
+                        "other", "reviewer" -> Screen.ReviewerDashboard.route
+                        "admin" -> Screen.AdminDashboard.route
+                        else -> Screen.Home.route
+                    }
+                    navController.navigate(target) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                },
                 onNavigateToCategorySelection = {
                     navController.navigate(Screen.CategorySelection.route)
                 },
@@ -56,10 +71,10 @@ fun AppNavGraph(
             )
         }
 
-        // 2. Category Selection Screen (Industries, Municipal worker, Households, Other)
+        // 2. Category Selection Screen (Condition: Do NOT show selected option initially)
         composable(Screen.CategorySelection.route) {
             CategorySelectionScreen(
-                initialSelectedCategory = container.sessionManager.getCategory(),
+                initialSelectedCategory = null,
                 onCategorySelected = { category ->
                     navController.navigate(Screen.CategoryAuth.createRoute(category.id))
                 },
@@ -85,9 +100,10 @@ fun AppNavGraph(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToDashboard = { selectedCat ->
                     val target = when (selectedCat.lowercase()) {
-                        "municipal worker", "municipal_worker" -> Screen.Tasks.route
-                        "industries", "industry" -> Screen.IndustryDashboard.route
-                        "other" -> Screen.ReviewerDashboard.route
+                        "municipal worker", "municipal_worker", "sanitation_worker" -> Screen.Tasks.route
+                        "industries", "industry", "institution" -> Screen.IndustryDashboard.route
+                        "other", "reviewer" -> Screen.ReviewerDashboard.route
+                        "admin" -> Screen.AdminDashboard.route
                         else -> Screen.Home.route
                     }
                     navController.navigate(target) {
@@ -129,6 +145,7 @@ fun AppNavGraph(
             }
             HomeScreen(
                 viewModel = vm,
+                sessionManager = container.sessionManager,
                 onNavigateToCamera = { navController.navigate(Screen.Camera.route) },
                 onNavigateToCreateReport = { navController.navigate(Screen.CreateReport.createRoute()) },
                 onNavigateToHistory = { navController.navigate(Screen.History.route) },
@@ -252,6 +269,7 @@ fun AppNavGraph(
             val vm = rememberViewModel { WorkerTasksViewModel(container.taskRepository) }
             WorkerTasksScreen(
                 viewModel = vm,
+                sessionManager = container.sessionManager,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToCamera = { navController.navigate(Screen.Camera.route) },
                 onNavigateToMap = { navController.navigate(Screen.Map.route) },
@@ -264,6 +282,7 @@ fun AppNavGraph(
             val vm = rememberViewModel { ReviewerDashboardViewModel(container.reportRepository) }
             ReviewerDashboardScreen(
                 viewModel = vm,
+                sessionManager = container.sessionManager,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) }
             )
@@ -274,6 +293,7 @@ fun AppNavGraph(
             val vm = rememberViewModel { AdminDashboardViewModel(container.reportRepository) }
             AdminDashboardScreen(
                 viewModel = vm,
+                sessionManager = container.sessionManager,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) }
             )
@@ -289,7 +309,19 @@ fun AppNavGraph(
             }
             LoginScreen(
                 viewModel = vm,
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToDashboard = { roleOrCat ->
+                    val target = when (roleOrCat.lowercase()) {
+                        "municipal worker", "municipal_worker", "sanitation_worker" -> Screen.Tasks.route
+                        "industries", "industry", "institution" -> Screen.IndustryDashboard.route
+                        "other", "reviewer" -> Screen.ReviewerDashboard.route
+                        "admin" -> Screen.AdminDashboard.route
+                        else -> Screen.Home.route
+                    }
+                    navController.navigate(target) {
+                        popUpTo(Screen.Home.route) { inclusive = false }
+                    }
+                }
             )
         }
     }

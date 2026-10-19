@@ -14,6 +14,7 @@ data class AuthUiState(
     val email: String = "",
     val role: String = "RESIDENT",
     val category: String = "Households",
+    val serverUrl: String = "http://10.0.2.2:8000/",
     val isLoggedIn: Boolean = false,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
@@ -22,7 +23,7 @@ data class AuthUiState(
 
 class LoginViewModel(
     private val authRepository: AuthRepository,
-    private val sessionManager: SessionManager
+    val sessionManager: SessionManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -30,34 +31,69 @@ class LoginViewModel(
             email = sessionManager.emailState.value,
             role = sessionManager.getRole(),
             category = sessionManager.getCategory(),
+            serverUrl = sessionManager.getServerUrl(),
             isLoggedIn = sessionManager.isLoggedIn
         )
     )
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+
+    fun updateServerUrl(url: String) {
+        sessionManager.setServerUrl(url)
+        _uiState.value = _uiState.value.copy(serverUrl = sessionManager.getServerUrl())
+    }
+
+    private fun resolveDefaultRole(category: String): String = when (category.lowercase()) {
+        "municipal worker", "municipal_worker" -> "SANITATION_WORKER"
+        "industries", "industry" -> "INSTITUTION"
+        "other" -> "REVIEWER"
+        else -> "RESIDENT"
+    }
 
     fun login(email: String, pass: String, category: String = "Households", onDone: (() -> Unit)? = null) {
         if (email.isBlank()) {
             _uiState.value = _uiState.value.copy(errorMessage = "Email / Identifier is required")
             return
         }
+        val defaultRole = resolveDefaultRole(category)
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             val res = authRepository.login(email, pass.ifBlank { null })
             when (res) {
                 is Resource.Success -> {
                     sessionManager.setCategory(category)
+                    sessionManager.setDevRoleOverride(res.data.role.ifBlank { defaultRole })
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isLoggedIn = true,
                         email = res.data.email,
-                        role = res.data.role,
+                        role = res.data.role.ifBlank { defaultRole },
                         category = category,
                         successMessage = "Logged in successfully as ${res.data.role}"
                     )
                     onDone?.invoke()
                 }
                 is Resource.Error -> {
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = res.message)
+                    val isConnectionError = res.cause != null ||
+                        res.message?.contains("connect", ignoreCase = true) == true ||
+                        res.message?.contains("timeout", ignoreCase = true) == true ||
+                        res.message?.contains("network", ignoreCase = true) == true ||
+                        res.message?.contains("10.0.2.2", ignoreCase = true) == true
+
+                    if (isConnectionError) {
+                        // Offline / Standalone Fallback: authenticate locally so the user is never blocked
+                        sessionManager.saveLocalSession(email, category, defaultRole)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            isLoggedIn = true,
+                            email = email,
+                            role = defaultRole,
+                            category = category,
+                            successMessage = "Server unreachable. Running in Local Mode."
+                        )
+                        onDone?.invoke()
+                    } else {
+                        _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = res.message)
+                    }
                 }
                 else -> {}
             }
@@ -69,24 +105,46 @@ class LoginViewModel(
             _uiState.value = _uiState.value.copy(errorMessage = "Email / Identifier is required")
             return
         }
+        val defaultRole = resolveDefaultRole(category)
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             val res = authRepository.register(email, pass.ifBlank { null })
             when (res) {
                 is Resource.Success -> {
                     sessionManager.setCategory(category)
+                    sessionManager.setDevRoleOverride(res.data.role.ifBlank { defaultRole })
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isLoggedIn = true,
                         email = res.data.email,
-                        role = res.data.role,
+                        role = res.data.role.ifBlank { defaultRole },
                         category = category,
                         successMessage = "Account created and logged in!"
                     )
                     onDone?.invoke()
                 }
                 is Resource.Error -> {
-                    _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = res.message)
+                    val isConnectionError = res.cause != null ||
+                        res.message?.contains("connect", ignoreCase = true) == true ||
+                        res.message?.contains("timeout", ignoreCase = true) == true ||
+                        res.message?.contains("network", ignoreCase = true) == true ||
+                        res.message?.contains("10.0.2.2", ignoreCase = true) == true
+
+                    if (isConnectionError) {
+                        // Offline / Standalone Fallback: register locally
+                        sessionManager.saveLocalSession(email, category, defaultRole)
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            isLoggedIn = true,
+                            email = email,
+                            role = defaultRole,
+                            category = category,
+                            successMessage = "Server unreachable. Account created locally."
+                        )
+                        onDone?.invoke()
+                    } else {
+                        _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = res.message)
+                    }
                 }
                 else -> {}
             }

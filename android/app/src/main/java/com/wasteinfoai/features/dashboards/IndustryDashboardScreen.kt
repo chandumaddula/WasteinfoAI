@@ -25,6 +25,10 @@ import com.wasteinfoai.core.theme.MintAccent
 import com.wasteinfoai.core.theme.RedHazard
 import com.wasteinfoai.data.remote.SessionManager
 
+import com.wasteinfoai.core.navigation.Screen
+import com.wasteinfoai.features.common.DashboardSideDrawer
+import kotlinx.coroutines.launch
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IndustryDashboardScreen(
@@ -38,27 +42,49 @@ fun IndustryDashboardScreen(
     onNavigateBack: () -> Unit
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Factory,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(26.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Industrial Portal", fontWeight = FontWeight.Bold)
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
+    DashboardSideDrawer(
+        drawerState = drawerState,
+        currentRoute = Screen.IndustryDashboard.route,
+        sessionManager = sessionManager,
+        onNavigate = { route ->
+            when (route) {
+                Screen.IndustryDashboard.route -> {}
+                Screen.Camera.route -> onNavigateToCamera()
+                Screen.Map.route -> onNavigateToMap()
+                Screen.History.route -> onNavigateToHistory()
+                Screen.CategorySelection.route -> onNavigateToCategorySelection()
+                else -> {
+                    if (route.startsWith("report/create")) onNavigateToCreateReport()
+                    else if (route.startsWith("assistant")) onNavigateToAssistant()
+                    else onNavigateBack()
+                }
+            }
+        },
+        onLogout = { showLogoutDialog = true }
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Factory,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(26.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Industrial Portal", fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Open Side Panel")
+                        }
+                    },
                 actions = {
                     Surface(
                         shape = RoundedCornerShape(16.dp),
@@ -310,6 +336,7 @@ fun IndustryDashboardScreen(
                 }
             }
         )
+    }
     }
 }
 

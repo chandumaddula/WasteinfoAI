@@ -20,6 +20,9 @@ class SessionManager(context: Context) {
         private const val KEY_ROLE = "user_role"
         private const val KEY_DISPLAY_NAME = "display_name"
         private const val KEY_CATEGORY = "user_category"
+        private const val KEY_SERVER_URL = "server_base_url"
+        private const val KEY_OFFLINE_MODE = "offline_mode"
+        const val DEFAULT_SERVER_URL = "http://10.0.2.2:8000/"
     }
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -36,6 +39,12 @@ class SessionManager(context: Context) {
     private val _emailState = MutableStateFlow(prefs.getString(KEY_EMAIL, "") ?: "")
     val emailState: StateFlow<String> = _emailState.asStateFlow()
 
+    private val _serverUrlState = MutableStateFlow(prefs.getString(KEY_SERVER_URL, DEFAULT_SERVER_URL) ?: DEFAULT_SERVER_URL)
+    val serverUrlState: StateFlow<String> = _serverUrlState.asStateFlow()
+
+    private val _isOfflineModeState = MutableStateFlow(prefs.getBoolean(KEY_OFFLINE_MODE, false))
+    val isOfflineModeState: StateFlow<Boolean> = _isOfflineModeState.asStateFlow()
+
     val isLoggedIn: Boolean
         get() = !_tokenState.value.isNullOrBlank()
 
@@ -48,6 +57,21 @@ class SessionManager(context: Context) {
     fun getUserId(): String? = prefs.getString(KEY_USER_ID, null)
 
     fun getDisplayName(): String = prefs.getString(KEY_DISPLAY_NAME, "") ?: ""
+
+    fun getServerUrl(): String = prefs.getString(KEY_SERVER_URL, DEFAULT_SERVER_URL) ?: DEFAULT_SERVER_URL
+
+    fun isOfflineMode(): Boolean = prefs.getBoolean(KEY_OFFLINE_MODE, false)
+
+    fun setServerUrl(url: String) {
+        val formatted = if (url.endsWith("/")) url else "$url/"
+        prefs.edit().putString(KEY_SERVER_URL, formatted).apply()
+        _serverUrlState.value = formatted
+    }
+
+    fun setOfflineMode(enabled: Boolean) {
+        prefs.edit().putBoolean(KEY_OFFLINE_MODE, enabled).apply()
+        _isOfflineModeState.value = enabled
+    }
 
     fun setCategory(category: String) {
         prefs.edit().putString(KEY_CATEGORY, category).apply()
@@ -73,13 +97,36 @@ class SessionManager(context: Context) {
         _emailState.value = user.email
     }
 
+    fun saveLocalSession(email: String, category: String, role: String) {
+        val localUser = UserResponse(
+            id = "local_${System.currentTimeMillis()}",
+            email = email.ifBlank { "guest@wasteinfo.ai" },
+            role = role,
+            fullName = email.substringBefore("@").replaceFirstChar { it.uppercase() },
+            displayName = email.substringBefore("@").replaceFirstChar { it.uppercase() },
+            isActive = true
+        )
+        saveSession(
+            token = "local_token_${System.currentTimeMillis()}",
+            user = localUser,
+            category = category
+        )
+    }
+
     fun setDevRoleOverride(role: String) {
         prefs.edit().putString(KEY_ROLE, role).apply()
         _roleState.value = role
     }
 
     fun clearSession() {
-        prefs.edit().clear().apply()
+        prefs.edit()
+            .remove(KEY_TOKEN)
+            .remove(KEY_USER_ID)
+            .remove(KEY_EMAIL)
+            .remove(KEY_ROLE)
+            .remove(KEY_DISPLAY_NAME)
+            .remove(KEY_CATEGORY)
+            .apply()
         _tokenState.value = null
         _roleState.value = "RESIDENT"
         _categoryState.value = "Households"

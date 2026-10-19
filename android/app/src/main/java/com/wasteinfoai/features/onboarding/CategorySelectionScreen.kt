@@ -30,19 +30,20 @@ import com.wasteinfoai.core.theme.MintAccent
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategorySelectionScreen(
-    initialSelectedCategory: String = "Households",
+    initialSelectedCategory: String? = null,
     onCategorySelected: (UserCategory) -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    // Condition: Do not show selected option initially
     var selectedCategory by remember {
-        mutableStateOf(UserCategory.fromId(initialSelectedCategory))
+        mutableStateOf(initialSelectedCategory?.let { UserCategory.fromId(it) })
     }
 
     val categories = remember {
         listOf(
-            UserCategory.INDUSTRIES,
-            UserCategory.MUNICIPAL_WORKER,
             UserCategory.HOUSEHOLDS,
+            UserCategory.MUNICIPAL_WORKER,
+            UserCategory.INDUSTRIES,
             UserCategory.OTHER
         )
     }
@@ -84,26 +85,39 @@ fun CategorySelectionScreen(
                         .padding(horizontal = 20.dp, vertical = 16.dp)
                 ) {
                     Button(
-                        onClick = { onCategorySelected(selectedCategory) },
+                        onClick = {
+                            selectedCategory?.let { onCategorySelected(it) }
+                        },
+                        enabled = selectedCategory != null,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(54.dp),
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant
                         )
                     ) {
-                        Text(
-                            text = "Continue as ${selectedCategory.title}",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        if (selectedCategory != null) {
+                            Text(
+                                text = "Continue as ${selectedCategory!!.title}",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        } else {
+                            Text(
+                                text = "Choose a Category to Continue",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }
@@ -127,7 +141,7 @@ fun CategorySelectionScreen(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Select your operational profile to configure your personalized dashboard, segregation guidance, and verification tools.",
+                    text = "Select your operational profile below. Tap an option to configure your personalized dashboard and tools.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -138,7 +152,14 @@ fun CategorySelectionScreen(
                 CategoryCard(
                     category = category,
                     isSelected = selectedCategory == category,
-                    onClick = { selectedCategory = category }
+                    onClick = {
+                        if (selectedCategory == category) {
+                            // If user taps the selected card again, immediately proceed
+                            onCategorySelected(category)
+                        } else {
+                            selectedCategory = category
+                        }
+                    }
                 )
             }
 

@@ -21,10 +21,16 @@ import com.wasteinfoai.data.local.entity.TaskEntity
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
+import com.wasteinfoai.core.navigation.Screen
+import com.wasteinfoai.data.remote.SessionManager
+import com.wasteinfoai.features.common.DashboardSideDrawer
+import kotlinx.coroutines.launch
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WorkerTasksScreen(
     viewModel: WorkerTasksViewModel,
+    sessionManager: SessionManager? = null,
     onNavigateBack: () -> Unit,
     onNavigateToCamera: (() -> Unit)? = null,
     onNavigateToMap: (() -> Unit)? = null,
@@ -35,20 +41,29 @@ fun WorkerTasksScreen(
 
     var taskToResolve by remember { mutableStateOf<TaskEntity?>(null) }
     var resolveNote by remember { mutableStateOf("") }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Municipal Tasks", fontWeight = FontWeight.Bold)
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
+    val content: @Composable () -> Unit = {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("Municipal Tasks", fontWeight = FontWeight.Bold)
+                        }
+                    },
+                    navigationIcon = {
+                        if (sessionManager != null) {
+                            IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
+                                Icon(Icons.Default.Menu, contentDescription = "Side Panel Navigation")
+                            }
+                        } else {
+                            IconButton(onClick = onNavigateBack) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            }
+                        }
+                    },
                 actions = {
                     if (onNavigateToCategorySelection != null) {
                         Surface(
@@ -260,5 +275,27 @@ fun WorkerTasksScreen(
                 }
             }
         )
+    }
+    }
+
+    if (sessionManager != null) {
+        DashboardSideDrawer(
+            drawerState = drawerState,
+            currentRoute = Screen.Tasks.route,
+            sessionManager = sessionManager,
+            onNavigate = { route ->
+                when (route) {
+                    Screen.Tasks.route -> {}
+                    Screen.Camera.route -> onNavigateToCamera?.invoke()
+                    Screen.Map.route -> onNavigateToMap?.invoke()
+                    Screen.CategorySelection.route -> onNavigateToCategorySelection?.invoke()
+                    else -> onNavigateBack()
+                }
+            },
+            onLogout = onNavigateBack,
+            content = content
+        )
+    } else {
+        content()
     }
 }

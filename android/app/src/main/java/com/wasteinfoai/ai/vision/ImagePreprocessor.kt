@@ -75,22 +75,45 @@ object ImagePreprocessor {
     fun scaleAndCenterCrop(source: Bitmap, targetW: Int, targetH: Int): Bitmap {
         val srcW = source.width
         val srcH = source.height
-        val scale = max(targetW.toFloat() / srcW, targetH.toFloat() / srcH)
-        val scaledW = (scale * srcW).toInt()
-        val scaledH = (scale * srcH).toInt()
+
+        // If source is already exact target dimensions, return it directly
+        if (srcW == targetW && srcH == targetH) {
+            return source
+        }
+
+        // Use double precision and ceil to guarantee scaled dimensions are at least target dimensions
+        val scale = max(targetW.toDouble() / srcW, targetH.toDouble() / srcH)
+        val scaledW = max(targetW, kotlin.math.ceil(scale * srcW).toInt())
+        val scaledH = max(targetH, kotlin.math.ceil(scale * srcH).toInt())
 
         val scaled = Bitmap.createScaledBitmap(source, scaledW, scaledH, true)
-        val cropX = max(0, (scaledW - targetW) / 2)
-        val cropY = max(0, (scaledH - targetH) / 2)
 
-        val cropped = Bitmap.createBitmap(scaled, cropX, cropY, targetW, targetH)
-        if (scaled != source && scaled != cropped) {
+        // Strictly clamp crop origins to valid bounds
+        val maxCropX = max(0, scaled.width - targetW)
+        val maxCropY = max(0, scaled.height - targetH)
+        val cropX = ((scaled.width - targetW) / 2).coerceIn(0, maxCropX)
+        val cropY = ((scaled.height - targetH) / 2).coerceIn(0, maxCropY)
+
+        // Strictly guarantee crop size never exceeds bitmap dimensions
+        val safeW = minOf(targetW, scaled.width - cropX)
+        val safeH = minOf(targetH, scaled.height - cropY)
+
+        val cropped = Bitmap.createBitmap(scaled, cropX, cropY, safeW, safeH)
+        if (scaled !== source && scaled !== cropped) {
             scaled.recycle()
         }
-        if (source != cropped) {
+        if (source !== cropped) {
             source.recycle()
         }
-        return cropped
+
+        // Return exact targetW x targetH bitmap
+        return if (cropped.width == targetW && cropped.height == targetH) {
+            cropped
+        } else {
+            Bitmap.createScaledBitmap(cropped, targetW, targetH, true).also {
+                if (it !== cropped) cropped.recycle()
+            }
+        }
     }
 
     /**

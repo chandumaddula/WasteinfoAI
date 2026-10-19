@@ -1,5 +1,6 @@
 package com.wasteinfoai.data.remote
 
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,6 +20,21 @@ object ApiClient {
         sessionManager: SessionManager,
         baseUrl: String = DEFAULT_BASE_URL
     ): ApiService {
+        val dynamicHostInterceptor = Interceptor { chain ->
+            var request = chain.request()
+            val serverUrl = sessionManager.getServerUrl().trim()
+            val targetHttpUrl = serverUrl.toHttpUrlOrNull()
+            if (targetHttpUrl != null) {
+                val newUrl = request.url.newBuilder()
+                    .scheme(targetHttpUrl.scheme)
+                    .host(targetHttpUrl.host)
+                    .port(targetHttpUrl.port)
+                    .build()
+                request = request.newBuilder().url(newUrl).build()
+            }
+            chain.proceed(request)
+        }
+
         val authInterceptor = Interceptor { chain ->
             val original = chain.request()
             val token = sessionManager.getToken()
@@ -36,11 +52,12 @@ object ApiClient {
         }
 
         val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(dynamicHostInterceptor)
             .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
+            .connectTimeout(4, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
             .build()
 
         val retrofit = Retrofit.Builder()

@@ -45,6 +45,9 @@ class AuthRepository(
             val regRes = apiService.register(LoginRequest(email = email, password = password))
             if (regRes.isSuccessful && regRes.body() != null) {
                 login(email, password)
+            } else if (regRes.code() == 409) {
+                // User already exists on backend: smoothly sign in!
+                login(email, password)
             } else {
                 Resource.Error("Registration failed: ${regRes.message()} (${regRes.code()})")
             }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,26 +16,41 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.wasteinfoai.data.remote.dto.ReportResponse
 
+import com.wasteinfoai.core.navigation.Screen
+import com.wasteinfoai.data.remote.SessionManager
+import com.wasteinfoai.features.common.DashboardSideDrawer
+import kotlinx.coroutines.launch
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReviewerDashboardScreen(
     viewModel: ReviewerDashboardViewModel,
+    sessionManager: SessionManager? = null,
     onNavigateBack: () -> Unit,
     onNavigateToCategorySelection: (() -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var reportToReject by remember { mutableStateOf<ReportResponse?>(null) }
     var rejectReason by remember { mutableStateOf("") }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Reviewer Verification") },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
-                    }
-                },
+    val content: @Composable () -> Unit = {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Reviewer Verification") },
+                    navigationIcon = {
+                        if (sessionManager != null) {
+                            IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
+                                Icon(Icons.Default.Menu, contentDescription = "Side Panel Navigation")
+                            }
+                        } else {
+                            IconButton(onClick = onNavigateBack) {
+                                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                            }
+                        }
+                    },
                 actions = {
                     if (onNavigateToCategorySelection != null) {
                         Surface(
@@ -232,5 +248,25 @@ fun ReviewerDashboardScreen(
                 }
             }
         )
+    }
+    }
+
+    if (sessionManager != null) {
+        DashboardSideDrawer(
+            drawerState = drawerState,
+            currentRoute = Screen.ReviewerDashboard.route,
+            sessionManager = sessionManager,
+            onNavigate = { route ->
+                when (route) {
+                    Screen.ReviewerDashboard.route -> {}
+                    Screen.CategorySelection.route -> onNavigateToCategorySelection?.invoke()
+                    else -> onNavigateBack()
+                }
+            },
+            onLogout = onNavigateBack,
+            content = content
+        )
+    } else {
+        content()
     }
 }

@@ -25,10 +25,16 @@ import com.wasteinfoai.data.local.entity.ScanHistoryEntity
 import java.text.SimpleDateFormat
 import java.util.*
 
+import com.wasteinfoai.core.navigation.Screen
+import com.wasteinfoai.data.remote.SessionManager
+import com.wasteinfoai.features.common.DashboardSideDrawer
+import kotlinx.coroutines.launch
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
+    sessionManager: SessionManager,
     onNavigateToCamera: () -> Unit,
     onNavigateToCreateReport: () -> Unit,
     onNavigateToHistory: () -> Unit,
@@ -43,22 +49,52 @@ fun HomeScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     var showRoleDialog by remember { mutableStateOf(false) }
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Recycling,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(28.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("wasteinfoAI", fontWeight = FontWeight.Bold)
-                    }
-                },
+    DashboardSideDrawer(
+        drawerState = drawerState,
+        currentRoute = Screen.Home.route,
+        sessionManager = sessionManager,
+        onNavigate = { route ->
+            when (route) {
+                Screen.Home.route -> {}
+                Screen.IndustryDashboard.route -> onNavigateToIndustry?.invoke()
+                Screen.Tasks.route -> onNavigateToTasks()
+                Screen.ReviewerDashboard.route -> onNavigateToReviewer()
+                Screen.AdminDashboard.route -> onNavigateToAdmin()
+                Screen.Camera.route -> onNavigateToCamera()
+                Screen.History.route -> onNavigateToHistory()
+                Screen.Map.route -> onNavigateToMap()
+                Screen.CategorySelection.route -> onNavigateToCategorySelection()
+                else -> {
+                    if (route.startsWith("report/create")) onNavigateToCreateReport()
+                    else if (route.startsWith("assistant")) onNavigateToAssistant()
+                }
+            }
+        },
+        onLogout = onNavigateToLogin
+    ) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    navigationIcon = {
+                        IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
+                            Icon(Icons.Default.Menu, contentDescription = "Side Panel Navigation")
+                        }
+                    },
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Recycling,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(28.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("wasteinfoAI", fontWeight = FontWeight.Bold)
+                        }
+                    },
                 actions = {
                     // Role Badge
                     Surface(
@@ -345,6 +381,7 @@ fun HomeScreen(
                 }
             }
         )
+    }
     }
 }
 

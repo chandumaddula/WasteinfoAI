@@ -1,6 +1,7 @@
 package com.wasteinfoai.features.onboarding
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -40,6 +41,15 @@ fun CategoryAuthScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var isRegisterMode by remember { mutableStateOf(false) }
 
+    var showServerDialog by remember { mutableStateOf(false) }
+
+    if (showServerDialog) {
+        com.wasteinfoai.features.common.ServerConfigDialog(
+            sessionManager = viewModel.sessionManager,
+            onDismissRequest = { showServerDialog = false }
+        )
+    }
+
     val categoryIcon: ImageVector = when (category) {
         UserCategory.INDUSTRIES -> Icons.Default.Factory
         UserCategory.MUNICIPAL_WORKER -> Icons.Default.Engineering
@@ -76,6 +86,15 @@ fun CategoryAuthScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back to categories")
                     }
+                },
+                actions = {
+                    IconButton(onClick = { showServerDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Public,
+                            contentDescription = "Server & Internet Settings",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             )
         }
@@ -88,7 +107,49 @@ fun CategoryAuthScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
+
+            // Network Server Config Quick Bar
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable { showServerDialog = true },
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Dns,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Server: ${uiState.serverUrl}",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1
+                        )
+                        Text(
+                            text = "Fast 4s Timeout • Compatible Online & Offline",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Text(
+                        text = "Edit IP",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
 
             // Category Banner Card
             Card(
