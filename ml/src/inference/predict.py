@@ -17,6 +17,7 @@ from typing import Dict, List, Optional, Tuple, Union
 from PIL import Image
 import torch
 import torch.nn as nn
+import timm
 from torchvision import models, transforms
 import yaml
 
@@ -120,6 +121,9 @@ class WastePredictor:
         ]
 
     def _build_model(self, num_classes: int) -> nn.Module:
+        arch = self.config.get("model", {}).get("architecture", "rexnet_150")
+        if "rexnet" in arch.lower():
+            return timm.create_model("rexnet_150", pretrained=False, num_classes=num_classes)
         model = models.mobilenet_v3_small(weights=None)
         in_features = model.classifier[3].in_features
         model.classifier[3] = nn.Linear(in_features, num_classes)

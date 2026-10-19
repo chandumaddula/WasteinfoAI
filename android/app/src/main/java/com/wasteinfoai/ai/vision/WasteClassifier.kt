@@ -68,10 +68,10 @@ class WasteClassifier(
         } catch (e: Exception) {
             Log.w(TAG, "Could not load labels from asset, falling back to canonical 17 classes", e)
             classLabels = listOf(
-                "Battery", "cardboard", "glass", "Keyboard", "metal",
-                "Microwave", "Mobile", "Mouse", "organic", "paper",
-                "PCB", "plastic", "Player", "Printer", "Television",
-                "trash", "Washing Machine"
+                "Battery", "Keyboard", "Microwave", "Mobile", "Mouse",
+                "PCB", "Player", "Printer", "Television", "Washing Machine",
+                "cardboard", "glass", "metal", "organic", "paper",
+                "plastic", "trash"
             )
         }
     }

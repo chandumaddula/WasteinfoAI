@@ -50,22 +50,22 @@ The classification model recognizes **17 waste classes** present in `ml/data/bal
 | Class ID | Name | Description |
 |---|---|---|
 | `0` | `Battery` | Household and rechargeable batteries. Hazardous handling. |
-| `1` | `cardboard` | Corrugated cardboard boxes, packaging cartons. |
-| `2` | `glass` | Glass bottles, containers, jars, and glassware. |
-| `3` | `Keyboard` | Computer keyboards and electronic input peripherals. |
-| `4` | `metal` | Aluminum cans, metal scrap, bottle caps, tins. |
-| `5` | `Microwave` | Small kitchen electronics and microwave ovens. |
-| `6` | `Mobile` | Mobile phones, smartphones, portable communication devices. |
-| `7` | `Mouse` | Computer pointing devices and accessories. |
-| `8` | `organic` | Food scraps, compostable waste, plant matter. |
-| `9` | `paper` | Printed paper, office paper, newspapers, magazines. |
-| `10` | `PCB` | Printed circuit boards and electronic components. |
-| `11` | `plastic` | Bottles, containers, plastic bags, packaging polymers. |
-| `12` | `Player` | Audio/video media players, portable electronics. |
-| `13` | `Printer` | Desktop printers, scanners, copiers. |
-| `14` | `Television` | CRT, LCD, and LED monitors and television displays. |
-| `15` | `trash` | Non-recyclable mixed refuse and inert waste. |
-| `16` | `Washing Machine` | Large home appliances and white goods. |
+| `1` | `Keyboard` | Computer keyboards and electronic input peripherals. |
+| `2` | `Microwave` | Small kitchen electronics and microwave ovens. |
+| `3` | `Mobile` | Mobile phones, smartphones, portable communication devices. |
+| `4` | `Mouse` | Computer pointing devices and accessories. |
+| `5` | `PCB` | Printed circuit boards and electronic components. |
+| `6` | `Player` | Audio/video media players, portable electronics. |
+| `7` | `Printer` | Desktop printers, scanners, copiers. |
+| `8` | `Television` | CRT, LCD, and LED monitors and television displays. |
+| `9` | `Washing Machine` | Large home appliances and white goods. |
+| `10` | `cardboard` | Corrugated cardboard boxes, packaging cartons. |
+| `11` | `glass` | Glass bottles, containers, jars, and glassware. |
+| `12` | `metal` | Aluminum cans, metal scrap, bottle caps, tins. |
+| `13` | `organic` | Food scraps, compostable waste, plant matter. |
+| `14` | `paper` | Printed paper, office paper, newspapers, magazines. |
+| `15` | `plastic` | Bottles, containers, plastic bags, packaging polymers. |
+| `16` | `trash` | Non-recyclable mixed refuse and inert waste. |
 
 ---
 

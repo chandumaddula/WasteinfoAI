@@ -13,22 +13,22 @@
     "num_classes": 17,
     "classes": [
       "Battery",
-      "cardboard",
-      "glass",
       "Keyboard",
-      "metal",
       "Microwave",
       "Mobile",
       "Mouse",
-      "organic",
-      "paper",
       "PCB",
-      "plastic",
       "Player",
       "Printer",
       "Television",
-      "trash",
-      "Washing Machine"
+      "Washing Machine",
+      "cardboard",
+      "glass",
+      "metal",
+      "organic",
+      "paper",
+      "plastic",
+      "trash"
     ]
   },
   "overall_metrics": {

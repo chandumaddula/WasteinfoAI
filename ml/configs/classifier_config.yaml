@@ -7,7 +7,7 @@ project:
   description: "MobileNetV3-Small on-device waste classification baseline"
 
 model:
-  architecture: "mobilenet_v3_small"
+  architecture: "rexnet_150"
   pretrained: true
   num_classes: 17
   dropout: 0.2
