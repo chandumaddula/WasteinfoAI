@@ -14,6 +14,9 @@ import com.wasteinfoai.data.local.entity.ScanHistoryEntity
 import com.wasteinfoai.data.local.entity.SyncState
 import com.wasteinfoai.data.local.entity.TaskEntity
 
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+
 class Converters {
     @TypeConverter
     fun fromSyncState(value: SyncState): String = value.name
@@ -28,7 +31,7 @@ class Converters {
         ReportDraftEntity::class,
         TaskEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -41,6 +44,16 @@ abstract class WasteDatabase : RoomDatabase() {
     companion object {
         private const val DB_NAME = "wasteinfoai.db"
 
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE scan_history ADD COLUMN specificItem TEXT")
+                db.execSQL("ALTER TABLE scan_history ADD COLUMN materialCode TEXT")
+                db.execSQL("ALTER TABLE scan_history ADD COLUMN isUserConfirmed INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE scan_history ADD COLUMN userConfirmedCategory TEXT")
+                db.execSQL("ALTER TABLE scan_history ADD COLUMN detectedBarcode TEXT")
+            }
+        }
+
         @Volatile
         private var INSTANCE: WasteDatabase? = null
 
@@ -51,6 +64,7 @@ abstract class WasteDatabase : RoomDatabase() {
                     WasteDatabase::class.java,
                     DB_NAME
                 )
+                .addMigrations(MIGRATION_1_2)
                 .fallbackToDestructiveMigration()
                 .build().also { INSTANCE = it }
             }

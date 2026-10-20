@@ -187,14 +187,6 @@ private fun CategoryCard(
         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f)
     }
 
-    val icon: ImageVector = when (category) {
-        UserCategory.HOUSEHOLD_RECYCLING -> Icons.Default.Home
-        UserCategory.E_WASTE_MANAGEMENT -> Icons.Default.Devices
-        UserCategory.COMMUNITY_RECYCLING -> Icons.Default.Groups
-        UserCategory.PLASTIC_WASTE_REDUCTION -> Icons.Default.Recycling
-        UserCategory.SUSTAINABILITY_EDUCATION -> Icons.Default.School
-    }
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -203,79 +195,17 @@ private fun CategoryCard(
         colors = CardDefaults.cardColors(containerColor = cardColor),
         border = BorderStroke(2.dp, borderColor)
     ) {
-        Row(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(horizontal = 20.dp, vertical = 18.dp),
+            contentAlignment = Alignment.CenterStart
         ) {
-            // Category Icon Badge
-            Box(
-                modifier = Modifier
-                    .size(52.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (isSelected) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.surface
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = category.title,
-                    tint = if (isSelected) Color.White else MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Text Info
-            Column(modifier = Modifier.weight(1f)) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = category.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Surface(
-                        shape = RoundedCornerShape(6.dp),
-                        color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-                        else MaterialTheme.colorScheme.surfaceVariant
-                    ) {
-                        Text(
-                            text = category.badgeLabel,
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = if (isSelected) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = category.subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    lineHeight = 16.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // Selection indicator
-            RadioButton(
-                selected = isSelected,
-                onClick = onClick,
-                colors = RadioButtonDefaults.colors(
-                    selectedColor = MaterialTheme.colorScheme.primary
-                )
+            Text(
+                text = category.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
             )
         }
     }
