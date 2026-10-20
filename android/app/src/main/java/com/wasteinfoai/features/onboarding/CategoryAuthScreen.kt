@@ -60,10 +60,11 @@ fun CategoryAuthScreen(
     }
 
     val categoryIcon: ImageVector = when (category) {
-        UserCategory.INDUSTRIES -> Icons.Default.Factory
-        UserCategory.MUNICIPAL_WORKER -> Icons.Default.Engineering
-        UserCategory.HOUSEHOLDS -> Icons.Default.Home
-        UserCategory.OTHER -> Icons.Default.Shield
+        UserCategory.HOUSEHOLD_RECYCLING -> Icons.Default.Home
+        UserCategory.E_WASTE_MANAGEMENT -> Icons.Default.Devices
+        UserCategory.COMMUNITY_RECYCLING -> Icons.Default.Groups
+        UserCategory.PLASTIC_WASTE_REDUCTION -> Icons.Default.Recycling
+        UserCategory.SUSTAINABILITY_EDUCATION -> Icons.Default.School
     }
 
     Scaffold(
@@ -299,7 +300,7 @@ fun CategoryAuthScreen(
                         placeholder = { Text(category.idFieldPlaceholder) },
                         leadingIcon = {
                             Icon(
-                                imageVector = if (category == UserCategory.MUNICIPAL_WORKER) Icons.Default.Badge else Icons.Default.Email,
+                                imageVector = if (category == UserCategory.E_WASTE_MANAGEMENT) Icons.Default.Badge else Icons.Default.Email,
                                 contentDescription = null
                             )
                         },
@@ -310,11 +311,11 @@ fun CategoryAuthScreen(
 
                     // Category-Specific Optional Info Field
                     when (category) {
-                        UserCategory.INDUSTRIES -> {
+                        UserCategory.PLASTIC_WASTE_REDUCTION -> {
                             OutlinedTextField(
                                 value = extraFieldInput,
                                 onValueChange = { extraFieldInput = it },
-                                label = { Text("Facility / Unit Name (Optional)") },
+                                label = { Text("Facility / Organization Name (Optional)") },
                                 placeholder = { Text("e.g. Sector 4 Processing Plant") },
                                 leadingIcon = { Icon(Icons.Default.LocationCity, contentDescription = null) },
                                 modifier = Modifier.fillMaxWidth(),
@@ -322,13 +323,37 @@ fun CategoryAuthScreen(
                                 shape = RoundedCornerShape(12.dp)
                             )
                         }
-                        UserCategory.MUNICIPAL_WORKER -> {
+                        UserCategory.E_WASTE_MANAGEMENT -> {
                             OutlinedTextField(
                                 value = extraFieldInput,
                                 onValueChange = { extraFieldInput = it },
-                                label = { Text("Assigned Zone / Ward (Optional)") },
-                                placeholder = { Text("e.g. Ward 14 - North Zone") },
+                                label = { Text("Assigned Zone / Facility (Optional)") },
+                                placeholder = { Text("e.g. Center 14 - North Zone") },
                                 leadingIcon = { Icon(Icons.Default.PinDrop, contentDescription = null) },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                        }
+                        UserCategory.COMMUNITY_RECYCLING -> {
+                            OutlinedTextField(
+                                value = extraFieldInput,
+                                onValueChange = { extraFieldInput = it },
+                                label = { Text("Community Hub / Area (Optional)") },
+                                placeholder = { Text("e.g. Central Community Center") },
+                                leadingIcon = { Icon(Icons.Default.Groups, contentDescription = null) },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                shape = RoundedCornerShape(12.dp)
+                            )
+                        }
+                        UserCategory.SUSTAINABILITY_EDUCATION -> {
+                            OutlinedTextField(
+                                value = extraFieldInput,
+                                onValueChange = { extraFieldInput = it },
+                                label = { Text("Institution / School Name (Optional)") },
+                                placeholder = { Text("e.g. Central City Institute") },
+                                leadingIcon = { Icon(Icons.Default.School, contentDescription = null) },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 shape = RoundedCornerShape(12.dp)

@@ -34,7 +34,7 @@ data class DetectedObjectBox(
  * - Rotation mapping to display space
  * - Temporal box smoothing for jitter-free tracking
  */
-class OpencvObjectDetector {
+class OpencvObjectDetector : WasteObjectDetector {
 
     companion object {
         private const val TAG = "OpencvObjectDetector"
@@ -61,7 +61,7 @@ class OpencvObjectDetector {
      * Analyzes an incoming camera frame and returns the normalized bounding box [0.0f..1.0f]
      * of the detected object in display space.
      */
-    fun analyzeFrame(imageProxy: ImageProxy): DetectedObjectBox {
+    override fun analyzeFrame(imageProxy: ImageProxy): DetectedObjectBox {
         return try {
             if (isOpenCvAvailable) {
                 detectWithOpenCv(imageProxy)
@@ -301,6 +301,88 @@ class OpencvObjectDetector {
             confidence = if (hasTarget) 0.92f else 0.50f,
             label = if (hasTarget) "OBJECT DETECTED" else "SCANNING OBJECT..."
         )
+    }
+
+    override fun detectObjects(bitmap: android.graphics.Bitmap): List<DetectedWasteItem> {
+        val w = bitmap.width
+        val h = bitmap.height
+        if (w < 64 || h < 64) {
+            return listOf(DetectedWasteItem(RectF(0.1f, 0.1f, 0.9f, 0.9f), 0.5f, "FULL_IMAGE"))
+        }
+
+        if (isOpenCvAvailable) {
+            try {
+                val targetW = 320
+                val targetH = ((h.toDouble() / w.toDouble()) * targetW).toInt().coerceAtLeast(160)
+                val small = android.graphics.Bitmap.createScaledBitmap(bitmap, targetW, targetH, true)
+
+                val pixels = IntArray(targetW * targetH)
+                small.getPixels(pixels, 0, targetW, 0, 0, targetW, targetH)
+                if (small !== bitmap) small.recycle()
+
+                val grayBytes = ByteArray(targetW * targetH)
+                for (i in pixels.indices) {
+                    val p = pixels[i]
+                    val r = (p shr 16) and 0xFF
+                    val g = (p shr 8) and 0xFF
+                    val b = p and 0xFF
+                    grayBytes[i] = (0.299f * r + 0.587f * g + 0.114f * b).toInt().toByte()
+                }
+
+                val grayMat = Mat(targetH, targetW, CvType.CV_8UC1)
+                grayMat.put(0, 0, grayBytes)
+
+                val blurredMat = Mat()
+                Imgproc.GaussianBlur(grayMat, blurredMat, Size(5.0, 5.0), 1.5)
+
+                val edgesMat = Mat()
+                Imgproc.Canny(blurredMat, edgesMat, 40.0, 120.0)
+
+                val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(5.0, 5.0))
+                val dilatedMat = Mat()
+                Imgproc.dilate(edgesMat, dilatedMat, kernel)
+
+                val contours = ArrayList<MatOfPoint>()
+                val hierarchy = Mat()
+                Imgproc.findContours(dilatedMat, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
+
+                val totalArea = targetW.toDouble() * targetH.toDouble()
+                val detected = mutableListOf<DetectedWasteItem>()
+
+                for (contour in contours) {
+                    val area = Imgproc.contourArea(contour)
+                    if (area < totalArea * 0.03 || area > totalArea * 0.90) continue
+                    val r = Imgproc.boundingRect(contour)
+                    if (r.width < targetW * 0.10 || r.height < targetH * 0.10) continue
+
+                    val left = (r.x.toFloat() / targetW).coerceIn(0f, 1f)
+                    val top = (r.y.toFloat() / targetH).coerceIn(0f, 1f)
+                    val right = ((r.x + r.width).toFloat() / targetW).coerceIn(0f, 1f)
+                    val bottom = ((r.y + r.height).toFloat() / targetH).coerceIn(0f, 1f)
+
+                    val score = (area / totalArea).toFloat().coerceIn(0.5f, 0.98f)
+                    detected.add(DetectedWasteItem(RectF(left, top, right, bottom), score))
+                }
+
+                // Clean up native OpenCV memory
+                grayMat.release()
+                blurredMat.release()
+                edgesMat.release()
+                kernel.release()
+                dilatedMat.release()
+                hierarchy.release()
+                contours.forEach { it.release() }
+
+                if (detected.isNotEmpty()) {
+                    return detected.sortedByDescending { it.saliencyScore }
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "OpenCV bitmap detection error: ${e.message}")
+            }
+        }
+
+        // Fallback: Return central salient candidate
+        return listOf(DetectedWasteItem(RectF(0.12f, 0.15f, 0.88f, 0.85f), 0.70f, "CENTER_ESTIMATE"))
     }
 
     private fun fallbackBox(): DetectedObjectBox {

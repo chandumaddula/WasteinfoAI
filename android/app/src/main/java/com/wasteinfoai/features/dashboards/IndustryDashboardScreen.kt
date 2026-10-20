@@ -93,7 +93,7 @@ fun IndustryDashboardScreen(
                         modifier = Modifier.padding(end = 8.dp)
                     ) {
                         Text(
-                            text = "INDUSTRIES",
+                            text = sessionManager.getCategory().uppercase(),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -302,7 +302,7 @@ fun IndustryDashboardScreen(
             title = { Text("Industrial Session") },
             text = {
                 Column {
-                    Text("Current Category: Industries")
+                    Text("Current Category: ${sessionManager.getCategory()}")
                     Text("Role: INSTITUTION")
                     Spacer(modifier = Modifier.height(8.dp))
                     Text("Would you like to switch category or log out?")

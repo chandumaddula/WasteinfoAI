@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 data class AuthUiState(
     val email: String = "",
     val role: String = "RESIDENT",
-    val category: String = "Households",
+    val category: String = "Household recycling",
     val serverUrl: String = "http://10.0.2.2:8000/",
     val isLoggedIn: Boolean = false,
     val isLoading: Boolean = false,
@@ -46,14 +46,17 @@ class LoginViewModel(
         _uiState.value = _uiState.value.copy(errorMessage = null, successMessage = null)
     }
 
-    private fun resolveDefaultRole(category: String): String = when (category.lowercase()) {
-        "municipal worker", "municipal_worker" -> "SANITATION_WORKER"
-        "industries", "industry" -> "INSTITUTION"
-        "other" -> "REVIEWER"
-        else -> "RESIDENT"
+    private fun resolveDefaultRole(category: String): String {
+        val lower = category.lowercase()
+        return when {
+            lower.contains("e-waste") || lower.contains("municipal") || lower.contains("worker") -> "SANITATION_WORKER"
+            lower.contains("plastic") || lower.contains("industr") -> "INSTITUTION"
+            lower.contains("education") || lower.contains("reviewer") || lower.contains("other") -> "REVIEWER"
+            else -> "RESIDENT"
+        }
     }
 
-    fun login(email: String, pass: String, category: String = "Households", onDone: (() -> Unit)? = null) {
+    fun login(email: String, pass: String, category: String = "Household recycling", onDone: (() -> Unit)? = null) {
         val cleanEmail = email.trim()
         if (cleanEmail.isBlank()) {
             _uiState.value = _uiState.value.copy(errorMessage = "Email / Identifier is required")
@@ -121,7 +124,7 @@ class LoginViewModel(
         email: String,
         pass: String,
         confirmPass: String,
-        category: String = "Households",
+        category: String = "Household recycling",
         onSuccess: ((registeredEmail: String) -> Unit)? = null
     ) {
         val cleanName = fullName.trim()
@@ -201,7 +204,7 @@ class LoginViewModel(
         }
     }
 
-    fun register(email: String, pass: String, category: String = "Households", onDone: (() -> Unit)? = null) {
+    fun register(email: String, pass: String, category: String = "Household recycling", onDone: (() -> Unit)? = null) {
         register(
             fullName = email.substringBefore("@").replaceFirstChar { it.uppercase() },
             email = email,
@@ -214,10 +217,12 @@ class LoginViewModel(
 
 
     fun loginDemo(category: String, onDone: () -> Unit) {
-        val (email, role) = when (category.lowercase()) {
-            "municipal worker", "municipal_worker" -> "sanitation.worker@citygov.org" to "SANITATION_WORKER"
-            "industries", "industry" -> "compliance@greenecoplant.com" to "INSTITUTION"
-            "other" -> "lead.reviewer@wasteinfo.ai" to "REVIEWER"
+        val lower = category.lowercase()
+        val (email, role) = when {
+            lower.contains("e-waste") || lower.contains("municipal") || lower.contains("worker") -> "ewaste.specialist@citygov.org" to "SANITATION_WORKER"
+            lower.contains("plastic") || lower.contains("industr") -> "plastic.reduction@greenecoplant.com" to "INSTITUTION"
+            lower.contains("education") || lower.contains("reviewer") || lower.contains("other") -> "educator@sustainability.edu" to "REVIEWER"
+            lower.contains("community") -> "community.lead@neighborhood.org" to "RESIDENT"
             else -> "resident@wasteinfo.ai" to "RESIDENT"
         }
         val user = com.wasteinfoai.data.remote.dto.UserResponse(

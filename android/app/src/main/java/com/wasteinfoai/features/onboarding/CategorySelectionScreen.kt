@@ -41,10 +41,11 @@ fun CategorySelectionScreen(
 
     val categories = remember {
         listOf(
-            UserCategory.HOUSEHOLDS,
-            UserCategory.MUNICIPAL_WORKER,
-            UserCategory.INDUSTRIES,
-            UserCategory.OTHER
+            UserCategory.HOUSEHOLD_RECYCLING,
+            UserCategory.E_WASTE_MANAGEMENT,
+            UserCategory.COMMUNITY_RECYCLING,
+            UserCategory.PLASTIC_WASTE_REDUCTION,
+            UserCategory.SUSTAINABILITY_EDUCATION
         )
     }
 
@@ -187,10 +188,11 @@ private fun CategoryCard(
     }
 
     val icon: ImageVector = when (category) {
-        UserCategory.INDUSTRIES -> Icons.Default.Factory
-        UserCategory.MUNICIPAL_WORKER -> Icons.Default.Engineering
-        UserCategory.HOUSEHOLDS -> Icons.Default.Home
-        UserCategory.OTHER -> Icons.Default.Shield
+        UserCategory.HOUSEHOLD_RECYCLING -> Icons.Default.Home
+        UserCategory.E_WASTE_MANAGEMENT -> Icons.Default.Devices
+        UserCategory.COMMUNITY_RECYCLING -> Icons.Default.Groups
+        UserCategory.PLASTIC_WASTE_REDUCTION -> Icons.Default.Recycling
+        UserCategory.SUSTAINABILITY_EDUCATION -> Icons.Default.School
     }
 
     Card(

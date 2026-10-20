@@ -33,7 +33,7 @@ class SessionManager(context: Context) {
     private val _roleState = MutableStateFlow(prefs.getString(KEY_ROLE, "RESIDENT") ?: "RESIDENT")
     val roleState: StateFlow<String> = _roleState.asStateFlow()
 
-    private val _categoryState = MutableStateFlow(prefs.getString(KEY_CATEGORY, "Households") ?: "Households")
+    private val _categoryState = MutableStateFlow(prefs.getString(KEY_CATEGORY, "Household recycling") ?: "Household recycling")
     val categoryState: StateFlow<String> = _categoryState.asStateFlow()
 
     private val _emailState = MutableStateFlow(prefs.getString(KEY_EMAIL, "") ?: "")
@@ -52,7 +52,7 @@ class SessionManager(context: Context) {
 
     fun getRole(): String = prefs.getString(KEY_ROLE, "RESIDENT") ?: "RESIDENT"
 
-    fun getCategory(): String = prefs.getString(KEY_CATEGORY, "Households") ?: "Households"
+    fun getCategory(): String = prefs.getString(KEY_CATEGORY, "Household recycling") ?: "Household recycling"
 
     fun getUserId(): String? = prefs.getString(KEY_USER_ID, null)
 
@@ -154,7 +154,7 @@ class SessionManager(context: Context) {
             .apply()
         _tokenState.value = null
         _roleState.value = "RESIDENT"
-        _categoryState.value = "Households"
+        _categoryState.value = "Household recycling"
         _emailState.value = ""
     }
 }

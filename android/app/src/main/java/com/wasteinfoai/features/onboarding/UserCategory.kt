@@ -11,54 +11,83 @@ enum class UserCategory(
     val idFieldLabel: String,
     val idFieldPlaceholder: String
 ) {
-    HOUSEHOLDS(
-        id = "Households",
-        title = "Households",
-        subtitle = "Residents, apartments, community recycling & domestic waste segregation",
+    HOUSEHOLD_RECYCLING(
+        id = "Household recycling",
+        title = "Household recycling",
+        subtitle = "Residents, apartments, domestic waste segregation & curbside sorting",
         defaultRole = "RESIDENT",
-        badgeLabel = "Citizen / Resident",
-        loginTitle = "Household Resident Sign In",
-        loginSubtitle = "Log in to track your recycling score, disposal history & community hotspot reports.",
+        badgeLabel = "Household / Resident",
+        loginTitle = "Household Recycling Sign In",
+        loginSubtitle = "Log in to track your recycling score, disposal history & domestic waste segregation.",
         idFieldLabel = "Email Address",
         idFieldPlaceholder = "resident@example.com"
     ),
-    MUNICIPAL_WORKER(
-        id = "Municipal worker",
-        title = "Municipal worker",
-        subtitle = "Field sanitation staff, waste collectors & municipal cleanup crews",
+    E_WASTE_MANAGEMENT(
+        id = "E-waste management",
+        title = "E-waste management",
+        subtitle = "Electronics, circuitry, batteries, hazardous scrap & certified e-waste drop-offs",
         defaultRole = "SANITATION_WORKER",
-        badgeLabel = "Field Sanitation",
-        loginTitle = "Municipal Staff Portal",
-        loginSubtitle = "Authenticate with your Sanitation Worker ID to view daily cleanup routes and assigned tasks.",
-        idFieldLabel = "Worker ID or Official Email",
-        idFieldPlaceholder = "MW-7482 or staff@citywaste.gov"
+        badgeLabel = "E-Waste Specialist",
+        loginTitle = "E-Waste Management Portal",
+        loginSubtitle = "Authenticate with your Specialist ID to view e-waste collection routes and tasks.",
+        idFieldLabel = "Specialist ID or Official Email",
+        idFieldPlaceholder = "EW-7482 or staff@citywaste.gov"
     ),
-    INDUSTRIES(
-        id = "Industries",
-        title = "Industries",
-        subtitle = "Commercial facilities, manufacturing plants & hazardous bulk waste generators",
+    COMMUNITY_RECYCLING(
+        id = "Community recycling",
+        title = "Community recycling",
+        subtitle = "Neighborhood hubs, local recycling drives & community collection initiatives",
+        defaultRole = "RESIDENT",
+        badgeLabel = "Community Hub",
+        loginTitle = "Community Recycling Portal",
+        loginSubtitle = "Sign in to coordinate community recycling drop points and neighborhood cleanup drives.",
+        idFieldLabel = "Community Lead Email",
+        idFieldPlaceholder = "community@wasteinfo.ai"
+    ),
+    PLASTIC_WASTE_REDUCTION(
+        id = "Plastic waste reduction",
+        title = "Plastic waste reduction",
+        subtitle = "Single-use plastics, packaging minimization & commercial recycling compliance",
         defaultRole = "INSTITUTION",
-        badgeLabel = "Commercial & Industrial",
-        loginTitle = "Industry & Facility Portal",
-        loginSubtitle = "Sign in to log industrial bulk waste manifests, track hazardous compliance & audit certificates.",
+        badgeLabel = "Plastic Reduction",
+        loginTitle = "Plastic Waste Reduction Portal",
+        loginSubtitle = "Sign in to log plastic audit manifests, track reduction compliance & certificates.",
         idFieldLabel = "Facility ID / Corporate Email",
-        idFieldPlaceholder = "IND-104 or plant.manager@company.com"
+        idFieldPlaceholder = "PWR-104 or plant.manager@company.com"
     ),
-    OTHER(
-        id = "Other",
-        title = "Other",
-        subtitle = "Auditors, environmental inspectors, system administrators & visitors",
+    SUSTAINABILITY_EDUCATION(
+        id = "Sustainability education",
+        title = "Sustainability education",
+        subtitle = "Schools, universities, public awareness campaigns & sustainability research",
         defaultRole = "REVIEWER",
-        badgeLabel = "Auditors & Public",
-        loginTitle = "Inspector & Operations Portal",
-        loginSubtitle = "Access verification queues, systemic audit metrics, and city-wide administrative control.",
-        idFieldLabel = "Staff / Admin Email",
-        idFieldPlaceholder = "inspector@wasteinfo.ai"
+        badgeLabel = "Education & Audit",
+        loginTitle = "Sustainability Education Portal",
+        loginSubtitle = "Access educational curriculums, sustainability guides & environmental audit metrics.",
+        idFieldLabel = "Staff / Educator Email",
+        idFieldPlaceholder = "educator@wasteinfo.ai"
     );
 
     companion object {
+        // Backwards-compatible aliases
+        val HOUSEHOLDS get() = HOUSEHOLD_RECYCLING
+        val MUNICIPAL_WORKER get() = E_WASTE_MANAGEMENT
+        val INDUSTRIES get() = PLASTIC_WASTE_REDUCTION
+        val OTHER get() = SUSTAINABILITY_EDUCATION
+
         fun fromId(id: String): UserCategory {
-            return entries.find { it.id.equals(id, ignoreCase = true) || it.name.equals(id, ignoreCase = true) } ?: HOUSEHOLDS
+            val trimmed = id.trim()
+            return entries.find {
+                it.id.equals(trimmed, ignoreCase = true) ||
+                it.title.equals(trimmed, ignoreCase = true) ||
+                it.name.equals(trimmed, ignoreCase = true)
+            } ?: when (trimmed.lowercase()) {
+                "households", "household", "household recycling" -> HOUSEHOLD_RECYCLING
+                "municipal worker", "municipal_worker", "e-waste", "e-waste management", "ewaste" -> E_WASTE_MANAGEMENT
+                "community", "community recycling" -> COMMUNITY_RECYCLING
+                "industries", "industry", "plastic", "plastic waste reduction" -> PLASTIC_WASTE_REDUCTION
+                "sustainability education", "education", "other", "reviewer" -> SUSTAINABILITY_EDUCATION
+                else -> HOUSEHOLD_RECYCLING
+            }
         }
     }
 }

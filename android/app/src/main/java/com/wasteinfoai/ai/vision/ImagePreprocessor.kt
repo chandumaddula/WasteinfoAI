@@ -2,16 +2,34 @@ package com.wasteinfoai.ai.vision
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.RectF
 import androidx.exifinterface.media.ExifInterface
 import java.io.File
 import kotlin.math.max
+
+/**
+ * Preprocessing strategies for image preparation.
+ */
+enum class PreprocessingStrategy {
+    CENTER_CROP,
+    LETTERBOX,
+    ROI_CROP
+}
 
 /**
  * Preprocessor matching ReXNet-150 / timm configuration:
  * - Input dimensions: 224 x 224
  * - Channel layout: NCHW, RGB
  * - ImageNet normalization: Mean = [0.485, 0.456, 0.406], Std = [0.229, 0.224, 0.225]
+ *
+ * Supports multiple validated strategies:
+ * 1. CENTER_CROP: Legacy baseline cropping the central square.
+ * 2. LETTERBOX: Aspect-ratio-preserving downscale with neutral gray padding, preventing cutoff.
+ * 3. ROI_CROP: Crops a detected object's bounding box with contextual margin, then letterboxes.
  */
 object ImagePreprocessor {
 
@@ -20,13 +38,20 @@ object ImagePreprocessor {
     const val NUM_CHANNELS = 3
     const val TENSOR_SIZE = INPUT_WIDTH * INPUT_HEIGHT * NUM_CHANNELS
 
+    // Neutral gray fill value for letterboxing: RGB (114, 114, 114)
+    const val NEUTRAL_GRAY_PAD = 0xFF727272.toInt()
+
     private val MEAN = floatArrayOf(0.485f, 0.456f, 0.406f)
     private val STD = floatArrayOf(0.229f, 0.224f, 0.225f)
 
     /**
-     * Decodes, corrects orientation, center crops, and scales the image from [file] to 224x224.
+     * Decodes, corrects orientation, and prepares the image from [file] to 224x224 using [strategy].
      */
-    fun loadAndPreprocessBitmap(file: File): Bitmap {
+    fun loadAndPreprocessBitmap(
+        file: File,
+        strategy: PreprocessingStrategy = PreprocessingStrategy.LETTERBOX,
+        roi: RectF? = null
+    ): Bitmap {
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         BitmapFactory.decodeFile(file.absolutePath, options)
         val origW = options.outWidth
@@ -49,8 +74,93 @@ object ImagePreprocessor {
         // Correct EXIF orientation
         val oriented = correctExifOrientation(file.absolutePath, sampled)
 
-        // Center crop to square and scale to 224x224
-        return scaleAndCenterCrop(oriented, INPUT_WIDTH, INPUT_HEIGHT)
+        return preprocessBitmap(oriented, strategy, roi)
+    }
+
+    /**
+     * Preprocesses an in-memory [source] bitmap to exact 224x224 using [strategy].
+     */
+    fun preprocessBitmap(
+        source: Bitmap,
+        strategy: PreprocessingStrategy = PreprocessingStrategy.LETTERBOX,
+        roi: RectF? = null
+    ): Bitmap {
+        return when (strategy) {
+            PreprocessingStrategy.CENTER_CROP -> {
+                scaleAndCenterCrop(source, INPUT_WIDTH, INPUT_HEIGHT)
+            }
+            PreprocessingStrategy.LETTERBOX -> {
+                letterbox(source, INPUT_WIDTH, INPUT_HEIGHT, NEUTRAL_GRAY_PAD)
+            }
+            PreprocessingStrategy.ROI_CROP -> {
+                if (roi != null && roi.width() > 0.05f && roi.height() > 0.05f) {
+                    val croppedRoi = cropRoi(source, roi, marginRatio = 0.12f)
+                    val result = letterbox(croppedRoi, INPUT_WIDTH, INPUT_HEIGHT, NEUTRAL_GRAY_PAD)
+                    if (croppedRoi !== source && croppedRoi !== result) {
+                        croppedRoi.recycle()
+                    }
+                    result
+                } else {
+                    // Fall back to letterboxing entire image if ROI is unavailable or invalid
+                    letterbox(source, INPUT_WIDTH, INPUT_HEIGHT, NEUTRAL_GRAY_PAD)
+                }
+            }
+        }
+    }
+
+    /**
+     * Resizes [source] preserving aspect ratio and pads with [padColor] into [targetW] x [targetH].
+     */
+    fun letterbox(source: Bitmap, targetW: Int, targetH: Int, padColor: Int = NEUTRAL_GRAY_PAD): Bitmap {
+        val srcW = source.width
+        val srcH = source.height
+
+        if (srcW == targetW && srcH == targetH) {
+            return source
+        }
+
+        val scale = minOf(targetW.toFloat() / srcW, targetH.toFloat() / srcH)
+        val scaledW = (srcW * scale).toInt().coerceAtLeast(1)
+        val scaledH = (srcH * scale).toInt().coerceAtLeast(1)
+
+        val scaled = Bitmap.createScaledBitmap(source, scaledW, scaledH, true)
+
+        val output = Bitmap.createBitmap(targetW, targetH, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+        canvas.drawColor(padColor)
+
+        val dx = (targetW - scaledW) / 2f
+        val dy = (targetH - scaledH) / 2f
+        canvas.drawBitmap(scaled, dx, dy, null)
+
+        if (scaled !== source) {
+            scaled.recycle()
+        }
+
+        return output
+    }
+
+    /**
+     * Crops the region defined by normalized coordinates [roi] (0.0f..1.0f) with an optional [marginRatio].
+     */
+    fun cropRoi(source: Bitmap, roi: RectF, marginRatio: Float = 0.10f): Bitmap {
+        val srcW = source.width
+        val srcH = source.height
+
+        val marginX = roi.width() * marginRatio
+        val marginY = roi.height() * marginRatio
+
+        val leftNorm = (roi.left - marginX).coerceIn(0.0f, 1.0f)
+        val topNorm = (roi.top - marginY).coerceIn(0.0f, 1.0f)
+        val rightNorm = (roi.right + marginX).coerceIn(0.0f, 1.0f)
+        val bottomNorm = (roi.bottom + marginY).coerceIn(0.0f, 1.0f)
+
+        val x = (leftNorm * srcW).toInt().coerceIn(0, srcW - 1)
+        val y = (topNorm * srcH).toInt().coerceIn(0, srcH - 1)
+        val w = ((rightNorm - leftNorm) * srcW).toInt().coerceIn(1, srcW - x)
+        val h = ((bottomNorm - topNorm) * srcH).toInt().coerceIn(1, srcH - y)
+
+        return Bitmap.createBitmap(source, x, y, w, h)
     }
 
     private fun correctExifOrientation(filePath: String, bitmap: Bitmap): Bitmap {
@@ -76,25 +186,21 @@ object ImagePreprocessor {
         val srcW = source.width
         val srcH = source.height
 
-        // If source is already exact target dimensions, return it directly
         if (srcW == targetW && srcH == targetH) {
             return source
         }
 
-        // Use double precision and ceil to guarantee scaled dimensions are at least target dimensions
         val scale = max(targetW.toDouble() / srcW, targetH.toDouble() / srcH)
         val scaledW = max(targetW, kotlin.math.ceil(scale * srcW).toInt())
         val scaledH = max(targetH, kotlin.math.ceil(scale * srcH).toInt())
 
         val scaled = Bitmap.createScaledBitmap(source, scaledW, scaledH, true)
 
-        // Strictly clamp crop origins to valid bounds
         val maxCropX = max(0, scaled.width - targetW)
         val maxCropY = max(0, scaled.height - targetH)
         val cropX = ((scaled.width - targetW) / 2).coerceIn(0, maxCropX)
         val cropY = ((scaled.height - targetH) / 2).coerceIn(0, maxCropY)
 
-        // Strictly guarantee crop size never exceeds bitmap dimensions
         val safeW = minOf(targetW, scaled.width - cropX)
         val safeH = minOf(targetH, scaled.height - cropY)
 
@@ -106,7 +212,6 @@ object ImagePreprocessor {
             source.recycle()
         }
 
-        // Return exact targetW x targetH bitmap
         return if (cropped.width == targetW && cropped.height == targetH) {
             cropped
         } else {

@@ -70,9 +70,9 @@ fun AppNavGraph(
         // 3. Category-Based Authentication Screen
         composable(
             route = Screen.CategoryAuth.route,
-            arguments = listOf(navArgument("category") { type = NavType.StringType; defaultValue = "Households" })
+            arguments = listOf(navArgument("category") { type = NavType.StringType; defaultValue = "Household recycling" })
         ) { backStackEntry ->
-            val cat = URLDecoder.decode(backStackEntry.arguments?.getString("category") ?: "Households", StandardCharsets.UTF_8.toString())
+            val cat = URLDecoder.decode(backStackEntry.arguments?.getString("category") ?: "Household recycling", StandardCharsets.UTF_8.toString())
             val vm = rememberViewModel {
                 LoginViewModel(
                     authRepository = container.authRepository,
@@ -84,11 +84,12 @@ fun AppNavGraph(
                 viewModel = vm,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToDashboard = { selectedCat ->
-                    val target = when (selectedCat.lowercase()) {
-                        "municipal worker", "municipal_worker", "sanitation_worker" -> Screen.Tasks.route
-                        "industries", "industry", "institution" -> Screen.IndustryDashboard.route
-                        "other", "reviewer" -> Screen.ReviewerDashboard.route
-                        "admin" -> Screen.AdminDashboard.route
+                    val lower = selectedCat.lowercase()
+                    val target = when {
+                        lower.contains("worker") || lower.contains("e-waste") || lower.contains("sanitation") -> Screen.Tasks.route
+                        lower.contains("industr") || lower.contains("plastic") || lower.contains("institution") -> Screen.IndustryDashboard.route
+                        lower.contains("education") || lower.contains("reviewer") || lower.contains("other") -> Screen.ReviewerDashboard.route
+                        lower.contains("admin") -> Screen.AdminDashboard.route
                         else -> Screen.Home.route
                     }
                     navController.navigate(target) {
@@ -326,11 +327,12 @@ fun AppNavGraph(
                 viewModel = vm,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToDashboard = { roleOrCat ->
-                    val target = when (roleOrCat.lowercase()) {
-                        "municipal worker", "municipal_worker", "sanitation_worker" -> Screen.Tasks.route
-                        "industries", "industry", "institution" -> Screen.IndustryDashboard.route
-                        "other", "reviewer" -> Screen.ReviewerDashboard.route
-                        "admin" -> Screen.AdminDashboard.route
+                    val lower = roleOrCat.lowercase()
+                    val target = when {
+                        lower.contains("worker") || lower.contains("e-waste") || lower.contains("sanitation") -> Screen.Tasks.route
+                        lower.contains("industr") || lower.contains("plastic") || lower.contains("institution") -> Screen.IndustryDashboard.route
+                        lower.contains("education") || lower.contains("reviewer") || lower.contains("other") -> Screen.ReviewerDashboard.route
+                        lower.contains("admin") -> Screen.AdminDashboard.route
                         else -> Screen.Home.route
                     }
                     navController.navigate(target) {

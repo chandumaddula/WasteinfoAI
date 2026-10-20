@@ -14,6 +14,10 @@ class ScanRepository(private val scanDao: ScanDao) {
         scanDao.insertScan(scan)
     }
 
+    suspend fun updateScan(scan: ScanHistoryEntity) = withContext(Dispatchers.IO) {
+        scanDao.updateScan(scan)
+    }
+
     suspend fun getScanById(id: Long): ScanHistoryEntity? = withContext(Dispatchers.IO) {
         scanDao.getScanById(id)
     }

@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 data class HomeUiState(
     val userRole: String = "RESIDENT",
-    val userCategory: String = "Households",
+    val userCategory: String = "Household recycling",
     val userEmail: String = "",
     val recentScans: List<ScanHistoryEntity> = emptyList(),
     val pendingSyncCount: Int = 0,

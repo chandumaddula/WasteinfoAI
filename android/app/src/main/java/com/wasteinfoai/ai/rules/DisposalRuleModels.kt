@@ -1,18 +1,23 @@
 package com.wasteinfoai.ai.rules
 
 /**
- * Verified disposal rule schema matching packaged disposal_rules.json.
+ * Verified hierarchical disposal rule schema matching packaged disposal_rules.json.
+ * Supports canonical category rules, material-specific rules, and exact item-level rules.
  */
 data class DisposalRule(
     val id: String,
     val category: String,
-    val jurisdiction: String = "GLOBAL_STANDARD",
+    val specificItem: String? = null,
+    val materialCode: String? = null,
+    val jurisdiction: String = "INDIA_SWM_2016",
     val disposalMethod: String,
     val isRecyclable: Boolean,
     val isHazardous: Boolean,
     val preparationInstructions: String,
     val safetyWarnings: String,
     val targetBinColor: String,
+    val acceptedPathways: List<String> = emptyList(),
+    val prohibitedPathways: List<String> = emptyList(),
     val reviewStatus: String = "VERIFIED",
     val source: String
 )

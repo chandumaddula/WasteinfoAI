@@ -15,5 +15,10 @@ data class ScanHistoryEntity(
     val isHazardous: Boolean = false,
     val disposalMethod: String? = null,
     val targetBinColor: String? = null,
-    val isSynced: Boolean = false
+    val isSynced: Boolean = false,
+    val specificItem: String? = null,
+    val materialCode: String? = null,
+    val isUserConfirmed: Boolean = false,
+    val userConfirmedCategory: String? = null,
+    val detectedBarcode: String? = null
 )

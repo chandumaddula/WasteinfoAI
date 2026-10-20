@@ -13,6 +13,9 @@ interface ScanDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertScan(scan: ScanHistoryEntity): Long
 
+    @androidx.room.Update
+    suspend fun updateScan(scan: ScanHistoryEntity)
+
     @Query("SELECT * FROM scan_history ORDER BY timestamp DESC")
     fun getAllScans(): Flow<List<ScanHistoryEntity>>
 

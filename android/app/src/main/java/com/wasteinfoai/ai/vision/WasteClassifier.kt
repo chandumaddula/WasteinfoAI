@@ -14,6 +14,8 @@ import java.io.FileOutputStream
 import java.io.IOException
 import kotlin.math.exp
 
+import android.graphics.RectF
+
 /**
  * On-device waste image classifier powered by ExecuTorch runtime and trained ReXNet-150.
  */
@@ -94,9 +96,13 @@ class WasteClassifier(
     }
 
     /**
-     * Runs on-device inference on [imageFile] and returns a structured [ClassificationResult].
+     * Runs on-device inference on [imageFile] using [strategy] and optional [roi].
      */
-    suspend fun classify(imageFile: File): kotlin.Result<ClassificationResult> = withContext(Dispatchers.Default) {
+    suspend fun classify(
+        imageFile: File,
+        strategy: PreprocessingStrategy = PreprocessingStrategy.LETTERBOX,
+        roi: RectF? = null
+    ): kotlin.Result<ClassificationResult> = withContext(Dispatchers.Default) {
         if (!isInitialized || module == null) {
             val initResult = initialize()
             if (initResult.isFailure) {
@@ -109,7 +115,7 @@ class WasteClassifier(
         val startTime = System.currentTimeMillis()
         var bitmap: Bitmap? = null
         try {
-            bitmap = ImagePreprocessor.loadAndPreprocessBitmap(imageFile)
+            bitmap = ImagePreprocessor.loadAndPreprocessBitmap(imageFile, strategy, roi)
             val inputFloatArray = ImagePreprocessor.bitmapToNormalizedFloatArray(bitmap)
 
             // Shape: [1, 3, 224, 224]
@@ -135,6 +141,56 @@ class WasteClassifier(
             kotlin.Result.failure(e)
         } finally {
             bitmap?.recycle()
+        }
+    }
+
+    /**
+     * Runs on-device inference on an in-memory [sourceBitmap] using [strategy] and optional [roi].
+     */
+    suspend fun classify(
+        sourceBitmap: Bitmap,
+        strategy: PreprocessingStrategy = PreprocessingStrategy.LETTERBOX,
+        roi: RectF? = null
+    ): kotlin.Result<ClassificationResult> = withContext(Dispatchers.Default) {
+        if (!isInitialized || module == null) {
+            val initResult = initialize()
+            if (initResult.isFailure) {
+                return@withContext kotlin.Result.failure(
+                    initResult.exceptionOrNull() ?: IllegalStateException("Classifier not initialized")
+                )
+            }
+        }
+
+        val startTime = System.currentTimeMillis()
+        var preprocessed: Bitmap? = null
+        try {
+            preprocessed = ImagePreprocessor.preprocessBitmap(sourceBitmap, strategy, roi)
+            val inputFloatArray = ImagePreprocessor.bitmapToNormalizedFloatArray(preprocessed)
+
+            val inputTensor = Tensor.fromBlob(
+                inputFloatArray,
+                longArrayOf(1, 3, ImagePreprocessor.INPUT_WIDTH.toLong(), ImagePreprocessor.INPUT_HEIGHT.toLong())
+            )
+            val inputEValue = EValue.from(inputTensor)
+
+            val outputs = module!!.forward(inputEValue)
+            if (outputs.isEmpty()) {
+                return@withContext kotlin.Result.failure(IllegalStateException("ExecuTorch returned empty output"))
+            }
+
+            val outputTensor = outputs[0].toTensor()
+            val rawLogits = outputTensor.dataAsFloatArray
+            val durationMs = System.currentTimeMillis() - startTime
+
+            val result = parseInferenceOutput(rawLogits, durationMs)
+            kotlin.Result.success(result)
+        } catch (e: Exception) {
+            Log.e(TAG, "Inference execution failed on bitmap", e)
+            kotlin.Result.failure(e)
+        } finally {
+            if (preprocessed !== sourceBitmap) {
+                preprocessed?.recycle()
+            }
         }
     }
 

@@ -180,16 +180,16 @@ fun DashboardSideDrawer(
                     val normCat = userCategory.lowercase()
                     val normRole = userRole.uppercase()
 
-                    val isHousehold = normCat.contains("household") || normRole == "RESIDENT"
-                    val isWorker = normCat.contains("worker") || normCat.contains("sanitation") || normRole == "SANITATION_WORKER"
-                    val isIndustry = normCat.contains("industr") || normRole == "INSTITUTION"
-                    val isReviewer = normCat.contains("reviewer") || normCat.contains("other") || normRole == "REVIEWER"
+                    val isHousehold = normCat.contains("household") || normCat.contains("community") || normRole == "RESIDENT"
+                    val isWorker = normCat.contains("worker") || normCat.contains("sanitation") || normCat.contains("e-waste") || normRole == "SANITATION_WORKER"
+                    val isIndustry = normCat.contains("industr") || normCat.contains("plastic") || normRole == "INSTITUTION"
+                    val isReviewer = normCat.contains("reviewer") || normCat.contains("other") || normCat.contains("education") || normRole == "REVIEWER"
                     val isAdmin = normRole == "ADMIN"
 
                     if (isHousehold) {
                         DrawerItem(
                             icon = Icons.Default.Home,
-                            label = "Households Dashboard",
+                            label = if (normCat.contains("community")) "Community Recycling Hub" else "Household Recycling",
                             isSelected = currentRoute == Screen.Home.route,
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
@@ -201,7 +201,7 @@ fun DashboardSideDrawer(
                     if (isIndustry) {
                         DrawerItem(
                             icon = Icons.Default.Factory,
-                            label = "Industrial Portal",
+                            label = if (normCat.contains("plastic")) "Plastic Waste Reduction" else "Industrial Portal",
                             isSelected = currentRoute == Screen.IndustryDashboard.route,
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
@@ -213,7 +213,7 @@ fun DashboardSideDrawer(
                     if (isWorker) {
                         DrawerItem(
                             icon = Icons.Default.Engineering,
-                            label = "Municipal Worker Tasks",
+                            label = if (normCat.contains("e-waste")) "E-Waste Management Tasks" else "Municipal Worker Tasks",
                             isSelected = currentRoute == Screen.Tasks.route,
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }
@@ -225,7 +225,7 @@ fun DashboardSideDrawer(
                     if (isReviewer) {
                         DrawerItem(
                             icon = Icons.Default.Shield,
-                            label = "Reviewer & Audit Portal",
+                            label = if (normCat.contains("education")) "Sustainability Education Portal" else "Reviewer & Audit Portal",
                             isSelected = currentRoute == Screen.ReviewerDashboard.route,
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }

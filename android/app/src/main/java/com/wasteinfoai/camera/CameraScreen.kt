@@ -44,10 +44,16 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import java.util.concurrent.Executors
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import com.wasteinfoai.ai.vision.ImageQualityAssessment
+import com.wasteinfoai.ai.vision.ImageQualityAssessor
+import com.wasteinfoai.ai.vision.QualityStatus
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -280,6 +286,33 @@ private fun CameraPreviewContent(
             modifier = Modifier.fillMaxSize()
         )
 
+        // Live capture guidance prompt
+        val boxW = (detectedBox.right - detectedBox.left).coerceAtLeast(0f)
+        val boxH = (detectedBox.bottom - detectedBox.top).coerceAtLeast(0f)
+        val areaRatio = boxW * boxH
+        val liveGuidance = when {
+            !detectedBox.hasTarget -> "Place one waste item inside frame"
+            areaRatio < 0.08f -> "Move closer to item"
+            areaRatio > 0.85f -> "Keep item fully visible"
+            else -> "Hold steady • Object detected"
+        }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+                .padding(top = 16.dp)
+                .background(Color.Black.copy(alpha = 0.72f), RoundedCornerShape(20.dp))
+                .border(1.dp, Color(0xFF00E676).copy(alpha = 0.6f), RoundedCornerShape(20.dp))
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            Text(
+                text = liveGuidance,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
         TextButton(
             onClick = onClose,
             modifier = Modifier.align(Alignment.TopStart).statusBarsPadding().padding(8.dp),
@@ -511,11 +544,14 @@ private fun ImageReviewContent(
 ) {
     // Decoding happens on a background dispatcher at preview resolution, never on the UI thread.
     var preview by remember(image.file) { mutableStateOf<PreviewResult>(PreviewResult.Loading) }
+    var qualityAssessment by remember(image.file) { mutableStateOf<ImageQualityAssessment?>(null) }
+
     LaunchedEffect(image.file) {
-        preview = withContext(Dispatchers.IO) {
-            ImageDecoding.decodeOriented(image.file, ImageDecoding.PREVIEW_MAX_DIMENSION)
+        withContext(Dispatchers.IO) {
+            preview = ImageDecoding.decodeOriented(image.file, ImageDecoding.PREVIEW_MAX_DIMENSION)
                 ?.let { PreviewResult.Ready(it.asImageBitmap()) }
                 ?: PreviewResult.Failed
+            qualityAssessment = ImageQualityAssessor.assessFile(image.file)
         }
     }
     val description = stringResource(R.string.camera_review_image_description)
@@ -533,12 +569,51 @@ private fun ImageReviewContent(
                 PreviewResult.Failed -> Text(stringResource(R.string.camera_preview_failed), color = Color.White)
             }
         }
+
+        // Image Quality Advisory Banner
+        qualityAssessment?.let { qa ->
+            if (qa.status != QualityStatus.ACCEPTABLE) {
+                Card(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF332000)),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFFFB300)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Text(
+                            text = when (qa.status) {
+                                QualityStatus.BLUR_WARNING -> "⚠️ Blurry Image Detected"
+                                QualityStatus.TOO_DARK -> "⚠️ Low Light Environment"
+                                QualityStatus.OVEREXPOSED -> "⚠️ Strong Glare / Overexposed"
+                                QualityStatus.LOW_RESOLUTION -> "⚠️ Low Resolution Image"
+                                else -> "⚠️ Image Quality Warning"
+                            },
+                            color = Color(0xFFFFD54F),
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                        androidx.compose.foundation.layout.Spacer(modifier = Modifier.size(4.dp))
+                        Text(
+                            text = qa.message,
+                            color = Color.White.copy(alpha = 0.9f),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
+        }
+
         Column(
-            Modifier.fillMaxWidth().padding(top = 16.dp),
+            Modifier.fillMaxWidth().padding(top = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Button(onClick = onConfirm, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.camera_confirm))
+                val label = if (qualityAssessment?.status != null && qualityAssessment?.status != QualityStatus.ACCEPTABLE) {
+                    "Proceed to Classification Anyway"
+                } else {
+                    stringResource(R.string.camera_confirm)
+                }
+                Text(label)
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = onRetake, modifier = Modifier.weight(1f)) {
