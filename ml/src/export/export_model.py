@@ -1,180 +1,104 @@
-"""Model Export Module for On-Device Deployment.
-
-Phase 4: On-Device Vision Deployment
-Exports trained MobileNetV3-Small model to an optimized runtime artifact
-for ExecuTorch / Android deployment (waste_classifier.pte).
-Supports ExecuTorch lowering flow and mobile-compatible export fallbacks.
-"""
-
+"""Export the calibrated model (softmax + temperature baked in) for ExecuTorch / Android."""
 import argparse
 import json
 import logging
 import shutil
 import sys
 from pathlib import Path
-from typing import Tuple
 
 import torch
 import torch.nn as nn
-from torchvision import models
-import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from src.common import load_checkpoint, load_config, project_root  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("export_model")
 
 
-def load_config(config_path: Path) -> dict:
-    """Load configuration YAML."""
-    with open(config_path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+class CalibratedModel(nn.Module):
+    """Outputs calibrated probabilities so the app applies thresholds directly."""
+
+    def __init__(self, model, temperature: float):
+        super().__init__()
+        self.model = model
+        self.register_buffer("t", torch.tensor(float(temperature)))
+
+    def forward(self, x):
+        return torch.softmax(self.model(x) / self.t, dim=1)
 
 
-def build_and_load_model(
-    checkpoint_path: Path,
-    num_classes: int,
-    device: torch.device,
-) -> nn.Module:
-    """Build MobileNetV3-Small architecture and load weights."""
-    model = models.mobilenet_v3_small(weights=None)
-    in_features = model.classifier[3].in_features
-    model.classifier[3] = nn.Linear(in_features, num_classes)
-
-    if checkpoint_path.exists():
-        checkpoint = torch.load(checkpoint_path, map_location=device)
-        state_dict = checkpoint.get("model_state_dict", checkpoint)
-        model.load_state_dict(state_dict)
-        logger.info("Loaded weights from checkpoint: %s", checkpoint_path)
-    else:
-        logger.warning("Checkpoint not found at %s. Using default weights for export testing.", checkpoint_path)
-
-    model.to(device)
-    model.eval()
-    return model
-
-
-def export_executorch(
-    model: nn.Module,
-    example_input: torch.Tensor,
-    output_path: Path,
-) -> bool:
-    """Attempt export via PyTorch ExecuTorch edge pipeline."""
+def export_executorch(module, example, out_path: Path) -> bool:
     try:
-        logger.info("Checking ExecuTorch export capabilities...")
-        # PyTorch 2.x export
         from torch.export import export
-
-        exported_prog = export(model, (example_input,))
-        logger.info("PyTorch 2 torch.export successful.")
-
+        from executorch.exir import EdgeCompileConfig, to_edge
+    except ImportError as exc:
+        logger.warning("ExecuTorch not available (%s).", exc)
+        return False
+    try:
+        program = export(module, (example,))
+        with torch.no_grad():  # parity check: exported graph must match eager model
+            diff = (program.module()(example) - module(example)).abs().max().item()
+        logger.info("torch.export parity max|diff| = %.2e", diff)
+        edge = to_edge(program, compile_config=EdgeCompileConfig())
         try:
-            import executorch.exir as exir
-            from executorch.exir import EdgeCompileConfig, to_edge
-
-            edge_program = to_edge(exported_prog, compile_config=EdgeCompileConfig())
-
-            # Optional XNNPACK lowering if available
-            try:
-                from executorch.backends.xnnpack.partition.xnnpack_partitioner import XnnpackPartitioner
-                edge_program = edge_program.to_backend(XnnpackPartitioner())
-                logger.info("Lowered with XNNPACK partitioner.")
-            except ImportError:
-                logger.info("XNNPACK backend not installed; exporting standard edge program.")
-
-            exec_prog = edge_program.to_executorch()
-            with open(output_path, "wb") as f:
-                f.write(exec_prog.buffer)
-            logger.info("Successfully saved ExecuTorch artifact to: %s", output_path)
-            return True
-
+            from executorch.backends.xnnpack.partition.xnnpack_partitioner import XnnpackPartitioner
+            edge = edge.to_backend(XnnpackPartitioner())
+            logger.info("Lowered with XNNPACK.")
         except ImportError:
-            logger.info(
-                "ExecuTorch python library ('executorch') is not installed in the active environment."
-            )
-            return False
-
+            logger.info("XNNPACK partitioner not installed; exporting portable program.")
+        out_path.write_bytes(edge.to_executorch().buffer)
+        return True
     except Exception as exc:
-        logger.warning("ExecuTorch export encountered an issue: %s", exc)
+        logger.warning("ExecuTorch export failed: %s", exc)
         return False
 
 
-def export_torchscript_fallback(
-    model: nn.Module,
-    example_input: torch.Tensor,
-    output_path: Path,
-) -> None:
-    """Export TorchScript / mobile-compatible traced artifact as fallback."""
-    logger.info("Exporting TorchScript / mobile-optimized model as fallback...")
-    traced_model = torch.jit.trace(model, example_input)
-    traced_model.save(str(output_path))
-    logger.info("Saved traced artifact to: %s", output_path)
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--config", default="configs/classifier_config.yaml")
+    ap.add_argument("--checkpoint", default="checkpoints/best_model.pth")
+    ap.add_argument("--sync-android", action="store_true")
+    args = ap.parse_args()
 
+    root = project_root()
+    cfg = load_config(root / args.config)
+    out_dir = root / cfg["export"]["exported_dir"]
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / cfg["export"]["output_model_name"]
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Export trained waste classifier to mobile runtime artifact")
-    parser.add_argument("--config", type=str, default="configs/classifier_config.yaml", help="Path to config")
-    parser.add_argument("--checkpoint", type=str, default="checkpoints/best_model.pth", help="Model checkpoint")
-    parser.add_argument("--output", type=str, default="exported/waste_classifier.pte", help="Output artifact path")
-    parser.add_argument("--sync-android", action="store_true", help="Copy exported artifact to Android assets")
-    args = parser.parse_args()
+    model, ckpt = load_checkpoint(root / args.checkpoint, torch.device("cpu"))
+    policy_path = root / cfg["evaluation"]["policy_file"]
+    policy = json.loads(policy_path.read_text()) if policy_path.exists() else {}
+    if not policy:
+        logger.warning("No rejection policy found; run calibrate_rejection_policy.py first. Using T=1.")
+    module = CalibratedModel(model, policy.get("temperature", 1.0)).eval()
+    example = torch.randn(*cfg["model"]["input_shape"])
 
-    base_dir = Path(__file__).resolve().parents[2]
-    config_path = base_dir / args.config
-    config = load_config(config_path)
+    if not export_executorch(module, example, out_path):
+        # A TorchScript file is NOT loadable by ExecuTorch, so do not give it a .pte name.
+        out_path = out_path.with_suffix(".pt")
+        torch.jit.trace(module, example).save(str(out_path))
+        logger.warning("Saved TorchScript fallback %s (use PyTorch Mobile, not ExecuTorch).", out_path)
 
-    checkpoint_path = base_dir / args.checkpoint
-    output_path = base_dir / args.output
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    device = torch.device("cpu")  # Export on CPU for mobile consistency
-    num_classes = config["model"]["num_classes"]
-    model = build_and_load_model(checkpoint_path, num_classes, device)
-
-    # Example input tensor
-    input_shape = config["model"].get("input_shape", [1, 3, 224, 224])
-    example_input = torch.randn(*input_shape, device=device)
-
-    # Try ExecuTorch flow first
-    success = export_executorch(model, example_input, output_path)
-
-    if not success:
-        # Fallback to traced model (.pte extension preserved for contract)
-        export_torchscript_fallback(model, example_input, output_path)
-
-    # Also save metadata alongside exported model
-    metadata_path = output_path.with_suffix(".json")
-    labels_file = base_dir / config["dataset"]["labels_file"]
-    class_names = []
-    if labels_file.exists():
-        with open(labels_file, "r", encoding="utf-8") as f:
-            cdata = json.load(f)
-            class_names = [cdata[str(i)] for i in range(len(cdata))]
-
-    meta_payload = {
-        "model_name": config["project"]["name"],
-        "architecture": config["model"]["architecture"],
-        "version": config["project"]["version"],
-        "input_shape": input_shape,
-        "normalization": config["dataset"]["normalization"],
-        "num_classes": num_classes,
-        "classes": class_names,
-        "exported_file": output_path.name,
+    meta = {
+        "architecture": ckpt["arch"], "classes": ckpt["classes"], "input_shape": cfg["model"]["input_shape"],
+        "preprocess": {"resize": [ckpt["image_size"], ckpt["image_size"]], "center_crop": False,
+                       "normalization": ckpt["norm"]},
+        "output": "calibrated softmax probabilities",
+        "rejection_policy": {k: policy[k] for k in ("confidence_threshold", "min_margin", "max_norm_entropy")
+                             if k in policy},
+        "exported_file": out_path.name,
     }
-    with open(metadata_path, "w", encoding="utf-8") as f:
-        json.dump(meta_payload, f, indent=2)
-    logger.info("Export metadata saved to: %s", metadata_path)
+    out_path.with_suffix(".json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
-    # Sync to Android assets if requested
     if args.sync_android:
-        android_target = (base_dir / config["export"]["android_asset_path"]).resolve()
-        android_target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(output_path, android_target)
-        logger.info("Synced exported artifact to Android assets: %s", android_target)
-
-        # Also sync class_names.json to android assets vision folder
-        android_classes = android_target.parent / "class_names.json"
-        if labels_file.exists():
-            shutil.copy2(labels_file, android_classes)
-            logger.info("Synced class_names.json to Android assets: %s", android_classes)
+        target = (root / cfg["export"]["android_asset_path"]).resolve()
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(out_path, target.with_name(out_path.name))
+        shutil.copy2(out_path.with_suffix(".json"), target.parent / "model_meta.json")
+        shutil.copy2(root / cfg["dataset"]["labels_file"], target.parent / "class_names.json")
+        logger.info("Synced to %s", target.parent)
 
 
 if __name__ == "__main__":

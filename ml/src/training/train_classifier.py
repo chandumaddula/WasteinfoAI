@@ -1,337 +1,126 @@
-"""Model Training Script for Waste Classifier.
-
-Phase 3: Waste Classification Model
-Trains a pretrained MobileNetV3-Small classifier on waste dataset splits,
-evaluates validation performance (Loss, Accuracy, Macro-F1),
-and saves the best checkpoint for on-device export.
-"""
-
+"""Train the waste classifier (timm backbone chosen in the config)."""
 import argparse
-import json
 import logging
-import os
 import sys
 from pathlib import Path
-from typing import Dict, Tuple
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+from sklearn.metrics import f1_score
 from torch.optim import AdamW
-from torch.optim.lr_scheduler import CosineAnnealingLR
-from torch.utils.data import DataLoader
-from torchvision import datasets, models, transforms
-import yaml
+from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
-)
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from src.common import (build_model, collect_logits, get_device, load_class_names,  # noqa: E402
+                        load_config, make_loaders, project_root, seed_everything)
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("train_classifier")
 
 
-def load_config(config_path: Path) -> dict:
-    """Load configuration YAML file."""
-    with open(config_path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+def set_frozen(model, head_ids, frozen: bool):
+    for p in model.parameters():
+        p.requires_grad = (not frozen) or id(p) in head_ids
 
 
-def get_data_transforms(config: dict) -> Tuple[transforms.Compose, transforms.Compose]:
-    """Define real-world data augmentation and normalization transforms.
-
-    Augmentations (lighting changes, perspective skew, blur, occlusion) are strictly
-    training-only to simulate environmental conditions without leaking into evaluation.
-    """
-    mean = config["dataset"]["normalization"]["mean"]
-    std = config["dataset"]["normalization"]["std"]
-    img_size = config["dataset"]["image_size"]
-
-    train_transform = transforms.Compose([
-        transforms.RandomResizedCrop(img_size, scale=(0.7, 1.0), ratio=(0.85, 1.15)),
-        transforms.RandomHorizontalFlip(p=0.5),
-        transforms.RandomRotation(degrees=15),
-        transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.05),
-        transforms.RandomAffine(degrees=0, translate=(0.08, 0.08), scale=(0.92, 1.08)),
-        transforms.RandomPerspective(distortion_scale=0.15, p=0.3),
-        transforms.RandomApply([
-            transforms.GaussianBlur(kernel_size=(3, 3), sigma=(0.1, 1.5))
-        ], p=0.25),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=mean, std=std),
-        transforms.RandomErasing(p=0.25, scale=(0.02, 0.18), ratio=(0.3, 3.3), value="random"),
-    ])
-
-    # Validation and test transforms: strictly deterministic, non-augmented
-    val_transform = transforms.Compose([
-        transforms.Resize(img_size + config["dataset"].get("crop_padding", 32)),
-        transforms.CenterCrop(img_size),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=mean, std=std),
-    ])
-
-    return train_transform, val_transform
+def train_one_epoch(model, loader, criterion, optimizer, scaler, device, use_amp, frozen):
+    model.train()
+    if frozen:  # keep BatchNorm statistics of the pretrained backbone untouched
+        for m in model.modules():
+            if isinstance(m, nn.modules.batchnorm._BatchNorm):
+                m.eval()
+    loss_sum, correct, n = 0.0, 0, 0
+    for x, y in loader:
+        x, y = x.to(device, non_blocking=True), y.to(device, non_blocking=True)
+        optimizer.zero_grad(set_to_none=True)
+        with torch.autocast(device_type=device.type, enabled=use_amp):
+            out = model(x)
+            loss = criterion(out, y)
+        scaler.scale(loss).backward()
+        scaler.unscale_(optimizer)
+        nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        scaler.step(optimizer)
+        scaler.update()
+        loss_sum += loss.item() * y.size(0)
+        correct += (out.argmax(1) == y).sum().item()
+        n += y.size(0)
+    return loss_sum / n, correct / n
 
 
-def build_model(num_classes: int, dropout: float = 0.2) -> nn.Module:
-    """Build MobileNetV3-Small model with custom classification head."""
-    logger.info("Initializing MobileNetV3-Small with pretrained weights...")
-    weights = models.MobileNet_V3_Small_Weights.DEFAULT
-    model = models.mobilenet_v3_small(weights=weights)
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--config", default="configs/classifier_config.yaml")
+    ap.add_argument("--epochs", type=int, default=None)
+    args = ap.parse_args()
 
-    # Replace classifier head (layer index 3 in mobilenet_v3 classifier)
-    in_features = model.classifier[3].in_features
-    model.classifier[2] = nn.Dropout(p=dropout)
-    model.classifier[3] = nn.Linear(in_features, num_classes)
+    root = project_root()
+    cfg = load_config(root / args.config)
+    seed_everything(cfg["dataset"]["random_seed"])
+    device = get_device(cfg["training"]["device"])
+    use_amp = device.type == "cuda"
+    classes = load_class_names(cfg, root)
+    loaders = make_loaders(cfg, root, classes)
 
-    return model
+    t, m = cfg["training"], cfg["model"]
+    epochs = args.epochs or t["epochs"]
+    model = build_model(m["architecture"], len(classes), m["pretrained"], m["dropout"]).to(device)
 
+    head_ids = {id(p) for p in model.get_classifier().parameters()}
+    head = [p for p in model.parameters() if id(p) in head_ids]
+    backbone = [p for p in model.parameters() if id(p) not in head_ids]
+    optimizer = AdamW([
+        {"params": backbone, "lr": t["learning_rate"] * t["backbone_lr_mult"]},
+        {"params": head, "lr": t["learning_rate"]},
+    ], weight_decay=t["weight_decay"])
+    # ONE optimizer + ONE scheduler for the whole run (the old code re-created the optimizer
+    # at unfreeze time, which silently detached it from the cosine scheduler).
+    scheduler = SequentialLR(
+        optimizer,
+        [LinearLR(optimizer, start_factor=0.1, total_iters=1),
+         CosineAnnealingLR(optimizer, T_max=max(1, epochs - 1), eta_min=t["min_lr"])],
+        milestones=[1])
+    criterion = nn.CrossEntropyLoss(label_smoothing=t["label_smoothing"])
+    scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
 
-def freeze_backbone(model: nn.Module, freeze: bool = True) -> None:
-    """Freeze or unfreeze backbone feature extractor layers."""
-    for param in model.features.parameters():
-        param.requires_grad = not freeze
-    state = "Frozen" if freeze else "Unfrozen"
-    logger.info("Backbone feature extractor parameters: %s", state)
-
-
-def evaluate_epoch(
-    model: nn.Module,
-    dataloader: DataLoader,
-    criterion: nn.Module,
-    device: torch.device,
-    num_classes: int,
-) -> Tuple[float, float, float]:
-    """Evaluate model on a dataset partition (validation).
-
-    Returns:
-        (avg_loss, accuracy, macro_f1)
-    """
-    model.eval()
-    running_loss = 0.0
-    correct = 0
-    total = 0
-
-    # For Macro-F1 computation
-    tp = [0] * num_classes
-    fp = [0] * num_classes
-    fn = [0] * num_classes
-
-    with torch.no_grad():
-        for images, labels in dataloader:
-            images = images.to(device)
-            labels = labels.to(device)
-
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-            running_loss += loss.item() * images.size(0)
-
-            _, preds = torch.max(outputs, 1)
-            correct += (preds == labels).sum().item()
-            total += labels.size(0)
-
-            for p, t in zip(preds.view(-1).cpu(), labels.view(-1).cpu()):
-                p_i, t_i = p.item(), t.item()
-                if p_i == t_i:
-                    tp[p_i] += 1
-                else:
-                    fp[p_i] += 1
-                    fn[t_i] += 1
-
-    avg_loss = running_loss / max(1, total)
-    accuracy = correct / max(1, total)
-
-    # Compute Macro-F1
-    f1_scores = []
-    for i in range(num_classes):
-        denom = (2 * tp[i] + fp[i] + fn[i])
-        f1 = (2 * tp[i] / denom) if denom > 0 else 0.0
-        f1_scores.append(f1)
-    macro_f1 = sum(f1_scores) / max(1, num_classes)
-
-    return avg_loss, accuracy, macro_f1
-
-
-def train_model(
-    config: dict,
-    base_dir: Path,
-    override_epochs: int = None,
-) -> None:
-    """Main training routine."""
-    # Set seed
-    seed = config["dataset"].get("random_seed", 42)
-    torch.manual_seed(seed)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
-
-    # Device selection
-    dev_str = config["training"].get("device", "auto")
-    if dev_str == "auto":
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device(dev_str)
-    logger.info("Using device: %s", device)
-
-    # Data loaders
-    splits_dir = base_dir / config["dataset"]["splits_dir"]
-    train_dir = splits_dir / "train"
-    val_dir = splits_dir / "val"
-    balanced_dir = base_dir / "data" / "balanced_waste_images"
-
-    train_tf, val_tf = get_data_transforms(config)
-    batch_size = config["training"]["batch_size"]
-    num_workers = config["training"].get("num_workers", 0 if sys.platform == "win32" else 2)
-
-    if train_dir.exists() and any(train_dir.iterdir()):
-        train_dataset = datasets.ImageFolder(str(train_dir), transform=train_tf)
-        val_dataset = datasets.ImageFolder(str(val_dir), transform=val_tf)
-
-        train_loader = DataLoader(
-            train_dataset, batch_size=batch_size, shuffle=True,
-            num_workers=num_workers, pin_memory=(device.type == "cuda")
-        )
-        val_loader = DataLoader(
-            val_dataset, batch_size=batch_size, shuffle=False,
-            num_workers=num_workers, pin_memory=(device.type == "cuda")
-        )
-        classes = train_dataset.classes
-        class_to_idx = train_dataset.class_to_idx
-    elif balanced_dir.exists():
-        sys.path.insert(0, str(base_dir))
-        from src.data.custom_dataset import CustomDataset
-
-        logger.info("Using CustomDataset with stratified split on: %s", balanced_dir)
-        train_loader, val_loader, _, cls_names, _ = CustomDataset.stratified_split_dls(
-            root=balanced_dir,
-            train_transformations=train_tf,
-            val_transformations=val_tf,
-            bs=batch_size,
-            ns=num_workers,
-        )
-        classes = list(cls_names.keys())
-        class_to_idx = cls_names
-    else:
-        logger.error(
-            "Neither splits directory (%s) nor balanced_waste_images (%s) found.",
-            splits_dir, balanced_dir
-        )
-        return
-
-    num_classes = config["model"]["num_classes"]
-    logger.info(
-        "Loaded datasets: %d train batches, %d val batches across %d classes.",
-        len(train_loader), len(val_loader), len(classes)
-    )
-
-    # Build model
-    model = build_model(num_classes, dropout=config["model"].get("dropout", 0.2))
-    model = model.to(device)
-
-    # Setup training hyperparameters
-    epochs = override_epochs or config["training"]["epochs"]
-    freeze_epochs = config["training"].get("freeze_backbone_epochs", 0)
-    lr = config["training"]["learning_rate"]
-    weight_decay = config["training"]["weight_decay"]
-
-    criterion = nn.CrossEntropyLoss()
-    optimizer = AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    scheduler = CosineAnnealingLR(
-        optimizer, T_max=epochs, eta_min=config["training"].get("min_lr", 1e-5)
-    )
-
-    checkpoint_dir = base_dir / config["training"]["checkpoint_dir"]
-    checkpoint_dir.mkdir(parents=True, exist_ok=True)
-
-    best_val_f1 = 0.0
-    patience = config["training"].get("early_stopping_patience", 5)
-    patience_counter = 0
-
-    if freeze_epochs > 0:
-        freeze_backbone(model, freeze=True)
-
-    logger.info("Beginning training for %d epochs...", epochs)
+    ckpt_dir = root / t["checkpoint_dir"]
+    ckpt_dir.mkdir(parents=True, exist_ok=True)
+    freeze_epochs, patience = t["freeze_backbone_epochs"], t["early_stopping_patience"]
+    best_f1, bad = 0.0, 0
+    logger.info("Device=%s arch=%s classes=%d epochs=%d", device, m["architecture"], len(classes), epochs)
 
     for epoch in range(1, epochs + 1):
-        if epoch == freeze_epochs + 1:
-            freeze_backbone(model, freeze=False)
-            # Re-initialize optimizer with smaller lr for fine-tuning
-            optimizer = AdamW(model.parameters(), lr=lr * 0.5, weight_decay=weight_decay)
+        frozen = epoch <= freeze_epochs
+        if epoch == 1 or epoch == freeze_epochs + 1:
+            set_frozen(model, head_ids, frozen)
+            logger.info("Backbone %s", "frozen" if frozen else "unfrozen")
 
-        model.train()
-        running_train_loss = 0.0
-        train_correct = 0
-        train_total = 0
-
-        for images, labels in train_loader:
-            images = images.to(device)
-            labels = labels.to(device)
-
-            optimizer.zero_grad()
-            outputs = model(images)
-            loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-
-            running_train_loss += loss.item() * images.size(0)
-            _, preds = torch.max(outputs, 1)
-            train_correct += (preds == labels).sum().item()
-            train_total += labels.size(0)
-
+        tr_loss, tr_acc = train_one_epoch(model, loaders["train"], criterion, optimizer,
+                                          scaler, device, use_amp, frozen)
         scheduler.step()
 
-        train_loss = running_train_loss / max(1, train_total)
-        train_acc = train_correct / max(1, train_total)
+        logits, targets = collect_logits(model, loaders["val"], device)
+        preds = logits.argmax(1)
+        val_loss = F.cross_entropy(logits, targets).item()
+        val_acc = (preds == targets).float().mean().item()
+        val_f1 = f1_score(targets, preds, average="macro", zero_division=0)
+        logger.info("Epoch %02d/%02d | train loss %.4f acc %.4f | val loss %.4f acc %.4f macroF1 %.4f",
+                    epoch, epochs, tr_loss, tr_acc, val_loss, val_acc, val_f1)
 
-        val_loss, val_acc, val_f1 = evaluate_epoch(
-            model, val_loader, criterion, device, num_classes
-        )
-
-        logger.info(
-            "Epoch [%02d/%02d] | Train Loss: %.4f | Train Acc: %.4f | "
-            "Val Loss: %.4f | Val Acc: %.4f | Val Macro-F1: %.4f",
-            epoch, epochs, train_loss, train_acc, val_loss, val_acc, val_f1
-        )
-
-        # Save checkpoint metadata
-        checkpoint_data = {
-            "epoch": epoch,
-            "model_state_dict": model.state_dict(),
-            "optimizer_state_dict": optimizer.state_dict(),
-            "val_f1": val_f1,
-            "val_acc": val_acc,
-            "classes": train_dataset.classes,
-            "class_to_idx": train_dataset.class_to_idx,
-            "config": config,
-        }
-
-        # Latest checkpoint
-        torch.save(checkpoint_data, checkpoint_dir / "latest_checkpoint.pth")
-
-        # Best checkpoint
-        if val_f1 > best_val_f1:
-            best_val_f1 = val_f1
-            patience_counter = 0
-            torch.save(checkpoint_data, checkpoint_dir / "best_model.pth")
-            logger.info("Saved new best checkpoint (Macro-F1: %.4f)", best_val_f1)
-        else:
-            patience_counter += 1
-            if patience_counter >= patience and epoch > freeze_epochs:
-                logger.info("Early stopping triggered after %d epochs without improvement.", patience)
+        if val_f1 > best_f1:
+            best_f1, bad = val_f1, 0
+            torch.save({
+                "model_state_dict": model.state_dict(), "arch": m["architecture"], "classes": classes,
+                "image_size": cfg["dataset"]["image_size"], "norm": cfg["dataset"]["normalization"],
+                "epoch": epoch, "val_f1": val_f1, "val_acc": val_acc,
+            }, ckpt_dir / "best_model.pth")
+            logger.info("Saved best checkpoint (val macro-F1 %.4f)", best_f1)
+        elif not frozen:
+            bad += 1
+            if bad >= patience:
+                logger.info("Early stopping.")
                 break
-
-    logger.info("Training complete. Best Validation Macro-F1: %.4f", best_val_f1)
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Train MobileNetV3-Small waste classifier")
-    parser.add_argument("--config", type=str, default="configs/classifier_config.yaml", help="Path to config")
-    parser.add_argument("--epochs", type=int, default=None, help="Override number of training epochs")
-    args = parser.parse_args()
-
-    base_dir = Path(__file__).resolve().parents[2]
-    config_path = base_dir / args.config
-    config = load_config(config_path)
-
-    train_model(config, base_dir, args.epochs)
+    logger.info("Done. Best val macro-F1: %.4f", best_f1)
 
 
 if __name__ == "__main__":
