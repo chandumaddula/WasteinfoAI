@@ -618,210 +618,311 @@ Detailed build commands, model download instructions, environment variables, and
 A proposed repository structure is:
 
 ```text
-wasteinfoAI/
-│
-├── README.md
+WasteinfoAI/
 ├── .gitignore
-├── .env.example
+├── README.md
 ├── docker-compose.yml
-│
-├── android/                           # PHASES 1–6, 9–10
-│   ├── settings.gradle.kts
+├── wasteinfoAI_complete_build_guide.pdf
+├── wasteinfoAI_phases_and_workflow.pdf
+├── android/
+│   ├── .gitignore
 │   ├── build.gradle.kts
 │   ├── gradle.properties
+│   ├── gradlew
+│   ├── gradlew.bat
+│   ├── local.properties
+│   ├── settings.gradle.kts
+│   ├── gradle/
+│   │   └── wrapper/
+│   │       ├── gradle-wrapper.jar
+│   │       └── gradle-wrapper.properties
 │   └── app/
 │       ├── build.gradle.kts
 │       ├── proguard-rules.pro
 │       └── src/
+│           ├── androidTest/
+│           │   └── java/
+│           │       └── com/
+│           │           └── wasteinfoai/
+│           │               └── camera/
+│           │                   └── AndroidImageValidatorTest.kt
 │           ├── main/
 │           │   ├── AndroidManifest.xml
-│           │   │
 │           │   ├── assets/
-│           │   │   ├── vision/
-│           │   │   │   └── waste_classifier.pte
-│           │   │   ├── llm/
-│           │   │   └── rules/
-│           │   │       └── disposal_rules.json
-│           │   │
-│           │   ├── java/com/wasteinfoai/
-│           │   │   ├── MainActivity.kt
-│           │   │   ├── WasteInfoAIApp.kt
-│           │   │   │
-│           │   │   ├── core/
-│           │   │   │   ├── common/
-│           │   │   │   ├── constants/
-│           │   │   │   ├── permissions/
-│           │   │   │   ├── navigation/
-│           │   │   │   └── util/
-│           │   │   │
-│           │   │   ├── data/
-│           │   │   │   ├── local/
-│           │   │   │   │   ├── WasteDatabase.kt
-│           │   │   │   │   ├── dao/
-│           │   │   │   │   └── entity/
-│           │   │   │   ├── remote/
-│           │   │   │   │   ├── ApiService.kt
-│           │   │   │   │   └── ApiClient.kt
-│           │   │   │   └── repository/
-│           │   │   │
-│           │   │   ├── ai/
-│           │   │   │   ├── vision/
-│           │   │   │   │   ├── WasteClassifier.kt
-│           │   │   │   │   ├── ImagePreprocessor.kt
-│           │   │   │   │   └── ClassificationResult.kt
-│           │   │   │   ├── llm/
-│           │   │   │   │   ├── LlamaEngine.kt
-│           │   │   │   │   ├── PromptBuilder.kt
-│           │   │   │   │   └── AssistantService.kt
-│           │   │   │   └── rules/
-│           │   │   │       ├── DisposalRuleEngine.kt
-│           │   │   │       └── SafetyGuard.kt
-│           │   │   │
-│           │   │   ├── camera/
-│           │   │   │   ├── CameraScreen.kt
-│           │   │   │   ├── CameraViewModel.kt
-│           │   │   │   └── ImagePicker.kt
-│           │   │   │
-│           │   │   ├── audio/
-│           │   │   │   └── TextToSpeechManager.kt
-│           │   │   │
-│           │   │   ├── features/
-│           │   │   │   ├── auth/
-│           │   │   │   ├── home/
-│           │   │   │   ├── scan/
-│           │   │   │   ├── history/
-│           │   │   │   ├── assistant/
-│           │   │   │   ├── reports/
-│           │   │   │   ├── map/
-│           │   │   │   ├── tasks/
-│           │   │   │   └── dashboards/
-│           │   │   │
-│           │   │   ├── sync/
-│           │   │   │   ├── SyncWorker.kt
-│           │   │   │   └── SyncScheduler.kt
-│           │   │   │
-│           │   │   └── ui/
-│           │   │       ├── theme/
-│           │   │       ├── components/
-│           │   │       └── screens/
-│           │   │
-│           │   ├── res/
-│           │   └── test/
-│           │
-│           └── androidTest/
-│
-├── ml/                                # PHASES 3–4
-│   ├── README.md
-│   ├── requirements.txt
-│   ├── configs/
-│   │   └── classifier_config.yaml
-│   ├── data/
-│   │   ├── raw/
-│   │   ├── processed/
-│   │   └── splits/
-│   ├── notebooks/
-│   │   ├── 01_dataset_exploration.ipynb
-│   │   └── 02_model_evaluation.ipynb
-│   ├── src/
-│   │   ├── data/
-│   │   │   ├── prepare_dataset.py
-│   │   │   └── split_dataset.py
-│   │   ├── training/
-│   │   │   ├── train_classifier.py
-│   │   │   └── evaluate_classifier.py
-│   │   ├── inference/
-│   │   │   └── predict.py
-│   │   └── export/
-│   │       ├── export_model.py
-│   │       └── validate_export.py
-│   ├── labels/
-│   │   └── class_names.json
-│   ├── checkpoints/                  # Generated locally; do not commit
-│   ├── exported/                     # Generated locally; do not commit
-│   └── reports/
-│       └── evaluation_summary.json
-│
-├── backend/                           # PHASES 7–8
-│   ├── requirements.txt
-│   ├── alembic.ini
+│           │   │   ├── rules/
+│           │   │   │   └── disposal_rules.json
+│           │   │   └── vision/
+│           │   │       ├── class_names.json
+│           │   │       ├── model_metadata.json
+│           │   │       └── waste_classifier.pte
+│           │   ├── java/
+│           │   │   └── com/
+│           │   │       └── wasteinfoai/
+│           │   │           ├── MainActivity.kt
+│           │   │           ├── WasteInfoAIApp.kt
+│           │   │           ├── ai/
+│           │   │           │   ├── barcode/
+│           │   │           │   │   ├── BarcodeScannerService.kt
+│           │   │           │   │   └── ProductLookupService.kt
+│           │   │           │   ├── llm/
+│           │   │           │   │   ├── AssistantService.kt
+│           │   │           │   │   ├── LlamaEngine.kt
+│           │   │           │   │   └── PromptBuilder.kt
+│           │   │           │   ├── rules/
+│           │   │           │   │   ├── DisposalRuleEngine.kt
+│           │   │           │   │   ├── DisposalRuleModels.kt
+│           │   │           │   │   └── SafetyGuard.kt
+│           │   │           │   ├── taxonomy/
+│           │   │           │   │   └── WasteTaxonomy.kt
+│           │   │           │   └── vision/
+│           │   │           │       ├── ClassificationResult.kt
+│           │   │           │       ├── DeepInspectionService.kt
+│           │   │           │       ├── ImagePreprocessor.kt
+│           │   │           │       ├── ImageQualityAssessor.kt
+│           │   │           │       └── WasteClassifier.kt
+│           │   │           ├── audio/
+│           │   │           │   └── TextToSpeechManager.kt
+│           │   │           ├── camera/
+│           │   │           │   ├── AndroidImageValidator.kt
+│           │   │           │   ├── AppImageStore.kt
+│           │   │           │   ├── CameraModels.kt
+│           │   │           │   ├── CameraScreen.kt
+│           │   │           │   ├── CameraViewModel.kt
+│           │   │           │   ├── CameraViewModelFactory.kt
+│           │   │           │   ├── ImageDecoding.kt
+│           │   │           │   ├── ImageGeometry.kt
+│           │   │           │   ├── ImagePicker.kt
+│           │   │           │   ├── OpencvObjectDetector.kt
+│           │   │           │   └── WasteObjectDetector.kt
+│           │   │           ├── core/
+│           │   │           │   ├── common/
+│           │   │           │   │   └── Resource.kt
+│           │   │           │   ├── di/
+│           │   │           │   │   └── AppContainer.kt
+│           │   │           │   ├── navigation/
+│           │   │           │   │   ├── NavGraph.kt
+│           │   │           │   │   └── Screen.kt
+│           │   │           │   ├── permissions/
+│           │   │           │   │   └── CameraPermission.kt
+│           │   │           │   ├── theme/
+│           │   │           │   │   ├── Color.kt
+│           │   │           │   │   └── Theme.kt
+│           │   │           │   └── util/
+│           │   │           │       ├── ActivityExt.kt
+│           │   │           │       ├── FileNaming.kt
+│           │   │           │       ├── HostLifecycle.kt
+│           │   │           │       └── SizeLimitedCopy.kt
+│           │   │           ├── data/
+│           │   │           │   ├── local/
+│           │   │           │   │   ├── WasteDatabase.kt
+│           │   │           │   │   ├── dao/
+│           │   │           │   │   │   ├── ReportDao.kt
+│           │   │           │   │   │   ├── ScanDao.kt
+│           │   │           │   │   │   └── TaskDao.kt
+│           │   │           │   │   └── entity/
+│           │   │           │   │       ├── ReportDraftEntity.kt
+│           │   │           │   │       ├── ScanHistoryEntity.kt
+│           │   │           │   │       └── TaskEntity.kt
+│           │   │           │   ├── remote/
+│           │   │           │   │   ├── ApiClient.kt
+│           │   │           │   │   ├── ApiService.kt
+│           │   │           │   │   ├── SessionManager.kt
+│           │   │           │   │   └── dto/
+│           │   │           │   │       ├── AuthDtos.kt
+│           │   │           │   │       ├── ReportDtos.kt
+│           │   │           │   │       └── SyncDtos.kt
+│           │   │           │   └── repository/
+│           │   │           │       ├── AuthRepository.kt
+│           │   │           │       ├── ReportRepository.kt
+│           │   │           │       ├── ScanRepository.kt
+│           │   │           │       └── TaskRepository.kt
+│           │   │           ├── features/
+│           │   │           │   ├── assistant/
+│           │   │           │   │   ├── AssistantScreen.kt
+│           │   │           │   │   └── AssistantViewModel.kt
+│           │   │           │   ├── auth/
+│           │   │           │   │   ├── LoginScreen.kt
+│           │   │           │   │   └── LoginViewModel.kt
+│           │   │           │   ├── common/
+│           │   │           │   │   ├── DashboardSideDrawer.kt
+│           │   │           │   │   └── ServerConfigDialog.kt
+│           │   │           │   ├── dashboards/
+│           │   │           │   │   ├── AdminDashboardScreen.kt
+│           │   │           │   │   ├── AdminDashboardViewModel.kt
+│           │   │           │   │   ├── IndustryDashboardScreen.kt
+│           │   │           │   │   ├── ReviewerDashboardScreen.kt
+│           │   │           │   │   └── ReviewerDashboardViewModel.kt
+│           │   │           │   ├── history/
+│           │   │           │   │   ├── HistoryScreen.kt
+│           │   │           │   │   └── HistoryViewModel.kt
+│           │   │           │   ├── home/
+│           │   │           │   │   ├── HomeScreen.kt
+│           │   │           │   │   └── HomeViewModel.kt
+│           │   │           │   ├── map/
+│           │   │           │   │   ├── MapScreen.kt
+│           │   │           │   │   └── MapViewModel.kt
+│           │   │           │   ├── onboarding/
+│           │   │           │   │   ├── CategoryAuthScreen.kt
+│           │   │           │   │   ├── CategorySelectionScreen.kt
+│           │   │           │   │   ├── SplashScreen.kt
+│           │   │           │   │   └── UserCategory.kt
+│           │   │           │   ├── reports/
+│           │   │           │   │   ├── CreateReportScreen.kt
+│           │   │           │   │   └── CreateReportViewModel.kt
+│           │   │           │   ├── scan/
+│           │   │           │   │   ├── ScanResultScreen.kt
+│           │   │           │   │   └── ScanResultViewModel.kt
+│           │   │           │   └── tasks/
+│           │   │           │       ├── WorkerTasksScreen.kt
+│           │   │           │       └── WorkerTasksViewModel.kt
+│           │   │           ├── location/
+│           │   │           │   └── LocationHelper.kt
+│           │   │           └── sync/
+│           │   │               ├── SyncScheduler.kt
+│           │   │               └── SyncWorker.kt
+│           │   └── res/
+│           │       └── values/
+│           │           └── camera_strings.xml
+│           └── test/
+│               └── java/
+│                   └── com/
+│                       └── wasteinfoai/
+│                           ├── ai/
+│                           │   ├── ClassificationResultTest.kt
+│                           │   ├── DisposalRuleEngineTest.kt
+│                           │   ├── ImagePreprocessorTest.kt
+│                           │   ├── ImageQualityAssessorTest.kt
+│                           │   ├── ProductLookupServiceTest.kt
+│                           │   ├── SafetyGuardTest.kt
+│                           │   └── WasteTaxonomyTest.kt
+│                           ├── camera/
+│                           │   ├── CameraViewModelTest.kt
+│                           │   └── ImageGeometryTest.kt
+│                           ├── core/
+│                           │   └── util/
+│                           │       └── UtilTest.kt
+│                           ├── location/
+│                           │   └── CoordinatesTest.kt
+│                           └── sync/
+│                               └── ReportSyncStateTest.kt
+├── backend/
+│   ├── .env
+│   ├── .env.example
+│   ├── .gitignore
 │   ├── Dockerfile
+│   ├── README.md
+│   ├── alembic.ini
+│   ├── pytest.ini
+│   ├── requirements.txt
 │   ├── alembic/
 │   │   ├── env.py
+│   │   ├── script.py.mako
 │   │   └── versions/
-│   │
+│   │       ├── .gitkeep
+│   │       └── 20261011_0902_6f0d97cd0f18_initial_schema.py
 │   ├── app/
 │   │   ├── main.py
 │   │   ├── api/
+│   │   │   ├── __init__.py
 │   │   │   └── v1/
+│   │   │       ├── __init__.py
 │   │   │       ├── auth.py
-│   │   │       ├── users.py
+│   │   │       ├── health.py
 │   │   │       ├── reports.py
-│   │   │       ├── hotspots.py
-│   │   │       ├── tasks.py
-│   │   │       └── rules.py
-│   │   │
+│   │   │       ├── router.py
+│   │   │       └── sync.py
 │   │   ├── core/
-│   │   │   ├── config.py
-│   │   │   ├── security.py
-│   │   │   └── permissions.py
-│   │   │
-│   │   ├── database/
-│   │   │   ├── session.py
-│   │   │   └── base.py
-│   │   │
-│   │   ├── models/
-│   │   │   ├── user.py
-│   │   │   ├── report.py
-│   │   │   ├── task.py
-│   │   │   ├── evidence.py
-│   │   │   └── audit_log.py
-│   │   │
-│   │   ├── schemas/
+│   │   │   ├── __init__.py
 │   │   │   ├── auth.py
-│   │   │   ├── user.py
+│   │   │   ├── config.py
+│   │   │   ├── errors.py
+│   │   │   ├── logging_config.py
+│   │   │   ├── middleware.py
+│   │   │   ├── permissions.py
+│   │   │   └── validation.py
+│   │   ├── database/
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py
+│   │   │   └── session.py
+│   │   ├── models/
+│   │   │   ├── __init__.py
+│   │   │   ├── audit_event.py
+│   │   │   ├── institution.py
 │   │   │   ├── report.py
-│   │   │   └── task.py
-│   │   │
-│   │   ├── services/
-│   │   │   ├── report_service.py
-│   │   │   ├── hotspot_service.py
-│   │   │   ├── task_service.py
-│   │   │   └── sync_service.py
-│   │   │
-│   │   └── storage/
-│   │       └── media_storage.py
-│   │
+│   │   │   └── user.py
+│   │   ├── schemas/
+│   │   │   ├── __init__.py
+│   │   │   ├── health.py
+│   │   │   ├── report.py
+│   │   │   └── user.py
+│   │   └── services/
+│   │       └── report.py
 │   └── tests/
-│       ├── test_auth.py
-│       ├── test_reports.py
-│       ├── test_tasks.py
-│       └── test_sync.py
-│
-├── database/                          # PHASE 7
+│       ├── __init__.py
+│       ├── conftest.py
+│       ├── test_config.py
+│       ├── test_database.py
+│       ├── test_errors.py
+│       ├── test_health.py
+│       ├── test_report_service.py
+│       ├── test_routes_auth.py
+│       ├── test_routes_reports.py
+│       └── test_validation.py
+├── database/
+│   ├── README.md
 │   ├── init/
+│   │   └── README.md
 │   └── seeds/
 │       └── development_rules.sql
-│
-├── docs/                              # PHASES 1–12
-│   ├── architecture.md
-│   ├── system_workflow.md
+├── docs/
 │   ├── api_documentation.md
+│   ├── architecture.md
 │   ├── database_schema.md
-│   ├── ai_model_card.md
-│   ├── offline_strategy.md
-│   ├── security_and_privacy.md
-│   ├── test_plan.md
-│   ├── technical_report.md
-│   └── demo_script.md
-│
-├── scripts/
-│   ├── setup_dev.ps1
-│   ├── train_model.ps1
-│   └── run_backend.ps1
-│
-└── .github/
-    └── workflows/
-        └── tests.yml
+│   └── system_workflow.md
+└── ml/
+    ├── .gitignore
+    ├── README.md
+    ├── requirements.txt
+    ├── checkpoints/
+    │   └── .gitkeep
+    ├── configs/
+    │   └── classifier_config.yaml
+    ├── data/
+    ├── exported/
+    │   ├── .gitkeep
+    │   ├── model_metadata.json
+    │   └── waste_classifier.pte
+    ├── labels/
+    │   └── class_names.json
+    ├── notebooks/
+    │   ├── 01_dataset_exploration.ipynb
+    │   └── 02_model_evaluation.ipynb
+    ├── reports/
+    │   └── evaluation_summary.json
+    ├── saved_models/
+    │   └── waste_best_model.pth
+    └── src/
+        ├── data/
+        │   ├── __init__.py
+        │   ├── custom_dataset.py
+        │   ├── prepare_dataset.py
+        │   ├── split_dataset.py
+        │   └── visualization.py
+        ├── export/
+        │   ├── export_model.py
+        │   ├── export_rexnet_model.py
+        │   ├── validate_export.py
+        │   └── validate_rexnet_export.py
+        ├── inference/
+        │   ├── __init__.py
+        │   ├── gradcam_analysis.py
+        │   └── predict.py
+        └── training/
+            ├── __init__.py
+            ├── evaluate_classifier.py
+            ├── train_classifier.py
+            └── train_validation.py
+
 ```
 
 This is a proposed structure and can be adapted to the actual repository implementation.
