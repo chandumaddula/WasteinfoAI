@@ -6,8 +6,12 @@ import android.graphics.RectF
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wasteinfoai.ai.barcode.BarcodeScannerService
+import com.wasteinfoai.ai.barcode.EvidenceReconciliationEngine
+import com.wasteinfoai.ai.barcode.OcrPackagingEvidence
+import com.wasteinfoai.ai.barcode.PackagingOcrService
 import com.wasteinfoai.ai.barcode.ProductLookupService
 import com.wasteinfoai.ai.barcode.ProductPackagingInfo
+import com.wasteinfoai.ai.barcode.ReconciledEvidenceResult
 import com.wasteinfoai.ai.rules.DisposalRule
 import com.wasteinfoai.ai.rules.DisposalRuleEngine
 import com.wasteinfoai.ai.rules.SafetyAssessment
@@ -22,10 +26,16 @@ import com.wasteinfoai.ai.vision.ImageQualityAssessment
 import com.wasteinfoai.ai.vision.PreprocessingStrategy
 import com.wasteinfoai.ai.vision.WasteClassifier
 import com.wasteinfoai.audio.TextToSpeechManager
-import com.wasteinfoai.camera.OpencvObjectDetector
 import com.wasteinfoai.camera.WasteObjectDetector
+import com.wasteinfoai.data.local.entity.FeedbackChoice
+import com.wasteinfoai.data.local.entity.ScanFeedbackEntity
 import com.wasteinfoai.data.local.entity.ScanHistoryEntity
+import com.wasteinfoai.data.local.entity.SyncState
+import com.wasteinfoai.data.repository.FeedbackRepository
 import com.wasteinfoai.data.repository.ScanRepository
+import com.wasteinfoai.location.JurisdictionResolver
+import com.wasteinfoai.location.LocationHelper
+import com.wasteinfoai.location.WasteJurisdiction
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +43,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.Locale
+import java.util.UUID
 
 sealed interface ScanResultUiState {
     data object Loading : ScanResultUiState
@@ -49,9 +61,16 @@ sealed interface ScanResultUiState {
         val detectedBarcode: String? = null,
         val productPackagingInfo: ProductPackagingInfo? = null,
         val detectedObjectsCount: Int = 0,
+        val detectedObjects: List<com.wasteinfoai.camera.DetectedWasteItem> = emptyList(),
+        val selectedObjectIndex: Int = 0,
         val isUserConfirmed: Boolean = false,
         val userConfirmedLabel: String? = null,
-        val specificCandidates: List<SpecificWasteCandidate> = emptyList()
+        val specificCandidates: List<SpecificWasteCandidate> = emptyList(),
+        val ocrEvidence: OcrPackagingEvidence? = null,
+        val hasEvidenceConflict: Boolean = false,
+        val conflictExplanation: String? = null,
+        val resolvedJurisdiction: WasteJurisdiction = WasteJurisdiction.INDIA_NATIONAL,
+        val feedbackSubmitted: Boolean = false
     ) : ScanResultUiState
     data class Error(val message: String, val imageFile: File?) : ScanResultUiState
 }
@@ -61,9 +80,13 @@ class ScanResultViewModel(
     private val disposalRuleEngine: DisposalRuleEngine,
     private val scanRepository: ScanRepository,
     private val ttsManager: TextToSpeechManager,
-    private val objectDetector: WasteObjectDetector = OpencvObjectDetector(),
+    private val objectDetector: WasteObjectDetector = com.wasteinfoai.camera.MlKitWasteObjectDetector(),
     private val barcodeScanner: BarcodeScannerService = BarcodeScannerService(),
-    private val productLookupService: ProductLookupService = ProductLookupService()
+    private val productLookupService: ProductLookupService = ProductLookupService(),
+    private val packagingOcrService: PackagingOcrService = PackagingOcrService(),
+    private val evidenceReconciliationEngine: EvidenceReconciliationEngine = EvidenceReconciliationEngine(),
+    private val feedbackRepository: FeedbackRepository? = null,
+    private val locationHelper: LocationHelper? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ScanResultUiState>(ScanResultUiState.Loading)
@@ -121,43 +144,44 @@ class ScanResultViewModel(
                 val barcode = bitmap?.let { barcodeScanner.scanBarcode(it) }
                 val productInfo = barcode?.let { productLookupService.lookup(it) }
 
-                // 6. Hierarchical item & material identification
-                val (effectiveCategory, specificItem, materialCode, identification) = if (productInfo != null && productInfo.specificItem != null) {
-                    val source = IdentificationSource.BARCODE_LOOKUP
-                    val hier = HierarchicalIdentification(
-                        coarseCategory = productInfo.coarseCategory,
-                        specificItem = productInfo.specificItem,
-                        materialCode = productInfo.materialCode,
-                        materialDescription = productInfo.packagingDescription,
-                        identificationSource = source,
-                        confidence = 0.95f,
-                        evidenceSummary = "Matched verified packaging record for '${productInfo.productName}' (${productInfo.dataSource})",
-                        needsUserConfirmation = false
-                    )
-                    Tuple4(productInfo.coarseCategory, productInfo.specificItem, productInfo.materialCode, hier)
-                } else {
-                    val hier = HierarchicalIdentification.fromVisionClassification(
-                        category = classification.label,
-                        confidence = classification.confidence,
-                        isCropped = cropRect != null
-                    )
-                    Tuple4(classification.label, null, null, hier)
-                }
+                // 6. On-device Packaging OCR for resin codes (RIC 1-7) & keywords
+                val ocrEvidence = bitmap?.let { packagingOcrService.scanPackagingText(it) }
 
-                // 7. Hierarchical Disposal Rule lookup
+                // 7. Multi-evidence reconciliation
+                val reconciliation = evidenceReconciliationEngine.reconcile(
+                    visualResult = classification,
+                    barcodeProduct = productInfo,
+                    ocrEvidence = ocrEvidence,
+                    isCroppedRoi = primaryObject != null
+                )
+
+                val effectiveCategory = reconciliation.coarseCategory
+                val specificItem = reconciliation.specificItem
+                val materialCode = reconciliation.materialCode
+                val identification = reconciliation.toHierarchicalIdentification()
+
+                // 8. Jurisdiction resolution based on location
+                val coords = locationHelper?.getLastKnownLocation()
+                val targetJurisdiction = JurisdictionResolver.resolveJurisdiction(
+                    latitude = coords?.latitude,
+                    longitude = coords?.longitude
+                )
+
+                // 9. Hierarchical Disposal Rule lookup for resolved jurisdiction
                 val rule = disposalRuleEngine.getHierarchicalRule(
                     category = effectiveCategory,
                     specificItem = specificItem,
-                    materialCode = materialCode
+                    materialCode = materialCode,
+                    jurisdiction = targetJurisdiction.code
                 )
 
-                // 8. Conservative safety assessment
+                // 10. Conservative safety assessment
                 val safety = SafetyGuard.evaluateSafety(effectiveCategory, classification.isUncertain)
 
-                // 9. Load specific candidate items for user refinement
+                // 11. Load specific candidate items for user refinement
                 val candidates = WasteTaxonomy.getCandidates(effectiveCategory)
 
-                // 10. Persist initial scan to Room
+                // 12. Persist initial scan to Room
                 val scanId = runCatching {
                     scanRepository.saveScan(
                         ScanHistoryEntity(
@@ -191,9 +215,78 @@ class ScanResultViewModel(
                     detectedBarcode = barcode,
                     productPackagingInfo = productInfo,
                     detectedObjectsCount = detectedItems.size,
+                    detectedObjects = detectedItems,
+                    selectedObjectIndex = 0,
                     isUserConfirmed = false,
-                    specificCandidates = candidates
+                    specificCandidates = candidates,
+                    ocrEvidence = ocrEvidence,
+                    hasEvidenceConflict = reconciliation.hasConflict,
+                    conflictExplanation = reconciliation.conflictReason,
+                    resolvedJurisdiction = targetJurisdiction,
+                    feedbackSubmitted = false
                 )
+            }
+        }
+    }
+
+    /**
+     * Multi-object selection: allows user to select which detected bounding box ROI to inspect.
+     * Re-crops and classifies the chosen item.
+     */
+    fun selectDetectedObject(index: Int) {
+        val currentState = _uiState.value as? ScanResultUiState.Success ?: return
+        if (index !in currentState.detectedObjects.indices) return
+        val targetObj = currentState.detectedObjects[index]
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val cropRect = RectF(
+                    targetObj.boundingBox.left,
+                    targetObj.boundingBox.top,
+                    targetObj.boundingBox.right,
+                    targetObj.boundingBox.bottom
+                )
+                val classResult = wasteClassifier.classify(
+                    currentState.imageFile,
+                    PreprocessingStrategy.ROI_CROP,
+                    cropRect
+                )
+                if (classResult.isSuccess) {
+                    val classification = classResult.getOrThrow()
+                    val reconciliation = evidenceReconciliationEngine.reconcile(
+                        visualResult = classification,
+                        barcodeProduct = currentState.productPackagingInfo,
+                        ocrEvidence = currentState.ocrEvidence,
+                        isCroppedRoi = true
+                    )
+
+                    val effectiveCategory = reconciliation.coarseCategory
+                    val specificItem = reconciliation.specificItem
+                    val materialCode = reconciliation.materialCode
+                    val hier = reconciliation.toHierarchicalIdentification()
+
+                    val rule = disposalRuleEngine.getHierarchicalRule(
+                        category = effectiveCategory,
+                        specificItem = specificItem,
+                        materialCode = materialCode,
+                        jurisdiction = currentState.resolvedJurisdiction.code
+                    )
+                    val safety = SafetyGuard.evaluateSafety(effectiveCategory, classification.isUncertain)
+                    val candidates = WasteTaxonomy.getCandidates(effectiveCategory)
+
+                    _uiState.value = currentState.copy(
+                        classification = classification,
+                        rule = rule,
+                        safety = safety,
+                        hierarchicalIdentification = hier,
+                        selectedObjectIndex = index,
+                        isUserConfirmed = false,
+                        userConfirmedLabel = null,
+                        specificCandidates = candidates,
+                        hasEvidenceConflict = reconciliation.hasConflict,
+                        conflictExplanation = reconciliation.conflictReason
+                    )
+                }
             }
         }
     }
@@ -214,7 +307,8 @@ class ScanResultViewModel(
                 val updatedRule = disposalRuleEngine.getHierarchicalRule(
                     category = newCategory,
                     specificItem = resolvedItem,
-                    materialCode = materialCode
+                    materialCode = materialCode,
+                    jurisdiction = currentState.resolvedJurisdiction.code
                 )
                 val updatedSafety = SafetyGuard.evaluateSafety(newCategory, false)
                 val newCandidates = WasteTaxonomy.getCandidates(newCategory)
@@ -258,7 +352,61 @@ class ScanResultViewModel(
                     hierarchicalIdentification = updatedIdentification,
                     isUserConfirmed = true,
                     userConfirmedLabel = resolvedItem ?: newCategory,
-                    specificCandidates = newCandidates
+                    specificCandidates = newCandidates,
+                    hasEvidenceConflict = false,
+                    conflictExplanation = null
+                )
+            }
+        }
+    }
+
+    /**
+     * Submit human-in-the-loop feedback with optional user consent for anonymized sync.
+     */
+    fun submitFeedback(
+        choice: String,
+        userCorrectedCategory: String? = null,
+        userCorrectedSpecificItem: String? = null,
+        hasConsent: Boolean = false
+    ) {
+        val currentState = _uiState.value as? ScanResultUiState.Success ?: return
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                val scanUuid = UUID.randomUUID().toString()
+                val crop = currentState.detectedObjects.getOrNull(currentState.selectedObjectIndex)?.boundingBox
+                val cropStr = crop?.let { "${it.left},${it.top},${it.right},${it.bottom}" }
+                val topKFormatted = currentState.classification.topKResults.joinToString(";") { scored ->
+                    "${scored.label}:${String.format(Locale.US, "%.3f", scored.score)}"
+                }
+
+                val feedbackChoice = when (choice) {
+                    "CORRECT" -> FeedbackChoice.CORRECT
+                    "WRONG_ITEM" -> FeedbackChoice.WRONG_ITEM
+                    else -> FeedbackChoice.NOT_SURE
+                }
+
+                val feedbackEntity = ScanFeedbackEntity(
+                    scanUuid = scanUuid,
+                    originalCategory = currentState.classification.label,
+                    originalConfidence = currentState.classification.confidence,
+                    topKJson = topKFormatted,
+                    detectorLabel = cropStr,
+                    userChoice = feedbackChoice,
+                    userConfirmedCategory = userCorrectedCategory ?: userCorrectedSpecificItem,
+                    modelVersion = "1.0.0-rexnet150",
+                    preprocessingVersion = if (crop != null) "roi_crop" else "letterbox",
+                    timestamp = System.currentTimeMillis(),
+                    hasUploadConsent = hasConsent,
+                    syncStatus = if (hasConsent) SyncState.PENDING_SYNC else SyncState.LOCAL_DRAFT
+                )
+
+                feedbackRepository?.saveFeedback(feedbackEntity)
+
+                _uiState.value = currentState.copy(
+                    feedbackSubmitted = true,
+                    isUserConfirmed = (choice == "CORRECT" || choice == "WRONG_ITEM"),
+                    userConfirmedLabel = userCorrectedSpecificItem ?: userCorrectedCategory ?: currentState.userConfirmedLabel
                 )
             }
         }
@@ -292,7 +440,6 @@ class ScanResultViewModel(
         super.onCleared()
         stopSpeaking()
         barcodeScanner.close()
+        packagingOcrService.close()
     }
-
-    private data class Tuple4<A, B, C, D>(val a: A, val b: B, val c: C, val d: D)
 }

@@ -79,8 +79,10 @@ dependencies {
     // OpenCV for real-time computer vision & object contour detection
     implementation("org.opencv:opencv:4.10.0")
 
-    // ML Kit Barcode Scanning (Offline on-device product packaging detection)
+    // ML Kit Vision Services (Offline on-device detection, OCR, and packaging barcode scanning)
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation("com.google.mlkit:object-detection:17.0.2")
+    implementation("com.google.mlkit:text-recognition:16.0.1")
 
     // Room Database
     val roomVersion = "2.6.1"

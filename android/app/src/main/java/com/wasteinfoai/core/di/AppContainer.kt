@@ -42,6 +42,10 @@ class AppContainer(private val context: Context) {
         ScanRepository(wasteDatabase.scanDao())
     }
 
+    val feedbackRepository: com.wasteinfoai.data.repository.FeedbackRepository by lazy {
+        com.wasteinfoai.data.repository.FeedbackRepository(wasteDatabase.feedbackDao())
+    }
+
     val reportRepository: ReportRepository by lazy {
         ReportRepository(wasteDatabase.reportDao(), apiService)
     }

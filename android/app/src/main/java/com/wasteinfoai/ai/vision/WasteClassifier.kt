@@ -23,7 +23,10 @@ class WasteClassifier(
     private val context: Context,
     private val modelAssetPath: String = "vision/waste_classifier.pte",
     private val labelsAssetPath: String = "vision/class_names.json",
-    private val confidenceThreshold: Float = 0.45f
+    private val confidenceThreshold: Float = 0.62f,
+    private val acceptancePolicy: PredictionAcceptancePolicy = PredictionAcceptancePolicy(
+        AcceptancePolicyConfig(confidenceThreshold = confidenceThreshold)
+    )
 ) : AutoCloseable {
 
     companion object {
@@ -197,21 +200,10 @@ class WasteClassifier(
     private fun parseInferenceOutput(logits: FloatArray, durationMs: Long): ClassificationResult {
         require(logits.isNotEmpty()) { "Output logits cannot be empty" }
 
-        // Compute softmax probabilities safely
-        val maxLogit = logits.maxOrNull() ?: 0f
-        var sumExp = 0.0
-        val expScores = DoubleArray(logits.size)
-        for (i in logits.indices) {
-            val expVal = exp((logits[i] - maxLogit).toDouble())
-            expScores[i] = expVal
-            sumExp += expVal
-        }
+        val evalResult = acceptancePolicy.evaluate(logits, classLabels)
 
-        val probabilities = FloatArray(logits.size) { i ->
-            (expScores[i] / sumExp).toFloat()
-        }
-
-        // Rank predictions
+        // Compute softmax for top-K extraction
+        val probabilities = acceptancePolicy.computeSoftmax(logits)
         val ranked = probabilities.indices
             .map { idx ->
                 val label = if (idx < classLabels.size) classLabels[idx] else "Class_$idx"
@@ -219,24 +211,27 @@ class WasteClassifier(
             }
             .sortedByDescending { it.score }
 
-        val top1 = ranked.first()
-        val isUncertain = top1.score < confidenceThreshold
+        val topK = ranked.take(3)
 
-        return if (isUncertain) {
-            ClassificationResult.uncertain(
-                reason = "Confidence score (${String.format("%.1f%%", top1.score * 100)}) is below acceptance threshold (${String.format("%.1f%%", confidenceThreshold * 100)}).",
-                durationMs = durationMs,
-                topK = ranked.take(3)
-            )
-        } else {
+        return if (evalResult.isAccepted) {
             ClassificationResult(
-                classId = top1.classId,
-                label = top1.label,
-                confidence = top1.score,
+                classId = evalResult.top1ClassId,
+                label = evalResult.top1Class,
+                confidence = evalResult.confidence,
                 inferenceDurationMs = durationMs,
                 modelVersion = "1.0.0-rexnet150",
                 isUncertain = false,
-                topKResults = ranked.take(3)
+                topKResults = topK,
+                acceptanceState = AcceptanceState.ACCEPTED,
+                policyResult = evalResult
+            )
+        } else {
+            ClassificationResult.uncertain(
+                reason = "${evalResult.userFacingMessage} (${evalResult.diagnosticDetails})",
+                durationMs = durationMs,
+                topK = topK,
+                state = evalResult.state,
+                policyResult = evalResult
             )
         }
     }

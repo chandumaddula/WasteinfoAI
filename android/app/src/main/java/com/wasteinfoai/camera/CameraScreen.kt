@@ -47,10 +47,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FlashOn
+import androidx.compose.material.icons.filled.FlashOff
 import com.wasteinfoai.ai.vision.ImageQualityAssessment
 import com.wasteinfoai.ai.vision.ImageQualityAssessor
 import com.wasteinfoai.ai.vision.QualityStatus
@@ -171,6 +176,41 @@ private fun CameraPreviewContent(
         ImageCapture.Builder().setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY).build()
     }
     var cameraBound by remember { mutableStateOf(false) }
+    var cameraInstance by remember { mutableStateOf<androidx.camera.core.Camera?>(null) }
+    var hasTorch by remember { mutableStateOf(false) }
+    var isTorchEnabled by remember { mutableStateOf(false) }
+    var isTooDark by remember { mutableStateOf(false) }
+    var isOverexposed by remember { mutableStateOf(false) }
+    var isDeviceSteady by remember { mutableStateOf(true) }
+
+    // Accelerometer motion sensor for hold-steady detection
+    val sensorManager = remember { context.getSystemService(android.content.Context.SENSOR_SERVICE) as? android.hardware.SensorManager }
+    val accelerometer = remember { sensorManager?.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER) }
+
+    DisposableEffect(sensorManager, accelerometer) {
+        if (sensorManager == null || accelerometer == null) {
+            return@DisposableEffect onDispose {}
+        }
+        var lastX = 0f; var lastY = 0f; var lastZ = 0f; var hasLast = false
+        val listener = object : android.hardware.SensorEventListener {
+            override fun onSensorChanged(event: android.hardware.SensorEvent) {
+                val x = event.values[0]
+                val y = event.values[1]
+                val z = event.values[2]
+                if (hasLast) {
+                    val delta = kotlin.math.abs(x - lastX) + kotlin.math.abs(y - lastY) + kotlin.math.abs(z - lastZ)
+                    isDeviceSteady = delta < 1.6f
+                }
+                lastX = x; lastY = y; lastZ = z; hasLast = true
+            }
+            override fun onAccuracyChanged(sensor: android.hardware.Sensor?, accuracy: Int) {}
+        }
+        sensorManager.registerListener(listener, accelerometer, android.hardware.SensorManager.SENSOR_DELAY_UI)
+        onDispose {
+            sensorManager.unregisterListener(listener)
+        }
+    }
+
     val currentOnUnavailable by rememberUpdatedState(onCameraUnavailable)
 
     val detector = remember { OpencvObjectDetector() }
@@ -196,9 +236,34 @@ private fun CameraPreviewContent(
             .apply {
                 setAnalyzer(analyzerExecutor) { imageProxy ->
                     try {
+                        // Fast frame luminance sampling
+                        val yPlane = imageProxy.planes[0]
+                        val buffer = yPlane.buffer
+                        buffer.rewind()
+                        val w = imageProxy.width
+                        val h = imageProxy.height
+                        val stride = yPlane.rowStride
+                        var sumLum = 0L
+                        var count = 0
+                        val step = 16
+                        val rowBytes = ByteArray(w)
+                        for (y in 0 until h step step) {
+                            buffer.position(y * stride)
+                            buffer.get(rowBytes)
+                            for (x in 0 until w step step) {
+                                sumLum += (rowBytes[x].toInt() and 0xFF)
+                                count++
+                            }
+                        }
+                        val meanLum = if (count > 0) sumLum.toFloat() / count else 128f
+                        val dark = meanLum < ImageQualityAssessor.TOO_DARK_THRESHOLD
+                        val glare = meanLum > ImageQualityAssessor.OVEREXPOSED_THRESHOLD
+
                         val result = detector.analyzeFrame(imageProxy)
                         previewView.post {
                             detectedBox = result
+                            isTooDark = dark
+                            isOverexposed = glare
                         }
                     } catch (e: Exception) {
                         // ignore dropped frames
@@ -238,7 +303,10 @@ private fun CameraPreviewContent(
                     }
                     val preview = Preview.Builder().build().also { it.setSurfaceProvider(previewView.surfaceProvider) }
                     cameraProvider.unbindAll()
-                    cameraProvider.bindToLifecycle(owner, selector, preview, imageCapture, imageAnalysis)
+                    val camera = cameraProvider.bindToLifecycle(owner, selector, preview, imageCapture, imageAnalysis)
+                    cameraInstance = camera
+                    hasTorch = camera.cameraInfo.hasFlashUnit()
+                    isTorchEnabled = false
                     cameraBound = true
                 } catch (e: Exception) {
                     cameraBound = false
@@ -250,6 +318,11 @@ private fun CameraPreviewContent(
         onDispose {
             disposed = true
             cameraBound = false
+            if (isTorchEnabled) {
+                cameraInstance?.cameraControl?.enableTorch(false)
+                isTorchEnabled = false
+            }
+            cameraInstance = null
             provider?.unbindAll()
             analyzerExecutor.shutdown()
         }
@@ -291,9 +364,12 @@ private fun CameraPreviewContent(
         val boxH = (detectedBox.bottom - detectedBox.top).coerceAtLeast(0f)
         val areaRatio = boxW * boxH
         val liveGuidance = when {
-            !detectedBox.hasTarget -> "Place one waste item inside frame"
-            areaRatio < 0.08f -> "Move closer to item"
-            areaRatio > 0.85f -> "Keep item fully visible"
+            isTooDark -> "Improve lighting • Tap flash"
+            isOverexposed -> "Too bright • Adjust angle or shade"
+            !isDeviceSteady -> "Hold steady"
+            !detectedBox.hasTarget -> "Place waste item inside frame"
+            areaRatio < 0.10f -> "Move closer to item"
+            areaRatio > 0.80f -> "Keep entire item visible"
             else -> "Hold steady • Object detected"
         }
 
@@ -303,7 +379,11 @@ private fun CameraPreviewContent(
                 .statusBarsPadding()
                 .padding(top = 16.dp)
                 .background(Color.Black.copy(alpha = 0.72f), RoundedCornerShape(20.dp))
-                .border(1.dp, Color(0xFF00E676).copy(alpha = 0.6f), RoundedCornerShape(20.dp))
+                .border(
+                    1.dp,
+                    if (isTooDark || isOverexposed || !isDeviceSteady) Color(0xFFFFB300) else Color(0xFF00E676).copy(alpha = 0.6f),
+                    RoundedCornerShape(20.dp)
+                )
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Text(
@@ -317,6 +397,30 @@ private fun CameraPreviewContent(
             onClick = onClose,
             modifier = Modifier.align(Alignment.TopStart).statusBarsPadding().padding(8.dp),
         ) { Text(stringResource(R.string.camera_close), color = Color.White) }
+
+        if (hasTorch) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .statusBarsPadding()
+                    .padding(8.dp)
+                    .background(Color.Black.copy(alpha = 0.6f), CircleShape)
+            ) {
+                IconButton(
+                    onClick = {
+                        val next = !isTorchEnabled
+                        cameraInstance?.cameraControl?.enableTorch(next)
+                        isTorchEnabled = next
+                    }
+                ) {
+                    Icon(
+                        imageVector = if (isTorchEnabled) Icons.Default.FlashOn else Icons.Default.FlashOff,
+                        contentDescription = if (isTorchEnabled) "Turn off flash" else "Turn on flash",
+                        tint = if (isTorchEnabled) Color(0xFFFFD54F) else Color.White
+                    )
+                }
+            }
+        }
 
         Row(
             modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().navigationBarsPadding().padding(24.dp),

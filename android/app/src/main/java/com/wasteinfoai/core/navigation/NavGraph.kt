@@ -183,7 +183,9 @@ fun AppNavGraph(
                     wasteClassifier = container.wasteClassifier,
                     disposalRuleEngine = container.disposalRuleEngine,
                     scanRepository = container.scanRepository,
-                    ttsManager = container.textToSpeechManager
+                    ttsManager = container.textToSpeechManager,
+                    feedbackRepository = container.feedbackRepository,
+                    locationHelper = container.locationHelper
                 )
             }
             ScanResultScreen(

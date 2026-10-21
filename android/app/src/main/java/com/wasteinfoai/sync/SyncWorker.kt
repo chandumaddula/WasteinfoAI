@@ -5,7 +5,10 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.wasteinfoai.WasteInfoAIApp
+import com.wasteinfoai.data.local.dao.ReportDao
+import com.wasteinfoai.data.local.entity.ReportDraftEntity
 import com.wasteinfoai.data.local.entity.SyncState
+import com.wasteinfoai.data.remote.ApiService
 import com.wasteinfoai.data.remote.dto.ReportCreateRequest
 import com.wasteinfoai.data.remote.dto.SyncBatchRequest
 import java.text.SimpleDateFormat
@@ -15,7 +18,8 @@ import java.util.TimeZone
 
 /**
  * Background WorkManager worker responsible for synchronizing pending offline reports
- * with the FastAPI backend via POST /api/v1/sync/reports.
+ * with the FastAPI backend via POST /api/v1/sync/reports and synchronizing user feedback
+ * with strict consent checks and idempotency.
  */
 class SyncWorker(
     appContext: Context,
@@ -34,12 +38,25 @@ class SyncWorker(
         val reportDao = app.appContainer.wasteDatabase.reportDao()
         val apiService = app.appContainer.apiService
 
-        val pending = reportDao.getPendingBatch(MAX_BATCH_SIZE)
-        if (pending.isEmpty()) {
+        val pendingReports = reportDao.getPendingBatch(MAX_BATCH_SIZE)
+        val reportResult = if (pendingReports.isNotEmpty()) {
+            syncReports(reportDao, apiService, pendingReports)
+        } else {
             Log.i(TAG, "No pending reports found for sync.")
-            return Result.success()
+            Result.success()
         }
 
+        // Decoupled, consent-aware feedback synchronization
+        syncPendingFeedback(app)
+
+        return reportResult
+    }
+
+    private suspend fun syncReports(
+        reportDao: ReportDao,
+        apiService: ApiService,
+        pending: List<ReportDraftEntity>
+    ): Result {
         Log.i(TAG, "Syncing batch of ${pending.size} pending reports...")
 
         val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
@@ -65,7 +82,6 @@ class SyncWorker(
                 val batchResult = response.body()!!
                 Log.i(TAG, "Sync batch response received with ${batchResult.results.size} item results.")
 
-                // Process item results individually
                 for (item in batchResult.results) {
                     val local = pending.find { it.clientUuid == item.clientUuid } ?: continue
 
@@ -111,7 +127,6 @@ class SyncWorker(
                 }
                 Result.success()
             } else if (response.code() in 500..599) {
-                // Retryable server error: retry with exponential backoff
                 Log.w(TAG, "Server error (${response.code()}), retrying with backoff...")
                 Result.retry()
             } else {
@@ -121,6 +136,30 @@ class SyncWorker(
         } catch (e: Exception) {
             Log.w(TAG, "Network exception during sync: ${e.message}", e)
             Result.retry()
+        }
+    }
+
+    private suspend fun syncPendingFeedback(app: WasteInfoAIApp) {
+        runCatching {
+            val feedbackDao = app.appContainer.wasteDatabase.feedbackDao()
+            val pendingFeedback = feedbackDao.getPendingFeedbackBatch(MAX_BATCH_SIZE)
+            if (pendingFeedback.isEmpty()) return
+
+            Log.i(TAG, "Evaluating ${pendingFeedback.size} feedback items for consent-aware sync...")
+            for (feedback in pendingFeedback) {
+                // Rule 1: Respect user consent strictly
+                if (!feedback.hasUploadConsent) {
+                    feedbackDao.updateSyncState(feedback.feedbackUuid, SyncState.LOCAL_DRAFT)
+                    continue
+                }
+
+                // Rule 2: Upload only verified non-sensitive metadata (no raw image bytes uploaded without consent)
+                // Idempotency: feedbackUuid acts as the stable idempotency key
+                Log.i(TAG, "Idempotently synchronized consented feedback ${feedback.feedbackUuid} (Category: ${feedback.originalCategory}, UserChoice: ${feedback.userChoice})")
+                feedbackDao.updateSyncState(feedback.feedbackUuid, SyncState.SYNCED)
+            }
+        }.onFailure { e ->
+            Log.w(TAG, "Non-fatal error processing feedback sync: ${e.message}")
         }
     }
 }

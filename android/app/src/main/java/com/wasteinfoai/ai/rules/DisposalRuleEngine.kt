@@ -137,21 +137,36 @@ class DisposalRuleEngine(
 
     /**
      * Hierarchical lookup adhering to precedence:
-     * 1. Verified Item-specific rule
-     * 2. Verified Material / RIC code rule
-     * 3. Verified Generic category rule
+     * 1. Verified Item-specific rule for target jurisdiction (or national fallback)
+     * 2. Verified Material / RIC code rule for target jurisdiction (or national fallback)
+     * 3. Verified Generic category rule for target jurisdiction
      * 4. Conservative fallback
      */
     fun getHierarchicalRule(
         category: String,
         specificItem: String? = null,
-        materialCode: String? = null
+        materialCode: String? = null,
+        jurisdiction: String? = null
     ): DisposalRule {
         if (!isLoaded) loadRules()
 
-        // 1. Try specific item match
+        val targetJur = jurisdiction?.uppercase()?.trim()
+
+        // 1. Try specific item match (jurisdiction-specific first)
         if (!specificItem.isNullOrBlank()) {
             val lowerItem = specificItem.lowercase().trim()
+            if (targetJur != null) {
+                val jurMatch = allRules.firstOrNull { rule ->
+                    rule.jurisdiction.equals(targetJur, ignoreCase = true) &&
+                    rule.specificItem != null && (
+                        lowerItem == rule.specificItem.lowercase() ||
+                        lowerItem.contains(rule.specificItem.lowercase()) ||
+                        rule.specificItem.lowercase().contains(lowerItem)
+                    )
+                }
+                if (jurMatch != null) return preserveSafety(jurMatch, category)
+            }
+
             val exactMatch = rulesBySpecificItem[lowerItem]
             if (exactMatch != null) return preserveSafety(exactMatch, category)
 
@@ -168,12 +183,29 @@ class DisposalRuleEngine(
         // 2. Try material code match (e.g., "PET 01", "ALU 41")
         if (!materialCode.isNullOrBlank()) {
             val upperCode = materialCode.uppercase().trim()
+            if (targetJur != null) {
+                val jurCodeMatch = allRules.firstOrNull { rule ->
+                    rule.jurisdiction.equals(targetJur, ignoreCase = true) &&
+                    rule.materialCode?.uppercase() == upperCode
+                }
+                if (jurCodeMatch != null) return preserveSafety(jurCodeMatch, category)
+            }
+
             val codeMatch = rulesByMaterialCode[upperCode]
                 ?: allRules.firstOrNull { it.materialCode?.uppercase() == upperCode }
             if (codeMatch != null) return preserveSafety(codeMatch, category)
         }
 
-        // 3. Fall back to generic category rule
+        // 3. Fall back to generic category rule for this jurisdiction
+        if (targetJur != null) {
+            val jurCatRule = allRules.firstOrNull { rule ->
+                rule.jurisdiction.equals(targetJur, ignoreCase = true) &&
+                rule.category.equals(category, ignoreCase = true) &&
+                rule.specificItem == null
+            }
+            if (jurCatRule != null) return jurCatRule
+        }
+
         val catRule = getRuleForCategory(category)
         if (catRule != null) return catRule
 
@@ -181,7 +213,7 @@ class DisposalRuleEngine(
         return DisposalRule(
             id = "RULE-FALLBACK-UNKNOWN",
             category = category,
-            jurisdiction = "INDIA_SWM_2016",
+            jurisdiction = targetJur ?: "INDIA_SWM_2016",
             disposalMethod = "Segregate into Domestic Non-Biodegradable Dry Waste or consult local civic ward",
             isRecyclable = false,
             isHazardous = false,

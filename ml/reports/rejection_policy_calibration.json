@@ -1,0 +1,91 @@
+{
+  "recommended_policy": {
+    "version": "2.0.0-calibrated",
+    "confidence_threshold": 0.62,
+    "min_margin_threshold": 0.15,
+    "max_normalized_entropy": 0.7,
+    "ood_confidence_floor": 0.35
+  },
+  "candidate_evaluation": [
+    {
+      "confidence_threshold": 0.45,
+      "margin_threshold": 0.15,
+      "norm_entropy_ceiling": 0.7,
+      "coverage": 1.0,
+      "false_rejection_rate": 0.0,
+      "accuracy_on_accepted": 0.9451,
+      "non_waste_false_acceptance_rate": 0.0,
+      "non_waste_correct_rejection_rate": 1.0
+    },
+    {
+      "confidence_threshold": 0.5,
+      "margin_threshold": 0.15,
+      "norm_entropy_ceiling": 0.7,
+      "coverage": 1.0,
+      "false_rejection_rate": 0.0,
+      "accuracy_on_accepted": 0.9451,
+      "non_waste_false_acceptance_rate": 0.0,
+      "non_waste_correct_rejection_rate": 1.0
+    },
+    {
+      "confidence_threshold": 0.55,
+      "margin_threshold": 0.15,
+      "norm_entropy_ceiling": 0.7,
+      "coverage": 1.0,
+      "false_rejection_rate": 0.0,
+      "accuracy_on_accepted": 0.9451,
+      "non_waste_false_acceptance_rate": 0.0,
+      "non_waste_correct_rejection_rate": 1.0
+    },
+    {
+      "confidence_threshold": 0.6,
+      "margin_threshold": 0.15,
+      "norm_entropy_ceiling": 0.7,
+      "coverage": 0.9941,
+      "false_rejection_rate": 0.0059,
+      "accuracy_on_accepted": 0.9448,
+      "non_waste_false_acceptance_rate": 0.0,
+      "non_waste_correct_rejection_rate": 1.0
+    },
+    {
+      "confidence_threshold": 0.62,
+      "margin_threshold": 0.15,
+      "norm_entropy_ceiling": 0.7,
+      "coverage": 0.9667,
+      "false_rejection_rate": 0.0333,
+      "accuracy_on_accepted": 0.9452,
+      "non_waste_false_acceptance_rate": 0.0,
+      "non_waste_correct_rejection_rate": 1.0
+    },
+    {
+      "confidence_threshold": 0.65,
+      "margin_threshold": 0.15,
+      "norm_entropy_ceiling": 0.7,
+      "coverage": 0.8098,
+      "false_rejection_rate": 0.1902,
+      "accuracy_on_accepted": 0.9419,
+      "non_waste_false_acceptance_rate": 0.0,
+      "non_waste_correct_rejection_rate": 1.0
+    },
+    {
+      "confidence_threshold": 0.7,
+      "margin_threshold": 0.15,
+      "norm_entropy_ceiling": 0.7,
+      "coverage": 0.2608,
+      "false_rejection_rate": 0.7392,
+      "accuracy_on_accepted": 0.9398,
+      "non_waste_false_acceptance_rate": 0.0,
+      "non_waste_correct_rejection_rate": 1.0
+    },
+    {
+      "confidence_threshold": 0.75,
+      "margin_threshold": 0.15,
+      "norm_entropy_ceiling": 0.7,
+      "coverage": 0.0127,
+      "false_rejection_rate": 0.9873,
+      "accuracy_on_accepted": 1.0,
+      "non_waste_false_acceptance_rate": 0.0,
+      "non_waste_correct_rejection_rate": 1.0
+    }
+  ]
+}

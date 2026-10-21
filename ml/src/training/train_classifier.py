@@ -37,19 +37,31 @@ def load_config(config_path: Path) -> dict:
 
 
 def get_data_transforms(config: dict) -> Tuple[transforms.Compose, transforms.Compose]:
-    """Define data augmentation and normalization transforms."""
+    """Define real-world data augmentation and normalization transforms.
+
+    Augmentations (lighting changes, perspective skew, blur, occlusion) are strictly
+    training-only to simulate environmental conditions without leaking into evaluation.
+    """
     mean = config["dataset"]["normalization"]["mean"]
     std = config["dataset"]["normalization"]["std"]
     img_size = config["dataset"]["image_size"]
 
     train_transform = transforms.Compose([
-        transforms.RandomResizedCrop(img_size, scale=(0.8, 1.0)),
+        transforms.RandomResizedCrop(img_size, scale=(0.7, 1.0), ratio=(0.85, 1.15)),
         transforms.RandomHorizontalFlip(p=0.5),
-        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
+        transforms.RandomRotation(degrees=15),
+        transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.05),
+        transforms.RandomAffine(degrees=0, translate=(0.08, 0.08), scale=(0.92, 1.08)),
+        transforms.RandomPerspective(distortion_scale=0.15, p=0.3),
+        transforms.RandomApply([
+            transforms.GaussianBlur(kernel_size=(3, 3), sigma=(0.1, 1.5))
+        ], p=0.25),
         transforms.ToTensor(),
         transforms.Normalize(mean=mean, std=std),
+        transforms.RandomErasing(p=0.25, scale=(0.02, 0.18), ratio=(0.3, 3.3), value="random"),
     ])
 
+    # Validation and test transforms: strictly deterministic, non-augmented
     val_transform = transforms.Compose([
         transforms.Resize(img_size + config["dataset"].get("crop_padding", 32)),
         transforms.CenterCrop(img_size),

@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.wasteinfoai.ai.rules.HazardSeverity
 import com.wasteinfoai.ai.taxonomy.IdentificationSource
 import com.wasteinfoai.ai.taxonomy.SpecificWasteCandidate
@@ -138,6 +140,12 @@ fun ScanResultScreen(
                         onSpeakClicked = { viewModel.speakGuidance() },
                         onSelectCategory = { cat, subItem ->
                             viewModel.confirmCategory(cat, subItem)
+                        },
+                        onSelectObject = { idx ->
+                            viewModel.selectDetectedObject(idx)
+                        },
+                        onSubmitFeedback = { choice, cat, item, consent ->
+                            viewModel.submitFeedback(choice, cat, item, consent)
                         }
                     )
                 }
@@ -154,7 +162,9 @@ private fun SuccessContent(
     onAssistantClicked: () -> Unit,
     onDoneClicked: () -> Unit,
     onSpeakClicked: () -> Unit,
-    onSelectCategory: (String, String?) -> Unit
+    onSelectCategory: (String, String?) -> Unit,
+    onSelectObject: (Int) -> Unit = {},
+    onSubmitFeedback: (String, String?, String?, Boolean) -> Unit = { _, _, _, _ -> }
 ) {
     var showCategorySelector by remember { mutableStateOf(false) }
 
@@ -199,7 +209,7 @@ private fun SuccessContent(
                         .align(Alignment.BottomEnd)
                         .padding(12.dp)
                 ) {
-                    val detectionBadge = if (state.detectedObjectsCount > 0) "OpenCV ROI Crop" else "Letterbox"
+                    val detectionBadge = if (state.detectedObjectsCount > 0) "ROI Item #${state.selectedObjectIndex + 1}" else "Letterbox"
                     Text(
                         text = "${String.format("%.1f%%", state.classification.confidence * 100)} conf • $detectionBadge",
                         style = MaterialTheme.typography.labelSmall,
@@ -230,69 +240,200 @@ private fun SuccessContent(
             }
         }
 
-        // 2. Primary Identified Category / Item Header Card
+        // Multi-Object Target Selector (when multiple candidate regions are detected)
+        if (state.detectedObjects.size > 1) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f))
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(
+                        text = "Multiple items detected (${state.detectedObjects.size}) — select target:",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        itemsIndexed(state.detectedObjects) { idx: Int, _: com.wasteinfoai.camera.DetectedWasteItem ->
+                            val itemNumber = idx + 1
+                            FilterChip(
+                                selected = state.selectedObjectIndex == idx,
+                                onClick = { onSelectObject(idx) },
+                                label = {
+                                    Text(if (idx == 0) "Item #1 (Primary)" else "Item #$itemNumber")
+                                },
+                                leadingIcon = if (state.selectedObjectIndex == idx) {
+                                    { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp)) }
+                                } else null
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // 1.5 Conflicting Evidence Banner (if detected)
+        if (state.hasEvidenceConflict && state.conflictExplanation != null) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.85f)),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.Warning,
+                        contentDescription = "Conflict",
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            text = "Conflicting Evidence Detected",
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                        Text(
+                            text = state.conflictExplanation,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                        Text(
+                            text = "Please verify and select the correct material below.",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        // 2. Primary Identified Category / Rejection Guidance Card
+        val isRejected = !state.classification.isAccepted && !state.isUserConfirmed
+        val policy = state.classification.policyResult
         val displayTitle = state.userConfirmedLabel
             ?: state.hierarchicalIdentification?.specificItem
-            ?: (if (state.classification.isUncertain) "Uncertain Prediction" else state.classification.label)
+            ?: if (isRejected) "No Clear Waste Detected" else state.classification.label
 
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = if (state.safety.isHazardous) MaterialTheme.colorScheme.errorContainer
-                else MaterialTheme.colorScheme.primaryContainer
+                containerColor = when {
+                    isRejected -> MaterialTheme.colorScheme.surfaceVariant
+                    state.safety.isHazardous -> MaterialTheme.colorScheme.errorContainer
+                    else -> MaterialTheme.colorScheme.primaryContainer
+                }
             ),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(
-                            if (state.safety.isHazardous) MaterialTheme.colorScheme.error
-                            else MaterialTheme.colorScheme.primary
-                        ),
-                    contentAlignment = Alignment.Center
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = if (state.safety.isHazardous) Icons.Default.Warning else Icons.Default.Check,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.surface
-                    )
-                }
-                Spacer(modifier = Modifier.width(16.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = displayTitle,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    val sourceText = when (state.hierarchicalIdentification?.identificationSource) {
-                        IdentificationSource.BARCODE_LOOKUP -> "Source: Barcode packaging database"
-                        IdentificationSource.USER_CONFIRMED -> "Source: User confirmed"
-                        IdentificationSource.OBJECT_CROP_CLASSIFIER -> "Source: Object ROI ReXNet-150"
-                        else -> "Source: ReXNet-150 on-device"
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(
+                                when {
+                                    isRejected -> MaterialTheme.colorScheme.outline
+                                    state.safety.isHazardous -> MaterialTheme.colorScheme.error
+                                    else -> MaterialTheme.colorScheme.primary
+                                }
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = when {
+                                isRejected -> Icons.Default.HelpOutline
+                                state.safety.isHazardous -> Icons.Default.Warning
+                                else -> Icons.Default.Check
+                            },
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.surface
+                        )
                     }
-                    Text(
-                        text = sourceText,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = if (state.safety.isHazardous) "Hazardous Material • Handle with Care" else "Non-Hazardous Solid Waste",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = if (state.safety.isHazardous) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer
-                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = displayTitle,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        val sourceText = when {
+                            isRejected -> "Status: ${state.classification.acceptanceState.name.replace('_', ' ')}"
+                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.BARCODE_LOOKUP -> "Source: Barcode packaging database"
+                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.USER_CONFIRMED -> "Source: User confirmed"
+                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.OBJECT_CROP_CLASSIFIER -> "Source: Object ROI ReXNet-150"
+                            else -> "Source: ReXNet-150 on-device"
+                        }
+                        Text(
+                            text = sourceText,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = if (isRejected) {
+                                policy?.diagnosticDetails ?: "The scanned scene did not match verified waste categories."
+                            } else if (state.safety.isHazardous) {
+                                "Hazardous Material • Handle with Care"
+                            } else {
+                                "Non-Hazardous Solid Waste"
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (state.safety.isHazardous) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    IconButton(onClick = onSpeakClicked) {
+                        Icon(Icons.Default.VolumeUp, contentDescription = "Speak Guidance")
+                    }
                 }
-                IconButton(onClick = onSpeakClicked) {
-                    Icon(Icons.Default.VolumeUp, contentDescription = "Speak Guidance")
+
+                if (isRejected) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Surface(
+                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                        shape = RoundedCornerShape(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = policy?.userFacingMessage
+                                ?: "No clear waste item detected. Please position the item inside the frame and try again.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(12.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = onDoneClicked,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Scan Again")
+                        }
+                        Button(
+                            onClick = { showCategorySelector = true },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Select Manually")
+                        }
+                    }
                 }
             }
         }
@@ -477,6 +618,45 @@ private fun SuccessContent(
             }
         }
 
+        // 5.5 Packaging OCR & Symbol Evidence Card (if detected)
+        state.ocrEvidence?.let { ocr ->
+            if (ocr.materialCode != null || ocr.detectedKeywords.isNotEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f))
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Packaging Markings & Symbol Evidence",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(6.dp))
+                        ocr.materialCode?.let { code ->
+                            Text(
+                                text = "Resin Code: $code (${ocr.materialName ?: ""})",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        if (ocr.detectedKeywords.isNotEmpty()) {
+                            Text(
+                                text = "Detected packaging text: ${ocr.detectedKeywords.joinToString(", ")}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
         // 6. Safety Warnings Card (if non-low)
         if (state.safety.severityLevel != HazardSeverity.LOW) {
             Card(
@@ -560,7 +740,7 @@ private fun SuccessContent(
                         }
                         Column {
                             Text("Jurisdiction", style = MaterialTheme.typography.labelSmall)
-                            Text(state.rule.jurisdiction, style = MaterialTheme.typography.bodySmall)
+                            Text(state.resolvedJurisdiction.displayName, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
                         }
                     }
 
@@ -582,6 +762,106 @@ private fun SuccessContent(
                     if (state.rule.prohibitedPathways.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text("Prohibited: ${state.rule.prohibitedPathways.joinToString(", ")}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                    }
+                }
+            }
+        }
+
+        // 7.5 Human-in-the-Loop Feedback Card (P4)
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f))
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Feedback, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Is this identification correct?",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Help improve waste classification accuracy for your neighborhood.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                if (state.feedbackSubmitted) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Thank you! Your feedback has been recorded locally.",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Medium
+                            )
+                        }
+                    }
+                } else {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    var consentGiven by remember { mutableStateOf(false) }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                onSubmitFeedback("CORRECT", null, null, consentGiven)
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text("✓ Correct", fontSize = 12.sp)
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                showCategorySelector = true
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text("✕ Wrong", fontSize = 12.sp)
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                onSubmitFeedback("NOT_SURE", null, null, consentGiven)
+                            },
+                            modifier = Modifier.weight(1f),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text("? Not sure", fontSize = 12.sp)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Checkbox(
+                            checked = consentGiven,
+                            onCheckedChange = { consentGiven = it }
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Consent to share anonymized metadata to improve AI",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }
