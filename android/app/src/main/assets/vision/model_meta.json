@@ -45,6 +45,10 @@
     }
   },
   "output": "calibrated softmax probabilities",
-  "rejection_policy": {},
-  "exported_file": "waste_classifier.pte"
+  "rejection_policy": {
+    "confidence_threshold": 0.95,
+    "min_margin": 0.0,
+    "max_norm_entropy": 0.5
+  },
+  "exported_file": "waste_classifier.pt"
 }
