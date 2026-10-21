@@ -20,6 +20,7 @@ android/.idea/
 
 # ML Datasets (keep large data outside Git)
 ml/data/balanced_waste_images/
+ml/data/ood/
 ml/data/raw/*
 !ml/data/raw/.gitkeep
 ml/data/processed/*
