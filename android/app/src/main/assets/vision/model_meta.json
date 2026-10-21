@@ -50,5 +50,5 @@
     "min_margin": 0.0,
     "max_norm_entropy": 0.5
   },
-  "exported_file": "waste_classifier.pt"
+  "exported_file": "waste_classifier.pte"
 }
