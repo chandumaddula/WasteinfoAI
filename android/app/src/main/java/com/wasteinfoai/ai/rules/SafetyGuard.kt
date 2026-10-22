@@ -26,6 +26,8 @@ object SafetyGuard {
     private val CRITICAL_HAZARDS = setOf("Battery", "PCB", "chemicals", "biohazard", "asbestos")
     private val HIGH_HAZARDS = setOf("Microwave", "Mobile", "Television", "Printer")
     private val MODERATE_HAZARDS = setOf("glass", "metal")
+    // Previously fell through to "standard domestic waste ... flatten cardboard" advice.
+    private val E_WASTE_GENERAL = setOf("Keyboard", "Mouse", "Player", "Washing Machine")
 
     fun evaluateSafety(category: String, isUncertain: Boolean): SafetyAssessment {
         if (isUncertain) {
@@ -68,6 +70,20 @@ object SafetyGuard {
                     "DO NOT attempt to disassemble, open, or break open display screens.",
                     "Keep intact and transport safely to an official e-waste collection center.",
                     "Remove loose batteries or toner cartridges separately if safe to do so."
+                ),
+                requiresSpecializedFacility = true
+            )
+        }
+
+        if (E_WASTE_GENERAL.any { it.equals(normalized, ignoreCase = true) }) {
+            return SafetyAssessment(
+                isHazardous = false,
+                severityLevel = HazardSeverity.MODERATE,
+                primaryWarning = "E-WASTE: Electronic item. Do not place in household trash or recycling bins.",
+                recommendedActions = listOf(
+                    "Take it to an authorized e-waste collection center or producer take-back point.",
+                    "Remove loose batteries first and keep them separate.",
+                    "Do not open or crush the device."
                 ),
                 requiresSpecializedFacility = true
             )

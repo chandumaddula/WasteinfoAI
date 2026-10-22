@@ -15,6 +15,7 @@ class SyncScheduler(private val context: Context) {
     fun schedulePeriodicSync() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
+            .setRequiresBatteryNotLow(true)
             .build()
 
         val periodicWork = PeriodicWorkRequestBuilder<SyncWorker>(15, TimeUnit.MINUTES)
@@ -41,12 +42,13 @@ class SyncScheduler(private val context: Context) {
 
         workManager.enqueueUniqueWork(
             "${SyncWorker.WORK_NAME}_immediate",
-            ExistingWorkPolicy.REPLACE,
+            ExistingWorkPolicy.KEEP, // REPLACE cancelled an in-flight sync mid-batch
             oneTimeWork
         )
     }
 
     fun cancelAll() {
         workManager.cancelUniqueWork(SyncWorker.WORK_NAME)
+        workManager.cancelUniqueWork("${SyncWorker.WORK_NAME}_immediate")
     }
 }

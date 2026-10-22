@@ -30,6 +30,7 @@ class SyncWorker(
         const val WORK_NAME = "wasteinfoai_offline_sync"
         private const val TAG = "SyncWorker"
         private const val MAX_BATCH_SIZE = 50
+        private const val MAX_BATCHES_PER_RUN = 5 // drain a backlog in one run instead of 50 reports / 15 min
     }
 
     override suspend fun doWork(): Result {
@@ -38,12 +39,17 @@ class SyncWorker(
         val reportDao = app.appContainer.wasteDatabase.reportDao()
         val apiService = app.appContainer.apiService
 
-        val pendingReports = reportDao.getPendingBatch(MAX_BATCH_SIZE)
-        val reportResult = if (pendingReports.isNotEmpty()) {
-            syncReports(reportDao, apiService, pendingReports)
-        } else {
-            Log.i(TAG, "No pending reports found for sync.")
-            Result.success()
+        var reportResult: Result = Result.success()
+        var batches = 0
+        while (batches < MAX_BATCHES_PER_RUN) {
+            val pending = reportDao.getPendingBatch(MAX_BATCH_SIZE)
+            if (pending.isEmpty()) {
+                if (batches == 0) Log.i(TAG, "No pending reports found for sync.")
+                break
+            }
+            reportResult = syncReports(reportDao, apiService, pending)
+            batches++
+            if (reportResult !is Result.Success || pending.size < MAX_BATCH_SIZE) break
         }
 
         // Decoupled, consent-aware feedback synchronization
@@ -126,12 +132,25 @@ class SyncWorker(
                     }
                 }
                 Result.success()
-            } else if (response.code() in 500..599) {
-                Log.w(TAG, "Server error (${response.code()}), retrying with backoff...")
-                Result.retry()
             } else {
-                Log.e(TAG, "Sync request failed with status: ${response.code()} ${response.message()}")
-                Result.retry()
+                val code = response.code()
+                when {
+                    // transient: retry with backoff
+                    code in 500..599 || code == 408 || code == 429 -> {
+                        Log.w(TAG, "Transient sync error ($code), retrying with backoff...")
+                        Result.retry()
+                    }
+                    // not logged in / session expired: keep reports pending, do not hammer the server
+                    code == 401 || code == 403 -> {
+                        Log.w(TAG, "Sync not authorized ($code); reports stay pending until the next login.")
+                        Result.success()
+                    }
+                    // other 4xx will never succeed by retrying the same request
+                    else -> {
+                        Log.e(TAG, "Sync request rejected with status: $code ${response.message()}")
+                        Result.failure()
+                    }
+                }
             }
         } catch (e: Exception) {
             Log.w(TAG, "Network exception during sync: ${e.message}", e)
@@ -153,10 +172,11 @@ class SyncWorker(
                     continue
                 }
 
-                // Rule 2: Upload only verified non-sensitive metadata (no raw image bytes uploaded without consent)
-                // Idempotency: feedbackUuid acts as the stable idempotency key
-                Log.i(TAG, "Idempotently synchronized consented feedback ${feedback.feedbackUuid} (Category: ${feedback.originalCategory}, UserChoice: ${feedback.userChoice})")
-                feedbackDao.updateSyncState(feedback.feedbackUuid, SyncState.SYNCED)
+                // BUG FIX: this branch used to mark feedback SYNCED without sending anything, silently
+                // discarding consented feedback. Never mark SYNCED unless an upload actually succeeded.
+                // TODO: add a feedback endpoint to ApiService, upload using feedbackUuid as the idempotency key,
+                //       and call feedbackDao.updateSyncState(feedback.feedbackUuid, SyncState.SYNCED) on success only.
+                Log.d(TAG, "Consented feedback ${feedback.feedbackUuid} is waiting for an upload endpoint")
             }
         }.onFailure { e ->
             Log.w(TAG, "Non-fatal error processing feedback sync: ${e.message}")

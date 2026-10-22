@@ -41,12 +41,13 @@ class BarcodeScannerService(
             val image = InputImage.fromBitmap(bitmap, 0)
             scanner.process(image)
                 .addOnSuccessListener { barcodes ->
-                    val validBarcode = barcodes.firstOrNull { barcode ->
-                        val rawValue = barcode.rawValue
-                        !rawValue.isNullOrBlank() && rawValue.length in 8..14 && rawValue.all { it.isDigit() }
-                    }?.rawValue ?: barcodes.firstOrNull()?.rawValue
+                    // Only numeric GTINs (8-14 digits). The old fallback returned arbitrary QR/Code128 text,
+                    // which was then pasted into the product-lookup URL.
+                    val validBarcode = barcodes
+                        .mapNotNull { it.rawValue?.trim() }
+                        .firstOrNull { it.length in 8..14 && it.all { c -> c.isDigit() } }
 
-                    continuation.resume(validBarcode)
+                    if (continuation.isActive) continuation.resume(validBarcode)
                 }
                 .addOnFailureListener { e ->
                     Log.w(TAG, "Barcode detection failed: ${e.message}")

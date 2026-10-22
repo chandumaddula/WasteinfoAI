@@ -16,6 +16,7 @@ class DisposalRuleEngine(
 
     companion object {
         private const val TAG = "DisposalRuleEngine"
+        private const val MIN_PARTIAL_MATCH_LEN = 6
     }
 
     constructor(rulesJsonString: String) : this(null, "") {
@@ -26,12 +27,13 @@ class DisposalRuleEngine(
         loadRulesList(rulesList)
     }
 
-    private var allRules: List<DisposalRule> = emptyList()
-    private var rulesByCategory: Map<String, DisposalRule> = emptyMap()
-    private var rulesBySpecificItem: Map<String, DisposalRule> = emptyMap()
-    private var rulesByMaterialCode: Map<String, DisposalRule> = emptyMap()
-    private var rulesVersion: String = "2.0.0"
-    private var isLoaded = false
+    @Volatile private var allRules: List<DisposalRule> = emptyList()
+    @Volatile private var rulesByCategory: Map<String, DisposalRule> = emptyMap()
+    @Volatile private var rulesBySpecificItem: Map<String, DisposalRule> = emptyMap()
+    @Volatile private var rulesByMaterialCode: Map<String, DisposalRule> = emptyMap()
+    @Volatile private var rulesVersion: String = "2.0.0"
+    @Volatile private var isLoaded = false
+    private var loadAttempted = false // a missing/bad asset used to be re-read (and re-logged) on every lookup
 
     init {
         if (context != null) {
@@ -42,7 +44,8 @@ class DisposalRuleEngine(
     @Synchronized
     fun loadRules() {
         val ctx = context ?: return
-        if (isLoaded) return
+        if (isLoaded || loadAttempted) return
+        loadAttempted = true
         try {
             val jsonStream: InputStream = ctx.assets.open(rulesAssetPath)
             val jsonStr = jsonStream.bufferedReader().use { it.readText() }
@@ -64,6 +67,7 @@ class DisposalRuleEngine(
 
             for (i in 0 until rulesArray.length()) {
                 val obj = rulesArray.getJSONObject(i)
+                try { // one malformed rule must not discard the whole rule set
                 val accepted = mutableListOf<String>()
                 val acceptedArr = obj.optJSONArray("accepted_pathways")
                 if (acceptedArr != null) {
@@ -95,6 +99,9 @@ class DisposalRuleEngine(
                 )
 
                 rulesList.add(rule)
+                } catch (e: Exception) {
+                    runCatching { Log.w(TAG, "Skipping malformed rule at index $i: ${e.message}") }
+                }
             }
 
             loadRulesList(rulesList)
@@ -137,10 +144,13 @@ class DisposalRuleEngine(
 
     /**
      * Hierarchical lookup adhering to precedence:
-     * 1. Verified Item-specific rule for target jurisdiction (or national fallback)
-     * 2. Verified Material / RIC code rule for target jurisdiction (or national fallback)
-     * 3. Verified Generic category rule for target jurisdiction
+     * 1. Item-specific rule (same coarse category first; jurisdiction-specific preferred)
+     * 2. Material / RIC code rule (same coarse category first)
+     * 3. Generic category rule for the jurisdiction, then any generic category rule
      * 4. Conservative fallback
+     *
+     * Matching is category-aware, so e.g. a "cardboard" barcode result can never resolve to a glass rule,
+     * and partial item matches need >= 6 characters on both sides (no more "can" matching everything).
      */
     fun getHierarchicalRule(
         category: String,
@@ -150,64 +160,36 @@ class DisposalRuleEngine(
     ): DisposalRule {
         if (!isLoaded) loadRules()
 
-        val targetJur = jurisdiction?.uppercase()?.trim()
+        val targetJur = jurisdiction?.uppercase()?.trim()?.takeIf { it.isNotEmpty() }
+        val rules = allRules
+        val sameCategory = rules.filter { it.category.equals(category, ignoreCase = true) }
 
-        // 1. Try specific item match (jurisdiction-specific first)
+        // 1. Specific item
         if (!specificItem.isNullOrBlank()) {
-            val lowerItem = specificItem.lowercase().trim()
-            if (targetJur != null) {
-                val jurMatch = allRules.firstOrNull { rule ->
-                    rule.jurisdiction.equals(targetJur, ignoreCase = true) &&
-                    rule.specificItem != null && (
-                        lowerItem == rule.specificItem.lowercase() ||
-                        lowerItem.contains(rule.specificItem.lowercase()) ||
-                        rule.specificItem.lowercase().contains(lowerItem)
-                    )
-                }
-                if (jurMatch != null) return preserveSafety(jurMatch, category)
-            }
-
-            val exactMatch = rulesBySpecificItem[lowerItem]
-            if (exactMatch != null) return preserveSafety(exactMatch, category)
-
-            // Substring search in specific items
-            val partialMatch = allRules.firstOrNull { rule ->
-                rule.specificItem != null && (
-                    lowerItem.contains(rule.specificItem.lowercase()) ||
-                    rule.specificItem.lowercase().contains(lowerItem)
-                )
-            }
-            if (partialMatch != null) return preserveSafety(partialMatch, category)
+            val query = specificItem.lowercase().trim()
+            (bestItemMatch(sameCategory, query, targetJur)
+                ?: bestItemMatch(rules.filter { it.specificItem?.lowercase()?.trim() == query }, query, targetJur)
+                )?.let { return preserveSafety(it, category) }
         }
 
-        // 2. Try material code match (e.g., "PET 01", "ALU 41")
+        // 2. Material code
         if (!materialCode.isNullOrBlank()) {
-            val upperCode = materialCode.uppercase().trim()
-            if (targetJur != null) {
-                val jurCodeMatch = allRules.firstOrNull { rule ->
-                    rule.jurisdiction.equals(targetJur, ignoreCase = true) &&
-                    rule.materialCode?.uppercase() == upperCode
-                }
-                if (jurCodeMatch != null) return preserveSafety(jurCodeMatch, category)
+            val code = materialCode.uppercase().trim()
+            fun pick(pool: List<DisposalRule>): DisposalRule? {
+                val m = pool.filter { it.materialCode?.uppercase() == code }
+                return m.firstOrNull { targetJur != null && it.jurisdiction.equals(targetJur, ignoreCase = true) }
+                    ?: m.firstOrNull { it.specificItem == null }
+                    ?: m.firstOrNull()
             }
-
-            val codeMatch = rulesByMaterialCode[upperCode]
-                ?: allRules.firstOrNull { it.materialCode?.uppercase() == upperCode }
-            if (codeMatch != null) return preserveSafety(codeMatch, category)
+            (pick(sameCategory) ?: pick(rules))?.let { return preserveSafety(it, category) }
         }
 
-        // 3. Fall back to generic category rule for this jurisdiction
+        // 3. Generic category rule
         if (targetJur != null) {
-            val jurCatRule = allRules.firstOrNull { rule ->
-                rule.jurisdiction.equals(targetJur, ignoreCase = true) &&
-                rule.category.equals(category, ignoreCase = true) &&
-                rule.specificItem == null
-            }
-            if (jurCatRule != null) return jurCatRule
+            sameCategory.firstOrNull { it.jurisdiction.equals(targetJur, ignoreCase = true) && it.specificItem == null }
+                ?.let { return it }
         }
-
-        val catRule = getRuleForCategory(category)
-        if (catRule != null) return catRule
+        getRuleForCategory(category)?.let { return it }
 
         // 4. Conservative unknown fallback
         return DisposalRule(
@@ -223,6 +205,20 @@ class DisposalRuleEngine(
             source = "SWM 2016 Conservative Precautionary Principle"
         )
     }
+
+    /** Best match by: jurisdiction > exact > longest partial overlap. */
+    private fun bestItemMatch(pool: List<DisposalRule>, query: String, jurisdiction: String?): DisposalRule? =
+        pool.mapNotNull { rule ->
+            val item = rule.specificItem?.lowercase()?.trim() ?: return@mapNotNull null
+            val score = when {
+                item == query -> 100
+                minOf(item.length, query.length) >= MIN_PARTIAL_MATCH_LEN &&
+                        (query.contains(item) || item.contains(query)) -> 50 + minOf(item.length, query.length)
+                else -> return@mapNotNull null
+            }
+            val jurBonus = if (jurisdiction != null && rule.jurisdiction.equals(jurisdiction, ignoreCase = true)) 1000 else 0
+            rule to (score + jurBonus)
+        }.maxByOrNull { it.second }?.first
 
     /**
      * Ensures safety warnings are never demoted if the coarse category or item is hazardous.

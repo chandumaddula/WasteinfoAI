@@ -74,17 +74,20 @@ class EvidenceReconciliationEngine {
                 )
             }
 
-            // Evidence agrees or vision was uncertain: adopt barcode packaging metadata
+            // Vision was accepted but disagrees (below the high-confidence bar): still use the barcode,
+            // but flag it and ask the user instead of silently overriding.
+            val disagrees = !isCoarseMatch && !visualResult.isUncertain
             return ReconciledEvidenceResult(
                 coarseCategory = barcodeProduct.coarseCategory,
                 specificItem = barcodeProduct.specificItem,
                 materialCode = barcodeProduct.materialCode,
                 identificationSource = IdentificationSource.BARCODE_LOOKUP,
-                confidence = 0.95f,
-                evidenceSummary = "Matched packaging record for '${barcodeProduct.productName}' (${barcodeProduct.dataSource})",
-                hasConflict = false,
-                conflictReason = null,
-                needsUserConfirmation = false
+                confidence = if (disagrees) 0.75f else 0.95f,
+                evidenceSummary = "Matched packaging record for '${barcodeProduct.productName}' (${barcodeProduct.dataSource})" +
+                        if (disagrees) "; image looks like '${visualResult.label}'" else "",
+                hasConflict = disagrees,
+                conflictReason = if (disagrees) "Image appears to be '${visualResult.label}' but barcode lists '$barcodeCat' packaging." else null,
+                needsUserConfirmation = disagrees
             )
         }
 
@@ -118,6 +121,19 @@ class EvidenceReconciliationEngine {
                     conflictReason = "Visual prediction '${visualResult.label}' disagrees with packaging resin mark '${ocrEvidence.materialCode}'.",
                     needsUserConfirmation = true
                 )
+            } else {
+                // Moderate-confidence vision disagrees with the resin mark: keep vision, but ask the user.
+                return ReconciledEvidenceResult(
+                    coarseCategory = visualResult.label,
+                    specificItem = null,
+                    materialCode = null,
+                    identificationSource = if (isCroppedRoi) IdentificationSource.OBJECT_CROP_CLASSIFIER else IdentificationSource.VISION_CLASSIFIER,
+                    confidence = visualResult.confidence,
+                    evidenceSummary = "Resin symbol '${ocrEvidence.materialCode}' ($ocrCat) disagrees with visual '${visualResult.label}'.",
+                    hasConflict = true,
+                    conflictReason = "Visual prediction '${visualResult.label}' disagrees with packaging resin mark '${ocrEvidence.materialCode}'.",
+                    needsUserConfirmation = true
+                )
             }
         }
 
@@ -129,7 +145,7 @@ class EvidenceReconciliationEngine {
             materialCode = null,
             identificationSource = source,
             confidence = visualResult.confidence,
-            evidenceSummary = if (isCroppedRoi) "Identified from salient object ROI using ReXNet-150" else "Identified from letterboxed image using ReXNet-150",
+            evidenceSummary = if (isCroppedRoi) "Identified from salient object ROI using the on-device classifier" else "Identified from the full image using the on-device classifier",
             hasConflict = false,
             conflictReason = null,
             needsUserConfirmation = visualResult.isUncertain

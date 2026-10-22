@@ -82,6 +82,7 @@ def main():
         logger.warning("Saved TorchScript fallback %s (use PyTorch Mobile, not ExecuTorch).", out_path)
 
     meta = {
+        "version": cfg["project"]["version"],
         "architecture": ckpt["arch"], "classes": ckpt["classes"], "input_shape": cfg["model"]["input_shape"],
         "preprocess": {"resize": [ckpt["image_size"], ckpt["image_size"]], "center_crop": False,
                        "normalization": ckpt["norm"]},
@@ -96,7 +97,7 @@ def main():
         target = (root / cfg["export"]["android_asset_path"]).resolve()
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(out_path, target.with_name(out_path.name))
-        shutil.copy2(out_path.with_suffix(".json"), target.parent / "model_meta.json")
+        shutil.copy2(out_path.with_suffix(".json"), target.parent / "model_metadata.json")
         shutil.copy2(root / cfg["dataset"]["labels_file"], target.parent / "class_names.json")
         logger.info("Synced to %s", target.parent)
 

@@ -1,26 +1,6 @@
 {
-  "model_name": "wasteinfoAI-rexnet150",
-  "architecture": "rexnet_150",
-  "runtime": "executorch",
-  "input_shape": [
-    1,
-    3,
-    224,
-    224
-  ],
-  "normalization": {
-    "mean": [
-      0.485,
-      0.456,
-      0.406
-    ],
-    "std": [
-      0.229,
-      0.224,
-      0.225
-    ]
-  },
-  "num_classes": 17,
+  "version": "2.0.0",
+  "architecture": "mobilenetv3_large_100",
   "classes": [
     "Battery",
     "Keyboard",
@@ -40,5 +20,36 @@
     "plastic",
     "trash"
   ],
-  "size_bytes": 31731232
+  "input_shape": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "preprocess": {
+    "resize": [
+      224,
+      224
+    ],
+    "center_crop": false,
+    "normalization": {
+      "mean": [
+        0.485,
+        0.456,
+        0.406
+      ],
+      "std": [
+        0.229,
+        0.224,
+        0.225
+      ]
+    }
+  },
+  "output": "calibrated softmax probabilities",
+  "rejection_policy": {
+    "confidence_threshold": 0.95,
+    "min_margin": 0.0,
+    "max_norm_entropy": 0.5
+  },
+  "exported_file": "waste_classifier.pte"
 }

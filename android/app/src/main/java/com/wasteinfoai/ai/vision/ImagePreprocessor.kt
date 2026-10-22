@@ -15,6 +15,8 @@ import kotlin.math.max
  * Preprocessing strategies for image preparation.
  */
 enum class PreprocessingStrategy {
+    /** Whole image stretched to 224x224. Matches the Python training/eval pipeline exactly (default). */
+    RESIZE_FULL,
     CENTER_CROP,
     LETTERBOX,
     ROI_CROP
@@ -44,12 +46,17 @@ object ImagePreprocessor {
     private val MEAN = floatArrayOf(0.485f, 0.456f, 0.406f)
     private val STD = floatArrayOf(0.229f, 0.224f, 0.225f)
 
+    // Per-channel lookup tables: (v/255 - mean) / std, computed once instead of 3 float divisions per pixel.
+    private val LUT_R = FloatArray(256) { ((it / 255.0f) - MEAN[0]) / STD[0] }
+    private val LUT_G = FloatArray(256) { ((it / 255.0f) - MEAN[1]) / STD[1] }
+    private val LUT_B = FloatArray(256) { ((it / 255.0f) - MEAN[2]) / STD[2] }
+
     /**
      * Decodes, corrects orientation, and prepares the image from [file] to 224x224 using [strategy].
      */
     fun loadAndPreprocessBitmap(
         file: File,
-        strategy: PreprocessingStrategy = PreprocessingStrategy.LETTERBOX,
+        strategy: PreprocessingStrategy = PreprocessingStrategy.RESIZE_FULL,
         roi: RectF? = null
     ): Bitmap {
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
@@ -74,7 +81,9 @@ object ImagePreprocessor {
         // Correct EXIF orientation
         val oriented = correctExifOrientation(file.absolutePath, sampled)
 
-        return preprocessBitmap(oriented, strategy, roi)
+        val result = preprocessBitmap(oriented, strategy, roi)
+        if (result !== oriented && !oriented.isRecycled) oriented.recycle() // was leaked before
+        return result
     }
 
     /**
@@ -82,10 +91,11 @@ object ImagePreprocessor {
      */
     fun preprocessBitmap(
         source: Bitmap,
-        strategy: PreprocessingStrategy = PreprocessingStrategy.LETTERBOX,
+        strategy: PreprocessingStrategy = PreprocessingStrategy.RESIZE_FULL,
         roi: RectF? = null
     ): Bitmap {
         return when (strategy) {
+            PreprocessingStrategy.RESIZE_FULL -> resizeFull(source)
             PreprocessingStrategy.CENTER_CROP -> {
                 scaleAndCenterCrop(source, INPUT_WIDTH, INPUT_HEIGHT)
             }
@@ -94,18 +104,35 @@ object ImagePreprocessor {
             }
             PreprocessingStrategy.ROI_CROP -> {
                 if (roi != null && roi.width() > 0.05f && roi.height() > 0.05f) {
-                    val croppedRoi = cropRoi(source, roi, marginRatio = 0.12f)
-                    val result = letterbox(croppedRoi, INPUT_WIDTH, INPUT_HEIGHT, NEUTRAL_GRAY_PAD)
-                    if (croppedRoi !== source && croppedRoi !== result) {
-                        croppedRoi.recycle()
-                    }
+                    // Square crop around the object (no distortion, no gray bars the model never saw in training)
+                    val square = cropRoiSquare(source, roi, marginRatio = 0.12f)
+                    val result = resizeFull(square)
+                    if (square !== source && square !== result) square.recycle()
                     result
                 } else {
-                    // Fall back to letterboxing entire image if ROI is unavailable or invalid
-                    letterbox(source, INPUT_WIDTH, INPUT_HEIGHT, NEUTRAL_GRAY_PAD)
+                    resizeFull(source)
                 }
             }
         }
+    }
+
+    /** Stretches the whole image to the model input size (identical to Resize((224,224)) in training). */
+    fun resizeFull(source: Bitmap, targetW: Int = INPUT_WIDTH, targetH: Int = INPUT_HEIGHT): Bitmap {
+        if (source.width == targetW && source.height == targetH) return source
+        return Bitmap.createScaledBitmap(source, targetW, targetH, true)
+    }
+
+    /** Square region centred on the normalized [roi] with context margin, clamped inside the image. */
+    fun cropRoiSquare(source: Bitmap, roi: RectF, marginRatio: Float = 0.12f): Bitmap {
+        val srcW = source.width
+        val srcH = source.height
+        val cx = (roi.left + roi.right) / 2f * srcW
+        val cy = (roi.top + roi.bottom) / 2f * srcH
+        val side = (max(roi.width() * srcW, roi.height() * srcH) * (1f + 2f * marginRatio))
+            .toInt().coerceIn(1, minOf(srcW, srcH))
+        val x = (cx - side / 2f).toInt().coerceIn(0, srcW - side)
+        val y = (cy - side / 2f).toInt().coerceIn(0, srcH - side)
+        return Bitmap.createBitmap(source, x, y, side, side)
     }
 
     /**
@@ -208,9 +235,7 @@ object ImagePreprocessor {
         if (scaled !== source && scaled !== cropped) {
             scaled.recycle()
         }
-        if (source !== cropped) {
-            source.recycle()
-        }
+        // NOTE: the caller owns [source]; recycling it here used to destroy caller-held bitmaps.
 
         return if (cropped.width == targetW && cropped.height == targetH) {
             cropped
@@ -247,15 +272,9 @@ object ImagePreprocessor {
 
         for (i in pixels.indices) {
             val pixel = pixels[i]
-            // Extract RGB (0..255)
-            val r = ((pixel shr 16) and 0xFF) / 255.0f
-            val g = ((pixel shr 8) and 0xFF) / 255.0f
-            val b = (pixel and 0xFF) / 255.0f
-
-            // Normalize and place in planar NCHW order
-            floatBuffer[i] = (r - MEAN[0]) / STD[0]
-            floatBuffer[planeSize + i] = (g - MEAN[1]) / STD[1]
-            floatBuffer[2 * planeSize + i] = (b - MEAN[2]) / STD[2]
+            floatBuffer[i] = LUT_R[(pixel shr 16) and 0xFF]
+            floatBuffer[planeSize + i] = LUT_G[(pixel shr 8) and 0xFF]
+            floatBuffer[2 * planeSize + i] = LUT_B[pixel and 0xFF]
         }
 
         return floatBuffer

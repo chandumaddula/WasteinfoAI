@@ -38,7 +38,8 @@ training:
   freeze_backbone_epochs: 2
 
 evaluation:
-  tta: true                           # horizontal-flip test-time augmentation
+  tta: false                          # MUST stay false while the Android app runs a single forward pass,
+                                      # otherwise thresholds are tuned on TTA outputs the phone never produces
   summary_file: "reports/evaluation_summary.json"
   policy_file: "reports/rejection_policy.json"
   ood_dir: "data/ood"                 # OPTIONAL: real non-waste photos (hands, rooms, people, pets)

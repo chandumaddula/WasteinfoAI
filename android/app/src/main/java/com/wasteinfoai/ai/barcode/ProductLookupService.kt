@@ -41,6 +41,8 @@ class ProductLookupService {
         private const val TAG = "ProductLookupService"
         private const val CONNECT_TIMEOUT_MS = 2500
         private const val READ_TIMEOUT_MS = 2500
+        private const val MISS_TTL_MS = 10 * 60 * 1000L
+        private val BARCODE_REGEX = Regex("""^\d{8,14}$""")
 
         // Embedded offline lookup database for common consumer products (India & International)
         private val LOCAL_PACKAGING_CATALOG = mapOf(
@@ -173,6 +175,8 @@ class ProductLookupService {
     }
 
     private val cache = ConcurrentHashMap<String, ProductPackagingInfo>(LOCAL_PACKAGING_CATALOG)
+    /** Barcodes the online DB definitively does not know / cannot classify (avoids repeat slow lookups). */
+    private val misses = ConcurrentHashMap<String, Long>()
 
     /**
      * Looks up packaging details for a decoded barcode.
@@ -180,10 +184,14 @@ class ProductLookupService {
      */
     suspend fun lookup(barcode: String): ProductPackagingInfo? = withContext(Dispatchers.IO) {
         val cleanBarcode = barcode.trim()
-        if (cleanBarcode.isBlank()) return@withContext null
+        // Only plain GTIN digits are ever placed in a request URL.
+        if (!BARCODE_REGEX.matches(cleanBarcode)) return@withContext null
 
         // 1. Instant offline cache lookup
         cache[cleanBarcode]?.let { return@withContext it }
+
+        val missedAt = misses[cleanBarcode]
+        if (missedAt != null && System.currentTimeMillis() - missedAt < MISS_TTL_MS) return@withContext null
 
         // 2. Query Open Food Facts v2 if network available
         return@withContext queryOpenFoodFacts(cleanBarcode)?.also { info ->
@@ -194,7 +202,7 @@ class ProductLookupService {
     private fun queryOpenFoodFacts(barcode: String): ProductPackagingInfo? {
         var connection: HttpURLConnection? = null
         return try {
-            val url = URL("https://world.openfoodfacts.org/api/v2/product/$barcode.json?fields=product_name,brands,packaging,packaging_text,ecoscore_data")
+            val url = URL("https://world.openfoodfacts.org/api/v2/product/$barcode.json?fields=product_name,brands,packaging,packaging_text,packaging_tags")
             connection = (url.openConnection() as HttpURLConnection).apply {
                 requestMethod = "GET"
                 connectTimeout = CONNECT_TIMEOUT_MS
@@ -202,12 +210,19 @@ class ProductLookupService {
                 setRequestProperty("User-Agent", "wasteinfoAI-Android/1.0.0 (contact@wasteinfoai.internal)")
             }
 
-            if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+            val code = connection.responseCode
+            if (code == HttpURLConnection.HTTP_NOT_FOUND) {
+                misses[barcode] = System.currentTimeMillis()
                 return null
+            }
+            if (code != HttpURLConnection.HTTP_OK) {
+                return null // transient: do not negative-cache
             }
 
             val responseText = connection.inputStream.bufferedReader().use { it.readText() }
-            parseOpenFoodFactsJson(barcode, responseText)
+            val parsed = parseOpenFoodFactsJson(barcode, responseText)
+            if (parsed == null) misses[barcode] = System.currentTimeMillis() // definitive: unknown / unclassifiable
+            parsed
         } catch (e: Exception) {
             Log.d(TAG, "Open Food Facts lookup failed for $barcode: ${e.message}")
             null
@@ -216,52 +231,93 @@ class ProductLookupService {
         }
     }
 
+    private data class PackagingMaterial(val coarse: String, val item: String, val code: String)
+
+    private val nonAlnum = Regex("[^a-z0-9]+")
+    private val metalWords = setOf("aluminium", "aluminum", "steel", "tin", "tinplate", "can", "cans", "metal")
+    private val glassWords = setOf("glass")
+    private val plasticWords = setOf(
+        "plastic", "plastics", "pet", "pete", "hdpe", "ldpe", "pp", "pvc", "ps",
+        "polypropylene", "polyethylene", "polystyrene", "pouch", "sachet", "film", "wrapper", "bag"
+    )
+    private val cardboardWords = setOf("cardboard", "carton", "tetra", "tetrapak", "paperboard", "box", "paper", "brik")
+
     private fun parseOpenFoodFactsJson(barcode: String, json: String): ProductPackagingInfo? {
         return try {
             val root = JSONObject(json)
             if (root.optInt("status", 0) != 1) return null
-
             val product = root.optJSONObject("product") ?: return null
+
             val name = product.optString("product_name").takeIf { it.isNotBlank() } ?: "Packaged Consumer Product"
             val brands = product.optString("brands").takeIf { it.isNotBlank() }
             val packaging = product.optString("packaging").takeIf { it.isNotBlank() }
                 ?: product.optString("packaging_text").takeIf { it.isNotBlank() }
 
-            // Deduce coarse category and material code from packaging text
-            val lower = (name + " " + (packaging ?: "")).lowercase()
-            val (coarse, item, code) = when {
-                lower.contains("aluminum") || lower.contains("can") || lower.contains("tin") || lower.contains("metal") ->
-                    Triple("metal", "Aluminum Beverage Can", "ALU 41")
-                lower.contains("glass") || lower.contains("bottle") && lower.contains("glass") ->
-                    Triple("glass", "Glass Container", "GL 70")
-                lower.contains("carton") || lower.contains("box") || lower.contains("cardboard") || lower.contains("tetra") ->
-                    Triple("cardboard", "Cardboard Box / Liquid Carton", "PAP 20")
-                lower.contains("pet") || lower.contains("polyethylene terephthalate") ->
-                    Triple("plastic", "PET Beverage Bottle", "PET 01")
-                lower.contains("hdpe") ->
-                    Triple("plastic", "HDPE Rigid Container", "HDPE 02")
-                lower.contains("pp") || lower.contains("polypropylene") ->
-                    Triple("plastic", "PP Plastic Container", "PP 05")
-                lower.contains("plastic") || lower.contains("pouch") || lower.contains("bottle") || lower.contains("sachet") ->
-                    Triple("plastic", "Plastic Packaging", "PLASTIC_UNKNOWN")
-                else ->
-                    Triple("trash", "Packaged Waste Item", "OTHER")
-            }
+            // Classify from PACKAGING fields only. The product name used to be included, so "Candy" matched
+            // "can" (metal), "Protein" matched "tin" (metal), "Apple" matched "pp" (plastic).
+            val tags = product.optJSONArray("packaging_tags")
+            val tagText = if (tags != null) List(tags.length()) { tags.optString(it) }.joinToString(" ") else ""
+            val packagingText = listOf(
+                product.optString("packaging"), product.optString("packaging_text"), tagText
+            ).joinToString(" ")
+
+            // No usable packaging evidence -> return null so the vision model decides.
+            // (Previously unknown packaging became "trash" at 95% confidence and overrode the image.)
+            val material = classifyPackaging(packagingText) ?: return null
 
             ProductPackagingInfo(
                 barcode = barcode,
                 productName = name,
                 brands = brands,
                 packagingDescription = packaging,
-                coarseCategory = coarse,
-                specificItem = item,
-                materialCode = code,
+                coarseCategory = material.coarse,
+                specificItem = material.item,
+                materialCode = material.code,
                 components = emptyList(),
                 dataSource = "Open Food Facts"
             )
         } catch (e: Exception) {
             Log.w(TAG, "Failed to parse Open Food Facts response", e)
             null
+        }
+    }
+
+    /** Whole-word token voting. Ties between materials are treated as ambiguous (null). */
+    private fun classifyPackaging(text: String): PackagingMaterial? {
+        val tokens = text.lowercase().split(nonAlnum).filter { it.isNotEmpty() }
+        if (tokens.isEmpty()) return null
+        val set = tokens.toSet()
+
+        val counts = linkedMapOf(
+            "cardboard" to tokens.count { it in cardboardWords },
+            "glass" to tokens.count { it in glassWords },
+            "plastic" to tokens.count { it in plasticWords },
+            "metal" to tokens.count { it in metalWords }
+        )
+        val max = counts.values.maxOrNull() ?: 0
+        if (max == 0) return null
+        val winners = counts.filterValues { it == max }.keys
+        if (winners.size != 1) return null
+
+        return when (winners.first()) {
+            "metal" ->
+                if (set.any { it == "steel" || it == "tin" || it == "tinplate" })
+                    PackagingMaterial("metal", "Steel / Tin Food Can", "FE 40")
+                else PackagingMaterial("metal", "Aluminum Beverage Can", "ALU 41")
+            "glass" -> PackagingMaterial("glass", "Glass Container", "GL 70")
+            "cardboard" ->
+                if ("tetra" in set || "tetrapak" in set || "brik" in set)
+                    PackagingMaterial("cardboard", "Multilayer Liquid Packaging Board (Tetra Pak)", "C/PAP 84")
+                else PackagingMaterial("cardboard", "Cardboard Box / Liquid Carton", "PAP 20")
+            else -> when {
+                "pet" in set || "pete" in set -> PackagingMaterial("plastic", "PET Beverage Bottle", "PET 01")
+                "hdpe" in set -> PackagingMaterial("plastic", "HDPE Rigid Container", "HDPE 02")
+                "pvc" in set -> PackagingMaterial("plastic", "PVC Plastic Packaging", "PVC 03")
+                "ldpe" in set -> PackagingMaterial("plastic", "LDPE Plastic Bag / Pouch", "LDPE 04")
+                "pp" in set || "polypropylene" in set -> PackagingMaterial("plastic", "PP Plastic Container", "PP 05")
+                "ps" in set || "polystyrene" in set -> PackagingMaterial("plastic", "Polystyrene Packaging", "PS 06")
+                else -> PackagingMaterial("plastic", "Plastic Packaging", "PLASTIC_UNKNOWN")
+            }
         }
     }
 }

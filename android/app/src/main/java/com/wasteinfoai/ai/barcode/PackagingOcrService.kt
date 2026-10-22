@@ -8,7 +8,7 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.util.concurrent.TimeUnit
-import java.util.regex.Pattern
+import kotlin.math.max
 
 /**
  * Structured evidence extracted from on-device packaging text and recycling symbol OCR.
@@ -24,26 +24,42 @@ data class OcrPackagingEvidence(
 )
 
 /**
- * On-device OCR service utilizing Google ML Kit Latin Text Recognition.
- * Identifies Resin Identification Codes (RIC 1–7), recycling triangle markings,
- * and manufacturer disposal instructions directly from physical packaging.
+ * On-device OCR (ML Kit Latin) for Resin Identification Codes and disposal instructions.
+ *
+ * NOTE: [scanPackagingText] blocks the calling thread (up to [timeoutMs]); call it from Dispatchers.IO/Default.
+ * Parsing lives in [extractEvidence] (pure function, JVM unit-testable).
  */
 class PackagingOcrService(
-    private val recognizer: TextRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+    private val recognizer: TextRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS),
+    private val timeoutMs: Long = 2500L
 ) : AutoCloseable {
 
     companion object {
         private const val TAG = "PackagingOcrService"
+        private const val MAX_OCR_SIDE = 1280 // full-res photos only slow OCR down
 
-        // Resin Identification Code patterns (1 to 7)
-        private val RIC_SYMBOL_REGEX = Pattern.compile(
-            """\b(?:RIC|RESIN)?\s*#?\s*([1-7])\b|♳|♴|♵|♶|♷|♸|♹""",
-            Pattern.CASE_INSENSITIVE
+        private val UNICODE_RIC = listOf('♳' to 1, '♴' to 2, '♵' to 3, '♶' to 4, '♷' to 5, '♸' to 6, '♹' to 7)
+
+        // "PET 1", "HDPE-2", "PP 5": the digit MUST agree with the resin name (rejects "PP 3", "PS 1").
+        private val NAME_WITH_DIGIT = Regex("""\b(PETE?|HDPE|PVC|LDPE|PP|PS|OTHER)\s*[-:]?\s*0?([1-7])\b""")
+        // Letters printed under the triangle: ">PET<", ">HDPE<"
+        private val NAME_IN_TRIANGLE = Regex(""">\s*(PETE?|HDPE|PVC|LDPE|PP|PS|OTHER)\s*<""")
+        // Names that are never ordinary English words. "PET" (pet food), "OTHER", "PP", "PS" are NOT accepted alone.
+        private val UNAMBIGUOUS_NAME = Regex(
+            """\b(HDPE|LDPE|PETE|POLYPROPYLENE|POLYSTYRENE|POLYETHYLENE TEREPHTHALATE|POLYVINYL CHLORIDE)\b"""
+        )
+        private val CONTEXT_DIGIT = Regex(
+            """\b(?:RIC|RESIN(?: CODE)?|RECYCLING CODE|PLASTIC)\s*(?:#|NO\.?|NUMBER)?\s*([1-7])\b"""
         )
 
-        private val RESIN_NAME_REGEX = Pattern.compile(
-            """\b(PETE?|HDPE|PVC|LDPE|PP|PS|OTHER)\s*(?:0?[1-7])?\b""",
-            Pattern.CASE_INSENSITIVE
+        private val RESIN_CODE_BY_NAME = mapOf(
+            "PET" to 1, "PETE" to 1, "POLYETHYLENE TEREPHTHALATE" to 1,
+            "HDPE" to 2,
+            "PVC" to 3, "POLYVINYL CHLORIDE" to 3,
+            "LDPE" to 4,
+            "PP" to 5, "POLYPROPYLENE" to 5,
+            "PS" to 6, "POLYSTYRENE" to 6,
+            "OTHER" to 7
         )
 
         private val INSTRUCTION_KEYWORDS = listOf(
@@ -61,96 +77,83 @@ class PackagingOcrService(
             6 to Triple("PS 06", "Polystyrene (PS)", "plastic"),
             7 to Triple("OTHER 07", "Other / Multi-Layer Polymer", "plastic")
         )
-    }
 
-    /**
-     * Extracts recycling symbols and packaging text markings from a [bitmap].
-     */
-    fun scanPackagingText(bitmap: Bitmap): OcrPackagingEvidence? {
-        return try {
-            val inputImage = InputImage.fromBitmap(bitmap, 0)
-            val task = recognizer.process(inputImage)
-            val result = Tasks.await(task, 2500, TimeUnit.MILLISECONDS)
-            val fullText = result.text.uppercase()
+        /** Pure text -> evidence parser. */
+        fun extractEvidence(rawText: String): OcrPackagingEvidence? {
+            val text = rawText.uppercase()
+            if (text.isBlank()) return null
 
-            if (fullText.isBlank()) return null
+            var ric: Int? = null
+            var matched = ""
+            var confidence = 0.92f
 
-            var detectedRic: Int? = null
-            var matchedText = ""
-
-            // Check unicode recycling symbols
-            when {
-                fullText.contains("♳") -> detectedRic = 1
-                fullText.contains("♴") -> detectedRic = 2
-                fullText.contains("♵") -> detectedRic = 3
-                fullText.contains("♶") -> detectedRic = 4
-                fullText.contains("♷") -> detectedRic = 5
-                fullText.contains("♸") -> detectedRic = 6
-                fullText.contains("♹") -> detectedRic = 7
+            // 1) Unicode recycling symbols
+            for ((symbol, code) in UNICODE_RIC) {
+                if (text.contains(symbol)) { ric = code; matched = symbol.toString(); break }
             }
-
-            // Check name regex
-            if (detectedRic == null) {
-                val nameMatcher = RESIN_NAME_REGEX.matcher(fullText)
-                if (nameMatcher.find()) {
-                    val codeStr = nameMatcher.group(1)?.uppercase() ?: ""
-                    detectedRic = when (codeStr) {
-                        "PET", "PETE" -> 1
-                        "HDPE" -> 2
-                        "PVC" -> 3
-                        "LDPE" -> 4
-                        "PP" -> 5
-                        "PS" -> 6
-                        "OTHER" -> 7
-                        else -> null
-                    }
-                    if (detectedRic != null) {
-                        matchedText = nameMatcher.group(0) ?: ""
-                    }
+            // 2) Name + matching digit ("PET 1")
+            if (ric == null) {
+                for (m in NAME_WITH_DIGIT.findAll(text)) {
+                    val digit = m.groupValues[2].toInt()
+                    if (RESIN_CODE_BY_NAME[m.groupValues[1]] == digit) { ric = digit; matched = m.value; break }
+                }
+            }
+            // 3) ">PET<" under the triangle
+            if (ric == null) {
+                NAME_IN_TRIANGLE.find(text)?.let { m ->
+                    ric = RESIN_CODE_BY_NAME[m.groupValues[1]]; matched = m.value
+                }
+            }
+            // 4) Digit with explicit recycling context ("RIC 5", "RESIN CODE 2")
+            if (ric == null) {
+                CONTEXT_DIGIT.find(text)?.let { m -> ric = m.groupValues[1].toInt(); matched = m.value }
+            }
+            // 5) Unambiguous material names (lower confidence: may describe a component, not the body)
+            if (ric == null) {
+                UNAMBIGUOUS_NAME.find(text)?.let { m ->
+                    ric = RESIN_CODE_BY_NAME[m.groupValues[1]]; matched = m.value; confidence = 0.85f
                 }
             }
 
-            // Check numeric symbol regex
-            if (detectedRic == null) {
-                val ricMatcher = RIC_SYMBOL_REGEX.matcher(fullText)
-                while (ricMatcher.find()) {
-                    val digitStr = ricMatcher.group(1)
-                    val digit = digitStr?.toIntOrNull()
-                    if (digit != null && digit in 1..7) {
-                        // Validate surrounding context to avoid false matching generic prices or counts
-                        val start = Math.max(0, ricMatcher.start() - 10)
-                        val end = Math.min(fullText.length, ricMatcher.end() + 10)
-                        val window = fullText.substring(start, end)
-                        if (window.contains("RECYCLE") || window.contains("RIC") || window.contains("TRIANGLE") || window.contains("PLASTIC") || window.contains("POLY")) {
-                            detectedRic = digit
-                            matchedText = ricMatcher.group(0) ?: ""
-                            break
-                        }
-                    }
-                }
-            }
+            val keywords = INSTRUCTION_KEYWORDS.filter { text.contains(it) }
+            if (ric == null && keywords.isEmpty()) return null
 
-            // Check keywords
-            val foundKeywords = INSTRUCTION_KEYWORDS.filter { fullText.contains(it) }
-
-            if (detectedRic == null && foundKeywords.isEmpty()) {
-                return null
-            }
-
-            val meta = detectedRic?.let { RIC_METADATA[it] }
-            OcrPackagingEvidence(
-                resinCode = detectedRic,
+            val meta = ric?.let { RIC_METADATA[it] }
+            return OcrPackagingEvidence(
+                resinCode = ric,
                 materialCode = meta?.first,
                 materialName = meta?.second,
                 coarseCategory = meta?.third,
-                detectedKeywords = foundKeywords,
-                confidence = if (detectedRic != null) 0.92f else 0.75f,
-                rawMatchedText = matchedText.ifBlank { foundKeywords.joinToString(", ") }
+                detectedKeywords = keywords,
+                confidence = if (ric != null) confidence else 0.75f,
+                rawMatchedText = matched.ifBlank { keywords.joinToString(", ") }
             )
+        }
+    }
+
+    fun scanPackagingText(bitmap: Bitmap): OcrPackagingEvidence? {
+        var work: Bitmap? = null
+        return try {
+            work = downscaleForOcr(bitmap)
+            val task = recognizer.process(InputImage.fromBitmap(work, 0))
+            val result = Tasks.await(task, timeoutMs, TimeUnit.MILLISECONDS)
+            extractEvidence(result.text)
         } catch (e: Exception) {
             Log.w(TAG, "OCR recognition error: ${e.message}")
             null
+        } finally {
+            val w = work
+            if (w != null && w !== bitmap) w.recycle()
         }
+    }
+
+    private fun downscaleForOcr(bitmap: Bitmap): Bitmap {
+        val longSide = max(bitmap.width, bitmap.height)
+        if (longSide <= MAX_OCR_SIDE) return bitmap
+        val s = MAX_OCR_SIDE / longSide.toFloat()
+        return Bitmap.createScaledBitmap(
+            bitmap, (bitmap.width * s).toInt().coerceAtLeast(1), (bitmap.height * s).toInt().coerceAtLeast(1), true
+        )
     }
 
     override fun close() {
