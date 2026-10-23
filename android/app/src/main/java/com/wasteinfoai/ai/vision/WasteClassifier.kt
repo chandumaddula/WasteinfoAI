@@ -250,7 +250,7 @@ class WasteClassifier(
                 topK = topK,
                 state = evalResult.state,
                 policyResult = evalResult
-            )
+            ).copy(confidence = evalResult.confidence) // keep the real top-1 score so the UI does not show 0.0%
         }
     }
 

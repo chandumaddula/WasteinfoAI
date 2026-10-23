@@ -44,9 +44,23 @@ object ImageQualityAssessor {
                 canProceed = false
             )
         }
-        val options = android.graphics.BitmapFactory.Options().apply {
-            inSampleSize = 2
+        val bounds = android.graphics.BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        android.graphics.BitmapFactory.decodeFile(file.absolutePath, bounds)
+        // Judge resolution on the ORIGINAL photo, never on the thumbnail used for the sharpness test.
+        if (bounds.outWidth > 0 && bounds.outHeight > 0 &&
+            (bounds.outWidth < MIN_DIMENSION || bounds.outHeight < MIN_DIMENSION)
+        ) {
+            return ImageQualityAssessment(
+                status = QualityStatus.LOW_RESOLUTION,
+                blurScore = 0f,
+                meanBrightness = 0f,
+                message = "Image resolution (${bounds.outWidth}x${bounds.outHeight}) is too low for accurate identification. Minimum is ${MIN_DIMENSION}x${MIN_DIMENSION}.",
+                canProceed = false
+            )
         }
+        var sample = 1
+        while (minOf(bounds.outWidth, bounds.outHeight) / (sample * 2) >= 480) sample *= 2
+        val options = android.graphics.BitmapFactory.Options().apply { inSampleSize = sample }
         val bmp = android.graphics.BitmapFactory.decodeFile(file.absolutePath, options)
         return try {
             assess(bmp)
@@ -88,15 +102,21 @@ object ImageQualityAssessor {
         small.getPixels(pixels, 0, sampleW, 0, 0, sampleW, sampleH)
         if (small !== bitmap) small.recycle()
 
-        return assessPixels(pixels, sampleW, sampleH)
+        // The sampled thumbnail is intentionally small (e.g. 160x120): its size says nothing about the photo.
+        return assessPixels(pixels, sampleW, sampleH, checkResolution = false)
     }
 
     /**
      * Algorithmic evaluation of raw pixel arrays for luminance, sharpness, and resolution.
      * Can run in pure JVM unit tests without Android OS graphics binaries.
      */
-    fun assessPixels(pixels: IntArray, width: Int, height: Int): ImageQualityAssessment {
-        if (width < MIN_DIMENSION || height < MIN_DIMENSION) {
+    fun assessPixels(
+        pixels: IntArray,
+        width: Int,
+        height: Int,
+        checkResolution: Boolean = true
+    ): ImageQualityAssessment {
+        if (checkResolution && (width < MIN_DIMENSION || height < MIN_DIMENSION)) {
             return ImageQualityAssessment(
                 status = QualityStatus.LOW_RESOLUTION,
                 blurScore = 0f,

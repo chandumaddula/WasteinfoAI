@@ -102,14 +102,21 @@ def create_or_load_split(cfg: dict, root: Path, class_names: List[str]) -> dict:
     image_dir = root / ds["image_dir"]
     if not image_dir.exists():
         raise FileNotFoundError(f"Dataset folder not found: {image_dir}")
-    folders = {p.name.lower(): p for p in image_dir.iterdir() if p.is_dir()}
+    roots = [image_dir] + [root / d for d in ds.get("extra_image_dirs", []) if (root / d).exists()]
+    extra_roots = set(roots[1:])
+    extra_set = set()
+    folders = {}
+    for r in roots:
+        for p in r.iterdir():
+            if p.is_dir():
+                folders.setdefault(p.name.lower(), []).append(p)
 
     paths, labels, seen, dupes, bad = [], [], set(), 0, 0
     for idx, name in enumerate(class_names):
-        folder = folders.get(name.lower())
-        if folder is None:
-            raise FileNotFoundError(f"No folder for class '{name}' in {image_dir}. Found: {sorted(folders)}")
-        for p in sorted(folder.rglob("*")):
+        class_folders = folders.get(name.lower())
+        if not class_folders:
+            raise FileNotFoundError(f"No folder for class '{name}' in {roots}. Found: {sorted(folders)}")
+        for p in sorted(f for fo in class_folders for f in fo.rglob("*")):
             if p.suffix.lower() not in IMAGE_EXTS:
                 continue
             try:
@@ -123,8 +130,11 @@ def create_or_load_split(cfg: dict, root: Path, class_names: List[str]) -> dict:
                 dupes += 1
                 continue
             seen.add(digest)
-            paths.append(p.relative_to(root).as_posix())
+            rel = p.relative_to(root).as_posix()
+            paths.append(rel)
             labels.append(idx)
+            if any(par in extra_roots for par in p.parents):
+                extra_set.add(rel)
     logger.info("Found %d images (%d exact duplicates and %d unreadable files skipped)", len(paths), dupes, bad)
 
     seed = ds["random_seed"]
@@ -132,6 +142,15 @@ def create_or_load_split(cfg: dict, root: Path, class_names: List[str]) -> dict:
     tr_p, tmp_p, tr_l, tmp_l = train_test_split(paths, labels, test_size=hold, stratify=labels, random_state=seed)
     va_p, te_p, va_l, te_l = train_test_split(
         tmp_p, tmp_l, test_size=ds["test_split"] / hold, stratify=tmp_l, random_state=seed)
+
+    # Real-world photos are few compared with the base dataset: repeat them in TRAIN only
+    # (each repeat gets different random augmentation). Val/test stay un-duplicated and honest.
+    rep = int(ds.get("extra_repeat", 3))
+    if extra_set and rep > 1:
+        extra_train = [(p, l) for p, l in zip(tr_p, tr_l) if p in extra_set]
+        tr_p = tr_p + [p for p, _ in extra_train] * (rep - 1)
+        tr_l = tr_l + [l for _, l in extra_train] * (rep - 1)
+        logger.info("Real-world images: %d in train (x%d), %d total", len(extra_train), rep, len(extra_set))
 
     manifest = {
         "classes": class_names,

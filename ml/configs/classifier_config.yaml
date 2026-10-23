@@ -12,6 +12,8 @@ model:
 
 dataset:
   image_dir: "data/balanced_waste_images"   # one sub-folder per class (case-insensitive match)
+  extra_image_dirs: ["data/real_world"]     # OPTIONAL: your own phone photos / TACO crops, same class sub-folders
+  extra_repeat: 3                           # repeat real-world train images x3 (different augmentation each time)
   splits_dir: "data/splits"                 # split_manifest.json is written here once and reused everywhere
   labels_file: "labels/class_names.json"
   train_split: 0.70
