@@ -2,8 +2,8 @@
   "metadata": {
     "arch": "mobilenetv3_large_100",
     "checkpoint": "checkpoints/best_model.pth",
-    "tta": true,
-    "evaluated_at": "2026-10-21T14:12:05.157929+00:00",
+    "tta": false,
+    "evaluated_at": "2026-10-23T18:49:16.718797+00:00",
     "classes": [
       "Battery",
       "Keyboard",
@@ -25,11 +25,11 @@
     ]
   },
   "overall": {
-    "test_loss": 0.2155,
-    "accuracy": 0.9674,
+    "test_loss": 0.2294,
+    "accuracy": 0.9654,
     "top3_accuracy": 0.9961,
-    "macro_f1": 0.9675,
-    "ece_uncalibrated": 0.1077,
+    "macro_f1": 0.9654,
+    "ece_uncalibrated": 0.1037,
     "samples": 1013
   },
   "per_class": {
@@ -47,8 +47,8 @@
     },
     "Microwave": {
       "precision": 1.0,
-      "recall": 0.9667,
-      "f1-score": 0.9831,
+      "recall": 0.95,
+      "f1-score": 0.9744,
       "support": 60.0
     },
     "Mobile": {
@@ -76,9 +76,9 @@
       "support": 59.0
     },
     "Printer": {
-      "precision": 0.9672,
+      "precision": 0.9516,
       "recall": 1.0,
-      "f1-score": 0.9833,
+      "f1-score": 0.9752,
       "support": 59.0
     },
     "Television": {
@@ -94,21 +94,21 @@
       "support": 60.0
     },
     "cardboard": {
-      "precision": 0.9825,
-      "recall": 0.9333,
-      "f1-score": 0.9573,
+      "precision": 0.9649,
+      "recall": 0.9167,
+      "f1-score": 0.9402,
       "support": 60.0
     },
     "glass": {
-      "precision": 0.9643,
-      "recall": 0.9,
-      "f1-score": 0.931,
+      "precision": 0.9322,
+      "recall": 0.9167,
+      "f1-score": 0.9244,
       "support": 60.0
     },
     "metal": {
-      "precision": 0.8788,
-      "recall": 0.9667,
-      "f1-score": 0.9206,
+      "precision": 0.9048,
+      "recall": 0.95,
+      "f1-score": 0.9268,
       "support": 60.0
     },
     "organic": {
@@ -118,21 +118,21 @@
       "support": 60.0
     },
     "paper": {
-      "precision": 0.9492,
-      "recall": 0.9333,
-      "f1-score": 0.9412,
+      "precision": 0.95,
+      "recall": 0.95,
+      "f1-score": 0.95,
       "support": 60.0
     },
     "plastic": {
-      "precision": 0.9298,
-      "recall": 0.8833,
-      "f1-score": 0.906,
+      "precision": 0.9123,
+      "recall": 0.8667,
+      "f1-score": 0.8889,
       "support": 60.0
     },
     "trash": {
-      "precision": 0.9219,
+      "precision": 0.9365,
       "recall": 1.0,
-      "f1-score": 0.9593,
+      "f1-score": 0.9672,
       "support": 59.0
     }
   },
@@ -143,7 +143,7 @@
       "predicted": "metal"
     },
     {
-      "count": 3,
+      "count": 4,
       "true": "glass",
       "predicted": "plastic"
     },
@@ -159,23 +159,23 @@
     },
     {
       "count": 2,
-      "true": "paper",
-      "predicted": "trash"
-    },
-    {
-      "count": 2,
-      "true": "glass",
-      "predicted": "metal"
-    },
-    {
-      "count": 1,
       "true": "plastic",
       "predicted": "glass"
     },
     {
       "count": 1,
       "true": "paper",
+      "predicted": "trash"
+    },
+    {
+      "count": 1,
+      "true": "paper",
       "predicted": "metal"
+    },
+    {
+      "count": 1,
+      "true": "paper",
+      "predicted": "cardboard"
     }
   ],
   "confusion_matrix": [
@@ -220,12 +220,12 @@
     [
       1,
       0,
-      58,
+      57,
       0,
       0,
       0,
       1,
-      0,
+      1,
       0,
       0,
       0,
@@ -380,8 +380,8 @@
       0,
       0,
       0,
-      56,
-      0,
+      55,
+      1,
       1,
       0,
       3,
@@ -400,11 +400,68 @@
       0,
       0,
       0,
-      54,
-      2,
+      55,
       0,
       0,
-      3,
+      0,
+      4,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      57,
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      60,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      0,
+      57,
+      0,
       1
     ],
     [
@@ -419,68 +476,11 @@
       0,
       0,
       0,
-      1,
-      58,
-      0,
-      0,
-      1,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      60,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-      1,
-      0,
-      56,
-      0,
-      2
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      1,
+      2,
       4,
       0,
       0,
-      53,
+      52,
       2
     ],
     [
