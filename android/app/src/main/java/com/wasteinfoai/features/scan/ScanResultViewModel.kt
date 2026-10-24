@@ -483,6 +483,28 @@ class ScanResultViewModel(
         ttsManager.speak(textToSpeak)
     }
 
+    /** Reads every item found in the photo, not only the selected one. */
+    fun speakAllItems() {
+        val state = _uiState.value as? ScanResultUiState.Success ?: return
+        val text = buildString {
+            append("Found ${state.items.size} items. ")
+            state.items.forEachIndexed { i, item ->
+                if (item.identification.needsUserConfirmation) {
+                    append("Item ${i + 1}: not sure what this is. Please confirm it on screen. ")
+                } else {
+                    val label = item.userConfirmedLabel
+                        ?: item.identification.specificItem
+                        ?: item.identification.coarseCategory
+                    append("Item ${i + 1}: $label. ")
+                    if (item.safety.isHazardous) append("Warning: hazardous. ${item.safety.primaryWarning}. ")
+                    append("Place in ${item.rule.targetBinColor} bin. ")
+                    append(item.rule.disposalMethod).append(". ")
+                }
+            }
+        }
+        ttsManager.speak(text)
+    }
+
     fun stopSpeaking() {
         ttsManager.stop()
     }

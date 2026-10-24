@@ -2,6 +2,7 @@ package com.wasteinfoai.features.scan
 
 import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,6 +35,7 @@ import com.wasteinfoai.ai.taxonomy.SpecificWasteCandidate
 import com.wasteinfoai.ai.vision.QualityStatus
 import com.wasteinfoai.core.theme.AmberWarning
 import com.wasteinfoai.core.theme.RedHazard
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,8 +62,11 @@ fun ScanResultScreen(
                     }
                 },
                 actions = {
-                    if (uiState is ScanResultUiState.Success) {
-                        IconButton(onClick = { viewModel.speakGuidance() }) {
+                    val current = uiState
+                    if (current is ScanResultUiState.Success) {
+                        IconButton(onClick = {
+                            if (current.items.size > 1) viewModel.speakAllItems() else viewModel.speakGuidance()
+                        }) {
                             Icon(Icons.Default.VolumeUp, contentDescription = "Read Aloud")
                         }
                     }
@@ -84,7 +89,7 @@ fun ScanResultScreen(
                         CircularProgressIndicator()
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            "Running on-device ExecuTorch & OpenCV analysis...",
+                            "Finding and classifying each item...",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -175,33 +180,74 @@ private fun SuccessContent(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // 1. Image preview with overlay badges
+        // 1. Image preview: upright photo with numbered, tappable boxes around every detected item
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(230.dp),
+            modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp)
         ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                if (state.bitmap != null) {
-                    Image(
-                        bitmap = state.bitmap.asImageBitmap(),
-                        contentDescription = "Scanned item",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 360.dp)
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                contentAlignment = Alignment.Center
+            ) {
+                val bmp = state.bitmap
+                if (bmp != null) {
+                    // Exact aspect ratio + FillBounds = no cropping, so normalized boxes line up with the pixels.
+                    BoxWithConstraints(
+                        modifier = Modifier.aspectRatio(bmp.width.toFloat() / bmp.height.toFloat())
+                    ) {
+                        val boxW = maxWidth
+                        val boxH = maxHeight
+                        Image(
+                            bitmap = bmp.asImageBitmap(),
+                            contentDescription = "Scanned items",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.FillBounds
+                        )
+                        if (state.items.size > 1) {
+                            state.items.forEachIndexed { idx, item ->
+                                val b = item.source?.boundingBox ?: return@forEachIndexed
+                                val isSelected = idx == state.selectedObjectIndex
+                                val ready = !item.identification.needsUserConfirmation
+                                val tint = when {
+                                    isSelected -> MaterialTheme.colorScheme.primary
+                                    ready -> Color(0xFF2E7D32)
+                                    else -> Color(0xFFF9A825)
+                                }
+                                Box(
+                                    modifier = Modifier
+                                        .offset(x = boxW * b.left, y = boxH * b.top)
+                                        .size(width = boxW * (b.right - b.left), height = boxH * (b.bottom - b.top))
+                                        .border(if (isSelected) 3.dp else 2.dp, tint, RoundedCornerShape(6.dp))
+                                        .clickable { onSelectObject(idx) }
+                                ) {
+                                    Surface(color = tint, shape = RoundedCornerShape(bottomEnd = 6.dp)) {
+                                        Text(
+                                            text = "${idx + 1}",
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 } else {
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                            .fillMaxWidth()
+                            .height(180.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(Icons.Default.Image, contentDescription = null, modifier = Modifier.size(48.dp))
                     }
                 }
 
-                // Confidence & Detection Mode Chip
+                // Confidence & Detection Mode Chip (for the selected item)
                 Surface(
                     shape = RoundedCornerShape(12.dp),
                     color = MaterialTheme.colorScheme.surface.copy(alpha = 0.88f),
@@ -209,9 +255,9 @@ private fun SuccessContent(
                         .align(Alignment.BottomEnd)
                         .padding(12.dp)
                 ) {
-                    val detectionBadge = if (state.detectedObjectsCount > 0) "ROI Item #${state.selectedObjectIndex + 1}" else "Letterbox"
+                    val detectionBadge = if (state.detectedObjectsCount > 0) "Item #${state.selectedObjectIndex + 1}" else "Full image"
                     Text(
-                        text = "${String.format("%.1f%%", state.classification.confidence * 100)} conf • $detectionBadge",
+                        text = "${String.format(Locale.US, "%.1f%%", state.classification.confidence * 100)} conf • $detectionBadge",
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         fontWeight = FontWeight.Bold
@@ -240,36 +286,32 @@ private fun SuccessContent(
             }
         }
 
-        // Multi-Object Target Selector (when multiple candidate regions are detected)
-        if (state.detectedObjects.size > 1) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f))
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(
-                        text = "Multiple items detected (${state.detectedObjects.size}) — select target:",
-                        style = MaterialTheme.typography.labelMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        itemsIndexed(state.detectedObjects) { idx: Int, _: com.wasteinfoai.camera.DetectedWasteItem ->
-                            val itemNumber = idx + 1
-                            FilterChip(
-                                selected = state.selectedObjectIndex == idx,
-                                onClick = { onSelectObject(idx) },
-                                label = {
-                                    Text(if (idx == 0) "Item #1 (Primary)" else "Item #$itemNumber")
-                                },
-                                leadingIcon = if (state.selectedObjectIndex == idx) {
-                                    { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp)) }
-                                } else null
-                            )
+        // 1.1 Every item found in the photo, each with its own bin and guidance
+        if (state.items.size > 1) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    text = "Items found (${state.items.size})",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                state.items.forEachIndexed { idx, item ->
+                    ItemSummaryCard(
+                        index = idx,
+                        item = item,
+                        selected = idx == state.selectedObjectIndex,
+                        onSelect = { onSelectObject(idx) },
+                        onQuickConfirm = { label ->
+                            onSelectObject(idx)            // select first (synchronous) ...
+                            onSelectCategory(label, null)  // ... then confirm for that item
                         }
-                    }
+                    )
                 }
+                Text(
+                    text = "Details for item #${state.selectedObjectIndex + 1}",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
             }
         }
 
@@ -374,8 +416,8 @@ private fun SuccessContent(
                             isRejected -> "Status: ${state.classification.acceptanceState.name.replace('_', ' ')}"
                             state.hierarchicalIdentification?.identificationSource == IdentificationSource.BARCODE_LOOKUP -> "Source: Barcode packaging database"
                             state.hierarchicalIdentification?.identificationSource == IdentificationSource.USER_CONFIRMED -> "Source: User confirmed"
-                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.OBJECT_CROP_CLASSIFIER -> "Source: Object ROI ReXNet-150"
-                            else -> "Source: ReXNet-150 on-device"
+                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.OBJECT_CROP_CLASSIFIER -> "Source: Object ROI classifier"
+                            else -> "Source: On-device classifier"
                         }
                         Text(
                             text = sourceText,
@@ -899,6 +941,152 @@ private fun SuccessContent(
             shape = RoundedCornerShape(12.dp)
         ) {
             Text("Done", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+
+private fun binColorFor(name: String): Color = when (name.uppercase()) {
+    "BLUE" -> Color(0xFF1976D2)
+    "GREEN" -> Color(0xFF388E3C)
+    "RED" -> Color(0xFFD32F2F)
+    "ORANGE" -> Color(0xFFF57C00)
+    else -> Color(0xFF424242)
+}
+
+private fun ItemAnalysis.summaryTitle(): String =
+    userConfirmedLabel
+        ?: identification.specificItem
+        ?: if (!identification.needsUserConfirmation) identification.coarseCategory
+        else classification.topKResults.firstOrNull()?.let { "Unsure \u2014 maybe ${it.label}" }
+        ?: "Unidentified item"
+
+@Composable
+private fun MiniChip(text: String, container: Color, content: Color) {
+    Surface(shape = RoundedCornerShape(6.dp), color = container) {
+        Text(
+            text = text,
+            color = content,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+        )
+    }
+}
+
+/** Compact result for ONE item: label, bin, hazard/recyclable flags, or quick-confirm chips when unsure. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun ItemSummaryCard(
+    index: Int,
+    item: ItemAnalysis,
+    selected: Boolean,
+    onSelect: () -> Unit,
+    onQuickConfirm: (String) -> Unit
+) {
+    val ready = !item.identification.needsUserConfirmation
+    val accent = when {
+        ready && item.safety.isHazardous -> MaterialTheme.colorScheme.error
+        ready -> Color(0xFF2E7D32)
+        else -> Color(0xFFF9A825)
+    }
+    val top = item.classification.topKResults.firstOrNull()
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onSelect),
+        shape = RoundedCornerShape(14.dp),
+        border = if (selected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = if (selected) 0.8f else 0.45f)
+        )
+    ) {
+        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(accent),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "${index + 1}",
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = item.summaryTitle(),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = if (ready) {
+                            item.rule.disposalMethod
+                        } else if (top != null) {
+                            "Best guess: ${top.label} (${String.format(Locale.US, "%.0f%%", top.score * 100)}) \u2014 please confirm"
+                        } else {
+                            "Could not identify \u2014 please choose a category"
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                if (ready) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                    MiniChip(item.rule.targetBinColor, binColorFor(item.rule.targetBinColor), Color.White)
+                }
+            }
+
+            if (ready) {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    if (item.safety.isHazardous) {
+                        MiniChip(
+                            "\u26A0 Hazardous",
+                            MaterialTheme.colorScheme.errorContainer,
+                            MaterialTheme.colorScheme.onErrorContainer
+                        )
+                    }
+                    MiniChip(
+                        if (item.rule.isRecyclable) "Recyclable" else "Not recyclable",
+                        MaterialTheme.colorScheme.surface,
+                        MaterialTheme.colorScheme.onSurface
+                    )
+                    if (item.productInfo != null) {
+                        MiniChip(
+                            "Barcode matched",
+                            MaterialTheme.colorScheme.tertiaryContainer,
+                            MaterialTheme.colorScheme.onTertiaryContainer
+                        )
+                    }
+                }
+            } else if (item.classification.topKResults.isNotEmpty()) {
+                Text(
+                    text = "Is it one of these?",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    item.classification.topKResults.take(3).forEach { c ->
+                        SuggestionChip(
+                            onClick = { onQuickConfirm(c.label) },
+                            label = { Text("${c.label} ${String.format(Locale.US, "%.0f%%", c.score * 100)}") }
+                        )
+                    }
+                }
+            }
         }
     }
 }
