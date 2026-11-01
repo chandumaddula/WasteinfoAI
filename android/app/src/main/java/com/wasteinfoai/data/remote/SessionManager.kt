@@ -79,12 +79,17 @@ class SessionManager(context: Context) {
     }
 
     fun saveSession(token: String, user: UserResponse, category: String? = null) {
+        val safeRole = user.role.ifBlank { "RESIDENT" }
+        val safeEmail = user.email
+        val safeUserId = user.id
+        val safeDisplayName = user.displayName ?: user.fullName ?: safeEmail
+
         val editor = prefs.edit()
             .putString(KEY_TOKEN, token)
-            .putString(KEY_USER_ID, user.id)
-            .putString(KEY_EMAIL, user.email)
-            .putString(KEY_ROLE, user.role)
-            .putString(KEY_DISPLAY_NAME, user.displayName ?: user.fullName ?: user.email)
+            .putString(KEY_USER_ID, safeUserId)
+            .putString(KEY_EMAIL, safeEmail)
+            .putString(KEY_ROLE, safeRole)
+            .putString(KEY_DISPLAY_NAME, safeDisplayName)
         
         if (category != null) {
             editor.putString(KEY_CATEGORY, category)
@@ -93,8 +98,8 @@ class SessionManager(context: Context) {
         editor.apply()
 
         _tokenState.value = token
-        _roleState.value = user.role
-        _emailState.value = user.email
+        _roleState.value = safeRole
+        _emailState.value = safeEmail
     }
 
     fun registerLocalAccount(email: String, password: String?, fullName: String?, category: String, role: String) {

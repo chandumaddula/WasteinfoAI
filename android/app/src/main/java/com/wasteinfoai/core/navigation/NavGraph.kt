@@ -93,7 +93,7 @@ fun AppNavGraph(
                         else -> Screen.Home.route
                     }
                     navController.navigate(target) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
+                        popUpTo(0) { inclusive = true }
                     }
                 }
             )
@@ -195,8 +195,8 @@ fun AppNavGraph(
                 onNavigateToCreateReport = { category, path ->
                     navController.navigate(Screen.CreateReport.createRoute(category, path))
                 },
-                onNavigateToAssistant = { category, scanId ->
-                    navController.navigate(Screen.Assistant.createRoute(category, scanId))
+                onNavigateToAssistant = { category ->
+                    navController.navigate(Screen.Assistant.createRoute(category))
                 }
             )
         }
@@ -346,7 +346,7 @@ fun AppNavGraph(
                         else -> Screen.Home.route
                     }
                     navController.navigate(target) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
+                        popUpTo(0) { inclusive = true }
                     }
                 },
                 onLogoutSuccess = {

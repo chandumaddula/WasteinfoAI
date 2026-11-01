@@ -49,7 +49,7 @@ class SyncWorker(
             }
             reportResult = syncReports(reportDao, apiService, pending)
             batches++
-            if (reportResult !is Result.Success || pending.size < MAX_BATCH_SIZE) break
+            if (reportResult != Result.success() || pending.size < MAX_BATCH_SIZE) break
         }
 
         // Decoupled, consent-aware feedback synchronization
