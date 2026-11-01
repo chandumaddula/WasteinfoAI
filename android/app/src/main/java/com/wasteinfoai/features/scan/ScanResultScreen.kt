@@ -44,7 +44,7 @@ fun ScanResultScreen(
     viewModel: ScanResultViewModel,
     onNavigateBack: () -> Unit,
     onNavigateToCreateReport: (String, String) -> Unit,
-    onNavigateToAssistant: (String, Long) -> Unit
+    onNavigateToAssistant: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -139,7 +139,7 @@ fun ScanResultScreen(
                             val label = state.userConfirmedLabel
                                 ?: state.hierarchicalIdentification?.specificItem
                                 ?: state.classification.label
-                            onNavigateToAssistant(label, state.scanId)
+                            onNavigateToAssistant(label)
                         },
                         onDoneClicked = onNavigateBack,
                         onSpeakClicked = { viewModel.speakGuidance() },
