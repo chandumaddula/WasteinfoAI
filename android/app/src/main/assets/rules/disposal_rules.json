@@ -13,10 +13,29 @@
       "preparation_instructions": "Tape the electrical terminals with non-conductive tape to prevent short circuits. Store in a dry plastic container.",
       "safety_warnings": "Extreme fire and chemical burn hazard. Never place in standard trash or blue/green recycling bins. Do not puncture or expose to heat.",
       "target_bin_color": "RED",
-      "accepted_pathways": ["Authorized E-Waste Center", "Domestic Hazardous Waste Bin (Red)"],
-      "prohibited_pathways": ["Household Compost (Green)", "Dry Recyclables (Blue)", "Open Burning"],
+      "accepted_pathways": [
+        "Authorized E-Waste Center",
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Household Compost (Green)",
+        "Dry Recyclables (Blue)",
+        "Open Burning"
+      ],
       "review_status": "VERIFIED",
-      "source": "India Solid Waste Management Rules 2016 & E-Waste Management Rules 2022"
+      "source": "India Solid Waste Management Rules 2016 & E-Waste Management Rules 2022",
+      "reuse_ideas": [
+        "Batteries cannot be safely reused or upcycled due to chemical corrosion and fire risks."
+      ],
+      "cleaning_tips": "Do not wash with water. If terminals have minor dust, wipe gently with a dry cloth. Never immerse.",
+      "environmental_impact": "Heavy metals (lead, cadmium, lithium) can leach into groundwater causing severe ecosystem toxicity.",
+      "condition_notes": {
+        "broken": "DANGER: Leaking or cracked battery casing releases corrosive acid/alkali. Do not touch bare liquid. Place in non-conductive sand or container.",
+        "crushed": "CRITICAL FIRE HAZARD: Crushed batteries risk immediate internal short-circuits and thermal runaway.",
+        "wet": "Keep completely dry. Water ingress into lithium cells causes exothermic gas reactions.",
+        "empty": "Discharged batteries retain residual electrical energy. Always tape terminals before disposal.",
+        "full": "Store charged cells insulated to avoid short circuits with metallic objects."
+      }
     },
     {
       "id": "RULE-ITEM-BATTERY-LI-ION",
@@ -30,10 +49,28 @@
       "preparation_instructions": "Immediately insulate positive and negative terminals with electrical tape. Store inside a fireproof container or sand bucket if swollen.",
       "safety_warnings": "CRITICAL FIRE HAZARD: Thermal runaway risk. Puncturing, crushing, or moisture exposure can spark fierce chemical fires emitting toxic hydrogen fluoride gas.",
       "target_bin_color": "RED",
-      "accepted_pathways": ["E-Waste Collection Point", "Manufacturer Take-Back"],
-      "prohibited_pathways": ["Curbside Bins", "Municipal Waste Truck Compactor"],
+      "accepted_pathways": [
+        "E-Waste Collection Point",
+        "Manufacturer Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Curbside Bins",
+        "Municipal Waste Truck Compactor"
+      ],
       "review_status": "VERIFIED",
-      "source": "E-Waste Management Rules 2022"
+      "source": "E-Waste Management Rules 2022",
+      "reuse_ideas": [
+        "Batteries cannot be safely reused or upcycled due to chemical corrosion and fire risks."
+      ],
+      "cleaning_tips": "Do not wash with water. If terminals have minor dust, wipe gently with a dry cloth. Never immerse.",
+      "environmental_impact": "Heavy metals (lead, cadmium, lithium) can leach into groundwater causing severe ecosystem toxicity.",
+      "condition_notes": {
+        "broken": "DANGER: Leaking or cracked battery casing releases corrosive acid/alkali. Do not touch bare liquid. Place in non-conductive sand or container.",
+        "crushed": "CRITICAL FIRE HAZARD: Crushed batteries risk immediate internal short-circuits and thermal runaway.",
+        "wet": "Keep completely dry. Water ingress into lithium cells causes exothermic gas reactions.",
+        "empty": "Discharged batteries retain residual electrical energy. Always tape terminals before disposal.",
+        "full": "Store charged cells insulated to avoid short circuits with metallic objects."
+      }
     },
     {
       "id": "RULE-ITEM-BATTERY-ALKALINE",
@@ -47,10 +84,28 @@
       "preparation_instructions": "Cover 9V terminals with tape. Keep spent batteries dry in a plastic container until collection day.",
       "safety_warnings": "Contains potassium hydroxide which may leak and cause chemical skin burns. Wash hands immediately if fluid contacts skin.",
       "target_bin_color": "RED",
-      "accepted_pathways": ["Domestic Hazardous Waste Bin (Red)", "Battery Collection Depot"],
-      "prohibited_pathways": ["Wet Waste Bin (Green)", "Dry Paper/Plastic Bin (Blue)"],
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)",
+        "Battery Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Dry Paper/Plastic Bin (Blue)"
+      ],
       "review_status": "VERIFIED",
-      "source": "India Solid Waste Management Rules 2016"
+      "source": "India Solid Waste Management Rules 2016",
+      "reuse_ideas": [
+        "Batteries cannot be safely reused or upcycled due to chemical corrosion and fire risks."
+      ],
+      "cleaning_tips": "Do not wash with water. If terminals have minor dust, wipe gently with a dry cloth. Never immerse.",
+      "environmental_impact": "Heavy metals (lead, cadmium, lithium) can leach into groundwater causing severe ecosystem toxicity.",
+      "condition_notes": {
+        "broken": "DANGER: Leaking or cracked battery casing releases corrosive acid/alkali. Do not touch bare liquid. Place in non-conductive sand or container.",
+        "crushed": "CRITICAL FIRE HAZARD: Crushed batteries risk immediate internal short-circuits and thermal runaway.",
+        "wet": "Keep completely dry. Water ingress into lithium cells causes exothermic gas reactions.",
+        "empty": "Discharged batteries retain residual electrical energy. Always tape terminals before disposal.",
+        "full": "Store charged cells insulated to avoid short circuits with metallic objects."
+      }
     },
     {
       "id": "RULE-CARDBOARD-001",
@@ -62,10 +117,30 @@
       "preparation_instructions": "Flatten all cardboard boxes completely. Remove plastic packaging, bubble wrap, and adhesive tape. Keep dry.",
       "safety_warnings": "Wet or oily cardboard contaminates paper recycling batches and cannot be pulped.",
       "target_bin_color": "BLUE",
-      "accepted_pathways": ["Dry Waste Bin (Blue)", "Door-to-door Kabadiwala Recycler"],
-      "prohibited_pathways": ["Wet Waste Bin (Green)", "Rain-Exposed Open Dumps"],
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Door-to-door Kabadiwala Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Rain-Exposed Open Dumps"
+      ],
       "review_status": "VERIFIED",
-      "source": "India Solid Waste Management Rules 2016"
+      "source": "India Solid Waste Management Rules 2016",
+      "reuse_ideas": [
+        "Use clean brown cardboard as biodegradable weed barrier or sheet mulch in gardens.",
+        "Reuse sturdy boxes for storage, shipping, or organization dividers.",
+        "Shred unprinted cardboard for compost carbon-bedding or worm bins."
+      ],
+      "cleaning_tips": "Keep strictly dry. Remove heavy plastic packing tape and styrofoam.",
+      "environmental_impact": "Recycling 1 ton of cardboard saves 17 trees, 7,000 gallons of water, and prevents methane emissions in landfills.",
+      "condition_notes": {
+        "broken": "Torn or broken cardboard pieces are fully recyclable. Flatten them for storage.",
+        "crushed": "Flattening boxes saves collection space and prevents truck overload.",
+        "wet": "Wet cardboard breaks down pulp fibers and molds; dry it first if clean, or compost if chemical-free.",
+        "greasy": "Greasy sections (e.g. pizza oil) cannot be pulped. Tear off clean parts for recycling and bin the oily parts in general waste.",
+        "empty": "Ensure all plastic liners, tape, and packing foam are removed."
+      }
     },
     {
       "id": "RULE-ITEM-CARDBOARD-SOILED",
@@ -79,10 +154,29 @@
       "preparation_instructions": "Tear off and discard greasy/cheesy bottom sections into general waste. The clean top lid can be separated into blue dry recyclables.",
       "safety_warnings": "Grease and food oil cannot be washed out during paper re-pulping and causes entire recycling batches to be discarded.",
       "target_bin_color": "BLACK",
-      "accepted_pathways": ["General Municipal Refuse (Black Bin)", "Industrial Composting if uncoated"],
-      "prohibited_pathways": ["Dry Paper Recyclables (Blue)"],
+      "accepted_pathways": [
+        "General Municipal Refuse (Black Bin)",
+        "Industrial Composting if uncoated"
+      ],
+      "prohibited_pathways": [
+        "Dry Paper Recyclables (Blue)"
+      ],
       "review_status": "VERIFIED",
-      "source": "SWM 2016 Recycler Contamination Guidelines"
+      "source": "SWM 2016 Recycler Contamination Guidelines",
+      "reuse_ideas": [
+        "Use clean brown cardboard as biodegradable weed barrier or sheet mulch in gardens.",
+        "Reuse sturdy boxes for storage, shipping, or organization dividers.",
+        "Shred unprinted cardboard for compost carbon-bedding or worm bins."
+      ],
+      "cleaning_tips": "Keep strictly dry. Remove heavy plastic packing tape and styrofoam.",
+      "environmental_impact": "Recycling 1 ton of cardboard saves 17 trees, 7,000 gallons of water, and prevents methane emissions in landfills.",
+      "condition_notes": {
+        "broken": "Torn or broken cardboard pieces are fully recyclable. Flatten them for storage.",
+        "crushed": "Flattening boxes saves collection space and prevents truck overload.",
+        "wet": "Wet cardboard breaks down pulp fibers and molds; dry it first if clean, or compost if chemical-free.",
+        "greasy": "Greasy sections (e.g. pizza oil) cannot be pulped. Tear off clean parts for recycling and bin the oily parts in general waste.",
+        "empty": "Ensure all plastic liners, tape, and packing foam are removed."
+      }
     },
     {
       "id": "RULE-ITEM-CARDBOARD-TETRAPAK",
@@ -96,10 +190,29 @@
       "preparation_instructions": "Cut open or fold flat, rinse out milk/juice residue thoroughly, and push the attached straw inside the flattened carton.",
       "safety_warnings": "Unrinsed liquid cartons develop mold and foul odors rapidly in hot weather.",
       "target_bin_color": "BLUE",
-      "accepted_pathways": ["Dry Waste Collection (Blue)", "Tetra Pak Authorized Recycler"],
-      "prohibited_pathways": ["Wet Waste (Green)"],
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Tetra Pak Authorized Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
       "review_status": "VERIFIED",
-      "source": "Tetra Pak India Recycling Initiative & SWM 2016"
+      "source": "Tetra Pak India Recycling Initiative & SWM 2016",
+      "reuse_ideas": [
+        "Use clean brown cardboard as biodegradable weed barrier or sheet mulch in gardens.",
+        "Reuse sturdy boxes for storage, shipping, or organization dividers.",
+        "Shred unprinted cardboard for compost carbon-bedding or worm bins."
+      ],
+      "cleaning_tips": "Keep strictly dry. Remove heavy plastic packing tape and styrofoam.",
+      "environmental_impact": "Recycling 1 ton of cardboard saves 17 trees, 7,000 gallons of water, and prevents methane emissions in landfills.",
+      "condition_notes": {
+        "broken": "Torn or broken cardboard pieces are fully recyclable. Flatten them for storage.",
+        "crushed": "Flattening boxes saves collection space and prevents truck overload.",
+        "wet": "Wet cardboard breaks down pulp fibers and molds; dry it first if clean, or compost if chemical-free.",
+        "greasy": "Greasy sections (e.g. pizza oil) cannot be pulped. Tear off clean parts for recycling and bin the oily parts in general waste.",
+        "empty": "Ensure all plastic liners, tape, and packing foam are removed."
+      }
     },
     {
       "id": "RULE-GLASS-001",
@@ -111,10 +224,29 @@
       "preparation_instructions": "Empty and rinse bottles and jars thoroughly. Remove metal or plastic crown caps. Keep intact bottles upright.",
       "safety_warnings": "Laceration hazard. Handle carefully to prevent breakage. Do not mix lightbulbs, window glass, mirrors, or ceramics with container glass.",
       "target_bin_color": "BLUE",
-      "accepted_pathways": ["Dry Waste Bin (Blue)", "Scrap Merchant / Kabadiwala"],
-      "prohibited_pathways": ["Wet Waste Bin (Green)", "Unwrapped Glass in Trash"],
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Merchant / Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Unwrapped Glass in Trash"
+      ],
       "review_status": "VERIFIED",
-      "source": "India Solid Waste Management Rules 2016"
+      "source": "India Solid Waste Management Rules 2016",
+      "reuse_ideas": [
+        "Sterilize glass jars for kitchen pantry storage (spices, grains, preserves).",
+        "Use jars as vases, candle votives, or desktop pencil containers.",
+        "Use for propagating plant cuttings in water on window sills."
+      ],
+      "cleaning_tips": "Rinse clean of all food residue. Labels do not need removal as furnace melting incinerates organic labels.",
+      "environmental_impact": "Glass is 100% and infinitely recyclable without any loss in chemical purity or physical strength.",
+      "condition_notes": {
+        "broken": "Wrap broken glass securely in multiple layers of newspaper or cardboard, tape shut, and label 'BROKEN GLASS' for safety.",
+        "crushed": "Place crushed glass inside a sturdy rigid box or tin to prevent lacerating sanitation workers.",
+        "wet": "Wet rinsed glass is completely fine in the dry recyclables bin.",
+        "empty": "Never dispose of pressurized or sealed full containers."
+      }
     },
     {
       "id": "RULE-ITEM-GLASS-BROKEN",
@@ -128,10 +260,28 @@
       "preparation_instructions": "Wrap glass shards securely in thick newspaper, cardboard, or place in a rigid cardboard box taped shut, clearly labeled 'CAUTION: BROKEN GLASS'.",
       "safety_warnings": "SEVERE LACERATION HAZARD: Waste collection sanitation workers suffer high injury rates from loose glass shards in plastic bags.",
       "target_bin_color": "RED",
-      "accepted_pathways": ["Wrapped Domestic Hazardous Waste (Red Bin)"],
-      "prohibited_pathways": ["Loose in Plastic Carry Bags", "Loose in Curbside Bins"],
+      "accepted_pathways": [
+        "Wrapped Domestic Hazardous Waste (Red Bin)"
+      ],
+      "prohibited_pathways": [
+        "Loose in Plastic Carry Bags",
+        "Loose in Curbside Bins"
+      ],
       "review_status": "VERIFIED",
-      "source": "Ministry of Housing and Urban Affairs (MoHUA) Safety Protocol"
+      "source": "Ministry of Housing and Urban Affairs (MoHUA) Safety Protocol",
+      "reuse_ideas": [
+        "Sterilize glass jars for kitchen pantry storage (spices, grains, preserves).",
+        "Use jars as vases, candle votives, or desktop pencil containers.",
+        "Use for propagating plant cuttings in water on window sills."
+      ],
+      "cleaning_tips": "Rinse clean of all food residue. Labels do not need removal as furnace melting incinerates organic labels.",
+      "environmental_impact": "Glass is 100% and infinitely recyclable without any loss in chemical purity or physical strength.",
+      "condition_notes": {
+        "broken": "Wrap broken glass securely in multiple layers of newspaper or cardboard, tape shut, and label 'BROKEN GLASS' for safety.",
+        "crushed": "Place crushed glass inside a sturdy rigid box or tin to prevent lacerating sanitation workers.",
+        "wet": "Wet rinsed glass is completely fine in the dry recyclables bin.",
+        "empty": "Never dispose of pressurized or sealed full containers."
+      }
     },
     {
       "id": "RULE-KEYBOARD-001",
@@ -143,10 +293,26 @@
       "preparation_instructions": "Remove any rechargeable or AA/AAA batteries. Coil cable securely.",
       "safety_warnings": "Contains mixed plastics and electronic circuitry. Under E-Waste Rules 2022, must not be handed to informal burning aggregators.",
       "target_bin_color": "ORANGE",
-      "accepted_pathways": ["E-Waste Collection Facility", "Manufacturer EPR Take-Back"],
-      "prohibited_pathways": ["Municipal Garbage Dump", "Open Scrap Burning"],
+      "accepted_pathways": [
+        "E-Waste Collection Facility",
+        "Manufacturer EPR Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Municipal Garbage Dump",
+        "Open Scrap Burning"
+      ],
       "review_status": "VERIFIED",
-      "source": "E-Waste Management Rules 2022"
+      "source": "E-Waste Management Rules 2022",
+      "reuse_ideas": [
+        "Repurpose clean items for household storage, gardening, or craft activities where suitable."
+      ],
+      "cleaning_tips": "Clean and dry items before placing them into the appropriate segregation stream.",
+      "environmental_impact": "Proper segregation prevents municipal landfill overload and promotes circular recycling.",
+      "condition_notes": {
+        "broken": "Wrap sharp fragments safely before disposal.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
     },
     {
       "id": "RULE-METAL-001",
@@ -158,10 +324,27 @@
       "preparation_instructions": "Rinse food and beverage cans thoroughly. If lids are detached, push them inside the can or crimp the top closed.",
       "safety_warnings": "Cut hazard from sharp can edges and lids. Pressurized aerosol cans must never be crushed manually.",
       "target_bin_color": "BLUE",
-      "accepted_pathways": ["Dry Waste Collection (Blue)", "Metal Scrap Dealers"],
-      "prohibited_pathways": ["Wet Waste Bin (Green)"],
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Metal Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
       "review_status": "VERIFIED",
-      "source": "India Solid Waste Management Rules 2016"
+      "source": "India Solid Waste Management Rules 2016",
+      "reuse_ideas": [
+        "Upcycle clean tins into desktop pen holders, succulent planters, or candle luminaries.",
+        "Collect clean aluminum cans to sell to kabadiwala / scrap dealers for top scrap value."
+      ],
+      "cleaning_tips": "Rinse out food or beverage residue with water. Push sharp lids inside the can.",
+      "environmental_impact": "Recycling aluminum requires 95% less energy than extracting virgin aluminum from bauxite ore.",
+      "condition_notes": {
+        "crushed": "Crushing aluminum beverage cans is recommended to save collection space.",
+        "broken": "Sharp metal edges must be folded in or wrapped to prevent worker lacerations.",
+        "greasy": "Wash greasy metal tins with soapy water before dry bin recycling.",
+        "empty": "Empty completely. Aerosols must have residual pressure discharged safely outdoors."
+      }
     },
     {
       "id": "RULE-ITEM-METAL-ALU-CAN",
@@ -175,10 +358,27 @@
       "preparation_instructions": "Empty all liquid contents completely. Rinse lightly. You may gently crush vertically to save storage space.",
       "safety_warnings": "Aluminum saves 95% energy when recycled versus virgin ore bauxite mining. Highly valued scrap.",
       "target_bin_color": "BLUE",
-      "accepted_pathways": ["Dry Waste Bin (Blue)", "Scrap Recyclers"],
-      "prohibited_pathways": ["Wet Waste Bin (Green)"],
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Recyclers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
       "review_status": "VERIFIED",
-      "source": "Aluminium Association of India & SWM 2016"
+      "source": "Aluminium Association of India & SWM 2016",
+      "reuse_ideas": [
+        "Upcycle clean tins into desktop pen holders, succulent planters, or candle luminaries.",
+        "Collect clean aluminum cans to sell to kabadiwala / scrap dealers for top scrap value."
+      ],
+      "cleaning_tips": "Rinse out food or beverage residue with water. Push sharp lids inside the can.",
+      "environmental_impact": "Recycling aluminum requires 95% less energy than extracting virgin aluminum from bauxite ore.",
+      "condition_notes": {
+        "crushed": "Crushing aluminum beverage cans is recommended to save collection space.",
+        "broken": "Sharp metal edges must be folded in or wrapped to prevent worker lacerations.",
+        "greasy": "Wash greasy metal tins with soapy water before dry bin recycling.",
+        "empty": "Empty completely. Aerosols must have residual pressure discharged safely outdoors."
+      }
     },
     {
       "id": "RULE-ITEM-METAL-AEROSOL",
@@ -192,10 +392,28 @@
       "preparation_instructions": "Discharge residual gas outdoors in well-ventilated area until empty. Do not puncture or remove valve nozzle.",
       "safety_warnings": "EXPLOSION & FIRE HAZARD: Pressurized canisters containing flammable hydrocarbon propellants can explode violently in garbage trucks or incinerators.",
       "target_bin_color": "RED",
-      "accepted_pathways": ["Domestic Hazardous Waste Bin (Red)"],
-      "prohibited_pathways": ["Municipal Truck Compactor", "Open Fire", "Puncturing"],
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Municipal Truck Compactor",
+        "Open Fire",
+        "Puncturing"
+      ],
       "review_status": "VERIFIED",
-      "source": "Petroleum and Explosives Safety Organisation (PESO) & SWM 2016"
+      "source": "Petroleum and Explosives Safety Organisation (PESO) & SWM 2016",
+      "reuse_ideas": [
+        "Upcycle clean tins into desktop pen holders, succulent planters, or candle luminaries.",
+        "Collect clean aluminum cans to sell to kabadiwala / scrap dealers for top scrap value."
+      ],
+      "cleaning_tips": "Rinse out food or beverage residue with water. Push sharp lids inside the can.",
+      "environmental_impact": "Recycling aluminum requires 95% less energy than extracting virgin aluminum from bauxite ore.",
+      "condition_notes": {
+        "crushed": "Crushing aluminum beverage cans is recommended to save collection space.",
+        "broken": "Sharp metal edges must be folded in or wrapped to prevent worker lacerations.",
+        "greasy": "Wash greasy metal tins with soapy water before dry bin recycling.",
+        "empty": "Empty completely. Aerosols must have residual pressure discharged safely outdoors."
+      }
     },
     {
       "id": "RULE-MICROWAVE-001",
@@ -207,10 +425,26 @@
       "preparation_instructions": "Unplug appliance. Remove glass turntable and wrap in cardboard. Tape microwave door shut securely during transport.",
       "safety_warnings": "LETHAL HIGH VOLTAGE: High-voltage magnetron capacitors can retain fatal electrical charges even years after being unplugged. Never attempt disassembly.",
       "target_bin_color": "SPECIAL_DEPOT",
-      "accepted_pathways": ["Authorized E-Waste Recycling Center", "Appliance Brand Exchange"],
-      "prohibited_pathways": ["Informal Disassembly", "Standard Garbage"],
+      "accepted_pathways": [
+        "Authorized E-Waste Recycling Center",
+        "Appliance Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Informal Disassembly",
+        "Standard Garbage"
+      ],
       "review_status": "VERIFIED",
-      "source": "E-Waste Management Rules 2022"
+      "source": "E-Waste Management Rules 2022",
+      "reuse_ideas": [
+        "Hazardous electronics and appliances must not be informally reused due to toxic capacitor and heavy metal risks."
+      ],
+      "cleaning_tips": "Do not wash internal circuitry with water. Wipe exterior dust with dry cloth only.",
+      "environmental_impact": "Improper e-waste disposal releases neurotoxins including mercury, cadmium, and lead into local water tables.",
+      "condition_notes": {
+        "broken": "DANGER: Broken electronics expose sharp leaded glass, high-voltage capacitors, or mercury backlights. Wear heavy protective gloves.",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
     },
     {
       "id": "RULE-MOBILE-001",
@@ -222,10 +456,27 @@
       "preparation_instructions": "Back up personal data, remove SIM and SD cards, perform factory reset. Ensure phone battery is not punctured.",
       "safety_warnings": "Contains lithium-ion battery and precious heavy metals (gold, palladium, lead). Never crush, burn, or discard with household refuse.",
       "target_bin_color": "RED",
-      "accepted_pathways": ["E-Waste Kiosks", "Electronics Retailer Take-Back", "Registered Recycler"],
-      "prohibited_pathways": ["Curbside Dustbin", "Landfill Dumpsite"],
+      "accepted_pathways": [
+        "E-Waste Kiosks",
+        "Electronics Retailer Take-Back",
+        "Registered Recycler"
+      ],
+      "prohibited_pathways": [
+        "Curbside Dustbin",
+        "Landfill Dumpsite"
+      ],
       "review_status": "VERIFIED",
-      "source": "E-Waste Management Rules 2022"
+      "source": "E-Waste Management Rules 2022",
+      "reuse_ideas": [
+        "Hazardous electronics and appliances must not be informally reused due to toxic capacitor and heavy metal risks."
+      ],
+      "cleaning_tips": "Do not wash internal circuitry with water. Wipe exterior dust with dry cloth only.",
+      "environmental_impact": "Improper e-waste disposal releases neurotoxins including mercury, cadmium, and lead into local water tables.",
+      "condition_notes": {
+        "broken": "DANGER: Broken electronics expose sharp leaded glass, high-voltage capacitors, or mercury backlights. Wear heavy protective gloves.",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
     },
     {
       "id": "RULE-MOUSE-001",
@@ -237,10 +488,24 @@
       "preparation_instructions": "Remove AA/AAA batteries if wireless. Coil cable securely if wired.",
       "safety_warnings": "Contains recyclable electronics and ABS plastics. Hand over to formal e-waste collection channels.",
       "target_bin_color": "ORANGE",
-      "accepted_pathways": ["E-Waste Collection Depot"],
-      "prohibited_pathways": ["Municipal General Waste"],
+      "accepted_pathways": [
+        "E-Waste Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Municipal General Waste"
+      ],
       "review_status": "VERIFIED",
-      "source": "E-Waste Management Rules 2022"
+      "source": "E-Waste Management Rules 2022",
+      "reuse_ideas": [
+        "Repurpose clean items for household storage, gardening, or craft activities where suitable."
+      ],
+      "cleaning_tips": "Clean and dry items before placing them into the appropriate segregation stream.",
+      "environmental_impact": "Proper segregation prevents municipal landfill overload and promotes circular recycling.",
+      "condition_notes": {
+        "broken": "Wrap sharp fragments safely before disposal.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
     },
     {
       "id": "RULE-ORGANIC-001",
@@ -252,10 +517,30 @@
       "preparation_instructions": "Segregate food scraps, fruit/vegetable peels, leftover food, tea leaves, and flowers. Remove all plastic packaging, rubber bands, and stickers.",
       "safety_warnings": "Do not mix with plastic wrappers, batteries, or sanitary waste. Wet waste is converted into organic compost or biogas.",
       "target_bin_color": "GREEN",
-      "accepted_pathways": ["Wet Waste Collection (Green Bin)", "Home / Community Composter", "Biomethanation Plant"],
-      "prohibited_pathways": ["Dry Waste (Blue)", "Plastic Bags", "Open Littering"],
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
       "review_status": "VERIFIED",
-      "source": "India Solid Waste Management Rules 2016"
+      "source": "India Solid Waste Management Rules 2016",
+      "reuse_ideas": [
+        "Convert vegetable scraps and peels into rich soil compost.",
+        "Simmer clean vegetable trimmings (onions, carrots, celery) to make homemade vegetable stock.",
+        "Use coffee grounds and dried crushed eggshells as garden fertilizer for acid-loving plants."
+      ],
+      "cleaning_tips": "No cleaning needed. Strictly remove all plastic stickers, rubber bands, and twist ties.",
+      "environmental_impact": "When dumped in landfills, organic waste creates anaerobic methane emissions—a greenhouse gas 28x stronger than CO2.",
+      "condition_notes": {
+        "wet": "Wet organic waste belongs strictly in the Green Bin for municipal composting or biomethanation.",
+        "greasy": "Small cooking oils can be composted; large amounts of liquid grease should be collected in a jar for specialized processing.",
+        "broken": "Chopping food scraps into smaller pieces speeds up decomposition."
+      }
     },
     {
       "id": "RULE-PAPER-001",
@@ -267,10 +552,28 @@
       "preparation_instructions": "Keep paper clean, dry, and flat. Bundle newspapers and magazines. Remove metallic spiral bindings and plastic tape.",
       "safety_warnings": "Wet, oily, or wax-coated paper cannot be recycled. Dispose soiled napkins in wet waste or sanitary waste.",
       "target_bin_color": "BLUE",
-      "accepted_pathways": ["Dry Waste Collection (Blue)", "Raddi / Kabadiwala Merchants"],
-      "prohibited_pathways": ["Wet Waste (Green)", "Burning"],
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Raddi / Kabadiwala Merchants"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Burning"
+      ],
       "review_status": "VERIFIED",
-      "source": "India Solid Waste Management Rules 2016"
+      "source": "India Solid Waste Management Rules 2016",
+      "reuse_ideas": [
+        "Use one-sided printed paper for scratch notes, shopping lists, or children's drawing.",
+        "Shred newspaper for compost brown layer or fragile item packaging cushioning.",
+        "Use clean newsprint for streak-free glass and mirror cleaning."
+      ],
+      "cleaning_tips": "Keep dry. Remove metal spiral bindings, staples, and plastic cover sheets.",
+      "environmental_impact": "Recycling paper saves 60% of the energy and 80% of the water required to produce virgin wood-pulp paper.",
+      "condition_notes": {
+        "wet": "Wet paper decomposes into moldy pulp; let it dry if clean, or compost if unbleached.",
+        "greasy": "Food-stained paper cannot be pulped into recycled paper; compost or dispose in general waste.",
+        "crushed": "Crumpled paper is recyclable, but keeping flat bundles saves storage space."
+      }
     },
     {
       "id": "RULE-PCB-001",
@@ -282,10 +585,26 @@
       "preparation_instructions": "Handle with dry gloves. Place in anti-static bag or wrapped in cardboard. Keep intact without breaking.",
       "safety_warnings": "TOXIC HEAVY METALS: Contains lead, cadmium, mercury, and brominated flame retardants. Acid-leaching or burning causes severe toxic air pollution.",
       "target_bin_color": "RED",
-      "accepted_pathways": ["Authorized Central Pollution Control Board (CPCB) Dismantler"],
-      "prohibited_pathways": ["Informal Scrap Acid Baths", "Open Burning", "Landfills"],
+      "accepted_pathways": [
+        "Authorized Central Pollution Control Board (CPCB) Dismantler"
+      ],
+      "prohibited_pathways": [
+        "Informal Scrap Acid Baths",
+        "Open Burning",
+        "Landfills"
+      ],
       "review_status": "VERIFIED",
-      "source": "Central Pollution Control Board (CPCB) Guidelines & E-Waste Rules 2022"
+      "source": "Central Pollution Control Board (CPCB) Guidelines & E-Waste Rules 2022",
+      "reuse_ideas": [
+        "Hazardous electronics and appliances must not be informally reused due to toxic capacitor and heavy metal risks."
+      ],
+      "cleaning_tips": "Do not wash internal circuitry with water. Wipe exterior dust with dry cloth only.",
+      "environmental_impact": "Improper e-waste disposal releases neurotoxins including mercury, cadmium, and lead into local water tables.",
+      "condition_notes": {
+        "broken": "DANGER: Broken electronics expose sharp leaded glass, high-voltage capacitors, or mercury backlights. Wear heavy protective gloves.",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
     },
     {
       "id": "RULE-PLASTIC-001",
@@ -297,10 +616,34 @@
       "preparation_instructions": "Empty all contents completely. Rinse food/oil residues with a small amount of water. Crush or flatten to save volume.",
       "safety_warnings": "Ensure plastics are separated by resin code when possible. Never burn plastic waste; releases toxic dioxins and furans.",
       "target_bin_color": "BLUE",
-      "accepted_pathways": ["Dry Waste Bin (Blue)", "Plastic Collection Kiosk", "Scrap Merchant"],
-      "prohibited_pathways": ["Open Burning", "Drains / Water Bodies", "Wet Waste (Green)"],
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Plastic Collection Kiosk",
+        "Scrap Merchant"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Drains / Water Bodies",
+        "Wet Waste (Green)"
+      ],
       "review_status": "VERIFIED",
-      "source": "Plastic Waste Management Rules 2016 (Amended 2022)"
+      "source": "Plastic Waste Management Rules 2016 (Amended 2022)",
+      "reuse_ideas": [
+        "Cut in half to create self-watering seed starters or indoor flower pots.",
+        "Use as desk organizers for pens, brushes, screws, or small accessories.",
+        "Create DIY garden funnels or scoop tools for dry grains.",
+        "Construct hanging bird feeders by punching small holes and perches."
+      ],
+      "cleaning_tips": "Rinse with water to remove food residues, sugar, and oils. Allow to air-dry before placing in recycling.",
+      "environmental_impact": "Plastics persist for centuries in landfills, fragmenting into hazardous microplastics that enter the human food web.",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "Flattening bottles saves bin volume and is highly recommended. Fasten cap back on after flattening.",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "Must be 100% empty of liquids before collection.",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
     },
     {
       "id": "RULE-ITEM-PLASTIC-PET",
@@ -314,10 +657,33 @@
       "preparation_instructions": "Empty liquid. Rinse bottle. Squash the bottle flat to reduce bulk, then re-screw the cap loosely so it stays attached for sorting.",
       "safety_warnings": "High-grade recyclable polymer converted into polyester fiber and food-grade rPET. Keep uncontaminated with dirt or oil.",
       "target_bin_color": "BLUE",
-      "accepted_pathways": ["Blue Dry Waste Bin", "Bottle Return Kiosk", "Door-to-door Kabadiwala"],
-      "prohibited_pathways": ["Littering", "Burning"],
+      "accepted_pathways": [
+        "Blue Dry Waste Bin",
+        "Bottle Return Kiosk",
+        "Door-to-door Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Littering",
+        "Burning"
+      ],
       "review_status": "VERIFIED",
-      "source": "India Plastic Waste Management Rules 2016"
+      "source": "India Plastic Waste Management Rules 2016",
+      "reuse_ideas": [
+        "Cut in half to create self-watering seed starters or indoor flower pots.",
+        "Use as desk organizers for pens, brushes, screws, or small accessories.",
+        "Create DIY garden funnels or scoop tools for dry grains.",
+        "Construct hanging bird feeders by punching small holes and perches."
+      ],
+      "cleaning_tips": "Rinse with water to remove food residues, sugar, and oils. Allow to air-dry before placing in recycling.",
+      "environmental_impact": "Plastics persist for centuries in landfills, fragmenting into hazardous microplastics that enter the human food web.",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "Flattening bottles saves bin volume and is highly recommended. Fasten cap back on after flattening.",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "Must be 100% empty of liquids before collection.",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
     },
     {
       "id": "RULE-ITEM-PLASTIC-HDPE",
@@ -331,10 +697,31 @@
       "preparation_instructions": "Rinse shampoo, detergent, or milk residue thoroughly. Leave cap on or place inside the container.",
       "safety_warnings": "Highly durable and widely recycled into pipes, crates, and bins.",
       "target_bin_color": "BLUE",
-      "accepted_pathways": ["Dry Waste Collection (Blue)", "Scrap Dealers"],
-      "prohibited_pathways": ["Wet Waste (Green)"],
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
       "review_status": "VERIFIED",
-      "source": "India Plastic Waste Management Rules 2016"
+      "source": "India Plastic Waste Management Rules 2016",
+      "reuse_ideas": [
+        "Cut in half to create self-watering seed starters or indoor flower pots.",
+        "Use as desk organizers for pens, brushes, screws, or small accessories.",
+        "Create DIY garden funnels or scoop tools for dry grains.",
+        "Construct hanging bird feeders by punching small holes and perches."
+      ],
+      "cleaning_tips": "Rinse with water to remove food residues, sugar, and oils. Allow to air-dry before placing in recycling.",
+      "environmental_impact": "Plastics persist for centuries in landfills, fragmenting into hazardous microplastics that enter the human food web.",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "Flattening bottles saves bin volume and is highly recommended. Fasten cap back on after flattening.",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "Must be 100% empty of liquids before collection.",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
     },
     {
       "id": "RULE-ITEM-PLASTIC-MLP",
@@ -348,10 +735,33 @@
       "preparation_instructions": "Shake out all food crumbs and dry residue. Bundle multiple pouches together inside one larger plastic pouch.",
       "safety_warnings": "Multi-layer metallized laminates cannot be mechanically recycled into clear plastic; routed for co-processing in cement kilns or waste-to-energy.",
       "target_bin_color": "BLUE",
-      "accepted_pathways": ["Dry Waste Bin (Blue)", "Cement Kiln Co-Processing", "Road Construction Bitumen Blend"],
-      "prohibited_pathways": ["Open Burning", "Organic Wet Waste (Green)"],
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Cement Kiln Co-Processing",
+        "Road Construction Bitumen Blend"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Organic Wet Waste (Green)"
+      ],
       "review_status": "VERIFIED",
-      "source": "CPCB EPR Guidelines for Plastic Packaging 2022"
+      "source": "CPCB EPR Guidelines for Plastic Packaging 2022",
+      "reuse_ideas": [
+        "Cut in half to create self-watering seed starters or indoor flower pots.",
+        "Use as desk organizers for pens, brushes, screws, or small accessories.",
+        "Create DIY garden funnels or scoop tools for dry grains.",
+        "Construct hanging bird feeders by punching small holes and perches."
+      ],
+      "cleaning_tips": "Rinse with water to remove food residues, sugar, and oils. Allow to air-dry before placing in recycling.",
+      "environmental_impact": "Plastics persist for centuries in landfills, fragmenting into hazardous microplastics that enter the human food web.",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "Flattening bottles saves bin volume and is highly recommended. Fasten cap back on after flattening.",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "Must be 100% empty of liquids before collection.",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
     },
     {
       "id": "RULE-PLAYER-001",
@@ -363,10 +773,24 @@
       "preparation_instructions": "Remove CDs, DVDs, and remote control batteries. Disconnect audio/video cables.",
       "safety_warnings": "Recyclable transformer copper and steel casing. Dispose via certified e-waste aggregators.",
       "target_bin_color": "ORANGE",
-      "accepted_pathways": ["E-Waste Collection Facility"],
-      "prohibited_pathways": ["Household General Waste"],
+      "accepted_pathways": [
+        "E-Waste Collection Facility"
+      ],
+      "prohibited_pathways": [
+        "Household General Waste"
+      ],
       "review_status": "VERIFIED",
-      "source": "E-Waste Management Rules 2022"
+      "source": "E-Waste Management Rules 2022",
+      "reuse_ideas": [
+        "Repurpose clean items for household storage, gardening, or craft activities where suitable."
+      ],
+      "cleaning_tips": "Clean and dry items before placing them into the appropriate segregation stream.",
+      "environmental_impact": "Proper segregation prevents municipal landfill overload and promotes circular recycling.",
+      "condition_notes": {
+        "broken": "Wrap sharp fragments safely before disposal.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
     },
     {
       "id": "RULE-PRINTER-001",
@@ -378,10 +802,25 @@
       "preparation_instructions": "Remove ink cartridges and toner bottles separately for specialized recycling. Secure the scanner glass lid.",
       "safety_warnings": "Toner powder inhalation hazard. Toner dust contains ultra-fine carbon black and plastic polymers causing respiratory harm if spilled.",
       "target_bin_color": "SPECIAL_DEPOT",
-      "accepted_pathways": ["Authorized E-Waste Recycler", "Brand Take-Back"],
-      "prohibited_pathways": ["Dumping with General Waste"],
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Brand Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Dumping with General Waste"
+      ],
       "review_status": "VERIFIED",
-      "source": "E-Waste Management Rules 2022"
+      "source": "E-Waste Management Rules 2022",
+      "reuse_ideas": [
+        "Hazardous electronics and appliances must not be informally reused due to toxic capacitor and heavy metal risks."
+      ],
+      "cleaning_tips": "Do not wash internal circuitry with water. Wipe exterior dust with dry cloth only.",
+      "environmental_impact": "Improper e-waste disposal releases neurotoxins including mercury, cadmium, and lead into local water tables.",
+      "condition_notes": {
+        "broken": "DANGER: Broken electronics expose sharp leaded glass, high-voltage capacitors, or mercury backlights. Wear heavy protective gloves.",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
     },
     {
       "id": "RULE-TELEVISION-001",
@@ -393,10 +832,26 @@
       "preparation_instructions": "Keep display panel intact without cracking. Tape screen surface with protective cardboard during transport.",
       "safety_warnings": "Explosion/implosion risk and toxic chemical hazard (mercury cold-cathode backlights, lead glass in CRT monitors). Never smash display.",
       "target_bin_color": "SPECIAL_DEPOT",
-      "accepted_pathways": ["Authorized E-Waste Depot", "Manufacturer Brand Exchange"],
-      "prohibited_pathways": ["Manual Screen Smashing", "Informal Scrap Dumps"],
+      "accepted_pathways": [
+        "Authorized E-Waste Depot",
+        "Manufacturer Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Manual Screen Smashing",
+        "Informal Scrap Dumps"
+      ],
       "review_status": "VERIFIED",
-      "source": "E-Waste Management Rules 2022"
+      "source": "E-Waste Management Rules 2022",
+      "reuse_ideas": [
+        "Hazardous electronics and appliances must not be informally reused due to toxic capacitor and heavy metal risks."
+      ],
+      "cleaning_tips": "Do not wash internal circuitry with water. Wipe exterior dust with dry cloth only.",
+      "environmental_impact": "Improper e-waste disposal releases neurotoxins including mercury, cadmium, and lead into local water tables.",
+      "condition_notes": {
+        "broken": "DANGER: Broken electronics expose sharp leaded glass, high-voltage capacitors, or mercury backlights. Wear heavy protective gloves.",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
     },
     {
       "id": "RULE-TRASH-001",
@@ -408,10 +863,25 @@
       "preparation_instructions": "Place items in a durable garbage bag. Ensure no recyclables (plastic, paper, metal, dry glass) or wet organics are mixed in.",
       "safety_warnings": "Never place lithium batteries, electronics, chemicals, or un-wrapped glass into general trash.",
       "target_bin_color": "BLACK",
-      "accepted_pathways": ["Municipal Inert Waste Collection (Black Bin)"],
-      "prohibited_pathways": ["Recycling Bins", "Compost"],
+      "accepted_pathways": [
+        "Municipal Inert Waste Collection (Black Bin)"
+      ],
+      "prohibited_pathways": [
+        "Recycling Bins",
+        "Compost"
+      ],
       "review_status": "VERIFIED",
-      "source": "India Solid Waste Management Rules 2016"
+      "source": "India Solid Waste Management Rules 2016",
+      "reuse_ideas": [
+        "Repurpose clean items for household storage, gardening, or craft activities where suitable."
+      ],
+      "cleaning_tips": "Clean and dry items before placing them into the appropriate segregation stream.",
+      "environmental_impact": "Proper segregation prevents municipal landfill overload and promotes circular recycling.",
+      "condition_notes": {
+        "broken": "Wrap sharp fragments safely before disposal.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
     },
     {
       "id": "RULE-WASHING_MACHINE-001",
@@ -423,10 +893,25 @@
       "preparation_instructions": "Unplug electrical power cord and water inlet hoses. Drain residual water from lint filter. Tape door shut during transport.",
       "safety_warnings": "Heavy lifting injury and child entrapment hazard. Remove door latch or door if storing prior to collection.",
       "target_bin_color": "SPECIAL_DEPOT",
-      "accepted_pathways": ["Authorized White-Goods Recycler", "Brand Exchange Schemes"],
-      "prohibited_pathways": ["Curbside Abandonment"],
+      "accepted_pathways": [
+        "Authorized White-Goods Recycler",
+        "Brand Exchange Schemes"
+      ],
+      "prohibited_pathways": [
+        "Curbside Abandonment"
+      ],
       "review_status": "VERIFIED",
-      "source": "E-Waste Management Rules 2022"
+      "source": "E-Waste Management Rules 2022",
+      "reuse_ideas": [
+        "Repurpose clean items for household storage, gardening, or craft activities where suitable."
+      ],
+      "cleaning_tips": "Clean and dry items before placing them into the appropriate segregation stream.",
+      "environmental_impact": "Proper segregation prevents municipal landfill overload and promotes circular recycling.",
+      "condition_notes": {
+        "broken": "Wrap sharp fragments safely before disposal.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
     }
   ]
 }

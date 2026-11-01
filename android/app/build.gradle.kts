@@ -17,6 +17,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "LLM_MODEL_DOWNLOAD_URL", "\"https://huggingface.co/datasets/wasteinfoAI/models/resolve/main/llama3_2_1b_instruct_q4.pte\"")
+        buildConfigField("String", "LLM_TOKENIZER_DOWNLOAD_URL", "\"https://huggingface.co/datasets/wasteinfoAI/models/resolve/main/tokenizer.bin\"")
+        buildConfigField("String", "CLOUD_ASSISTANT_URL", "\"\"")
     }
 
     buildTypes {
@@ -40,6 +44,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {

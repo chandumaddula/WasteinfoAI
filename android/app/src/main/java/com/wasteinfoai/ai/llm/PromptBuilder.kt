@@ -1,64 +1,100 @@
 package com.wasteinfoai.ai.llm
 
 import com.wasteinfoai.ai.rules.DisposalRule
+import com.wasteinfoai.features.assistant.ChatMessage
 
 /**
- * Builds grounded prompts for the AI assistant strictly anchored in verified disposal rules.
- *
- * Built with buildString (not trimIndent): trimIndent on text containing interpolated multi-line
- * values computes the wrong indent and leaves stray whitespace before <|begin_of_text|>.
+ * Builds grounded prompts for Bottle strictly anchored in verified disposal rules.
+ * Uses [ChatTemplate] to render multi-turn dialogues adhering to model token formats.
  */
 object PromptBuilder {
 
-    private const val MAX_QUESTION_CHARS = 300
+    private const val MAX_QUESTION_CHARS = 400
+    private val defaultTemplate: ChatTemplate = Llama3ChatTemplate()
 
+    const val SYSTEM_PROMPT = """You are Bottle, an offline environmental sanitation assistant.
+Always follow these strict safety rules:
+1. Ground your answer ONLY in the official disposal rule provided. Never invent municipal policies.
+2. If the item is hazardous, prominently emphasize safety warnings and personal protection.
+3. If no verified rule exists, say so and advise consulting local waste authorities.
+4. Keep the response friendly, conversational, and under 120 words."""
+
+    /**
+     * Backward-compatible single-turn prompt builder.
+     */
     fun buildDisposalExplanationPrompt(
         category: String,
         rule: DisposalRule?,
         userQuestion: String? = null
     ): String {
-        val ruleText = if (rule != null) {
-            listOf(
-                "Canonical Waste Category: ${rule.category}",
-                "Disposal Method: ${rule.disposalMethod}",
-                "Recyclable: ${if (rule.isRecyclable) "Yes" else "No"}",
-                "Hazardous: ${if (rule.isHazardous) "YES - HAZARDOUS" else "No"}",
-                "Target Bin: ${rule.targetBinColor}",
-                "Preparation Instructions: ${rule.preparationInstructions}",
-                "Safety Warnings: ${rule.safetyWarnings}",
-                "Official Source: ${rule.source}"
-            ).joinToString("\n")
-        } else {
-            "No verified rule currently registered for category '$category'."
+        return buildMultiTurnPrompt(
+            context = AssistantContext(category = category),
+            rule = rule,
+            history = emptyList(),
+            currentMessage = userQuestion ?: "How should I dispose of $category?"
+        )
+    }
+
+    /**
+     * Multi-turn grounded prompt builder using [ChatTemplate].
+     */
+    fun buildMultiTurnPrompt(
+        context: AssistantContext,
+        rule: DisposalRule?,
+        history: List<ChatMessage>,
+        currentMessage: String,
+        template: ChatTemplate = defaultTemplate
+    ): String {
+        val groundingData = buildRuleGroundingText(context, rule)
+        val sanitizedQuery = sanitize(currentMessage).take(MAX_QUESTION_CHARS)
+
+        return template.format(
+            systemPrompt = SYSTEM_PROMPT,
+            history = history,
+            currentMessage = sanitizedQuery,
+            groundingData = groundingData
+        )
+    }
+
+    fun buildRuleGroundingText(context: AssistantContext, rule: DisposalRule?): String {
+        val itemName = context.specificItem ?: context.category
+        if (rule == null) {
+            return "Item: $itemName. No verified municipal rule currently registered for category '${context.category}'."
         }
 
-        // Strip chat-template control tokens so a user question cannot inject new turns.
-        val safeQuestion = userQuestion
-            ?.replace("<|", "< |")
-            ?.replace("|>", "| >")
-            ?.trim()
-            ?.take(MAX_QUESTION_CHARS)
+        val lines = mutableListOf(
+            "Item: $itemName",
+            "Canonical Waste Category: ${rule.category}",
+            "Disposal Method: ${rule.disposalMethod}",
+            "Recyclable: ${if (rule.isRecyclable) "Yes" else "No"}",
+            "Hazardous: ${if (rule.isHazardous) "YES - CRITICAL HAZARD" else "No"}",
+            "Target Bin: ${rule.targetBinColor} BIN",
+            "Preparation Instructions: ${rule.preparationInstructions}",
+            "Safety Warnings: ${rule.safetyWarnings}",
+            "Official Source: ${rule.source}"
+        )
 
-        val questionPart = if (!safeQuestion.isNullOrBlank()) {
-            "User Question: $safeQuestion"
-        } else {
-            "Please provide a clear, concise, and helpful summary of how to properly prepare and dispose of this item."
+        if (rule.cleaningTips != null) {
+            lines.add("Cleaning Tips: ${rule.cleaningTips}")
+        }
+        if (rule.reuseIdeas.isNotEmpty()) {
+            lines.add("Verified Reuse Ideas: ${rule.reuseIdeas.joinToString("; ")}")
+        }
+        if (rule.environmentalImpact != null) {
+            lines.add("Environmental Impact: ${rule.environmentalImpact}")
+        }
+        if (rule.conditionNotes.isNotEmpty()) {
+            val conds = rule.conditionNotes.map { "${it.key}: ${it.value}" }.joinToString(" | ")
+            lines.add("Condition Handling: $conds")
         }
 
-        return buildString {
-            append("<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n")
-            append("You are wasteinfoAI Assistant, an offline environmental sanitation assistant.\n")
-            append("Always follow these strict safety rules:\n")
-            append("1. Ground your answer ONLY in the official disposal rule below. Never invent new rules or recycling policies.\n")
-            append("2. If the item is hazardous, prominently emphasize safety warnings and personal protection.\n")
-            append("3. If no verified rule exists, say so and advise consulting the local waste authority.\n")
-            append("4. Keep the response friendly and under 120 words.\n\n")
-            append("Official Grounding Data:\n")
-            append(ruleText)
-            append("<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n")
-            append("I have an item identified as '$category'.\n")
-            append(questionPart)
-            append("<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n")
-        }
+        return lines.joinToString("\n")
+    }
+
+    private fun sanitize(text: String): String {
+        return text
+            .replace("<|", "< |")
+            .replace("|>", "| >")
+            .trim()
     }
 }

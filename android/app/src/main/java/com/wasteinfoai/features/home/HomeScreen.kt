@@ -230,7 +230,7 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     QuickActionCard(
-                        title = "AI Assistant",
+                        title = "Bottle AI",
                         icon = Icons.Default.Psychology,
                         modifier = Modifier.weight(1f),
                         onClick = onNavigateToAssistant

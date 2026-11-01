@@ -19,7 +19,11 @@ data class DisposalRule(
     val acceptedPathways: List<String> = emptyList(),
     val prohibitedPathways: List<String> = emptyList(),
     val reviewStatus: String = "VERIFIED",
-    val source: String
+    val source: String,
+    val reuseIdeas: List<String> = emptyList(),
+    val cleaningTips: String? = null,
+    val environmentalImpact: String? = null,
+    val conditionNotes: Map<String, String> = emptyMap()
 )
 
 data class DisposalRulesPayload(

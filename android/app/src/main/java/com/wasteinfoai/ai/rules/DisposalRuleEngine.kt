@@ -80,6 +80,22 @@ class DisposalRuleEngine(
                     for (j in 0 until prohibitedArr.length()) prohibited.add(prohibitedArr.getString(j))
                 }
 
+                val reuseList = mutableListOf<String>()
+                val reuseArr = obj.optJSONArray("reuse_ideas")
+                if (reuseArr != null) {
+                    for (j in 0 until reuseArr.length()) reuseList.add(reuseArr.getString(j))
+                }
+
+                val conditionMap = mutableMapOf<String, String>()
+                val condObj = obj.optJSONObject("condition_notes")
+                if (condObj != null) {
+                    val keys = condObj.keys()
+                    while (keys.hasNext()) {
+                        val key = keys.next()
+                        conditionMap[key.lowercase()] = condObj.getString(key)
+                    }
+                }
+
                 val rule = DisposalRule(
                     id = obj.getString("id"),
                     category = obj.getString("category"),
@@ -95,7 +111,11 @@ class DisposalRuleEngine(
                     acceptedPathways = accepted,
                     prohibitedPathways = prohibited,
                     reviewStatus = obj.optString("review_status", "VERIFIED"),
-                    source = obj.optString("source", "India Solid Waste Management Rules 2016")
+                    source = obj.optString("source", "India Solid Waste Management Rules 2016"),
+                    reuseIdeas = reuseList,
+                    cleaningTips = obj.optString("cleaning_tips").takeIf { it.isNotBlank() },
+                    environmentalImpact = obj.optString("environmental_impact").takeIf { it.isNotBlank() },
+                    conditionNotes = conditionMap
                 )
 
                 rulesList.add(rule)

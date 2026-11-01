@@ -3,6 +3,7 @@ package com.wasteinfoai.ai.llm
 import com.wasteinfoai.ai.rules.DisposalRule
 import com.wasteinfoai.ai.rules.DisposalRuleEngine
 import com.wasteinfoai.ai.rules.SafetyGuard
+import com.wasteinfoai.features.assistant.ChatMessage
 import kotlinx.coroutines.withTimeoutOrNull
 
 data class AssistantResponse(
@@ -14,26 +15,104 @@ data class AssistantResponse(
 )
 
 /**
- * Coordinates LLM generation with deterministic, rule-grounded guidance.
- * Safety warnings always come from the rule engine / SafetyGuard, never only from the LLM.
+ * Core assistant coordinator for "Bottle".
+ * Coordinates Cloud LLM (optional hybrid), on-device Llama 3 via ExecuTorch,
+ * and the deterministic rule-grounded OfflineResponder.
+ * Strict invariant: Hazardous items ALWAYS receive prominent safety advisories on all paths.
  */
 class AssistantService(
     private val llamaEngine: LlamaEngine,
-    private val ruleEngine: DisposalRuleEngine
+    private val ruleEngine: DisposalRuleEngine,
+    private val cloudClient: CloudAssistantClient = CloudAssistantClient(),
+    private val offlineResponder: OfflineResponder = OfflineResponder()
 ) {
+
     companion object {
-        private const val LLM_TIMEOUT_MS = 45_000L
-        private const val MIN_LLM_CHARS = 20
+        private const val LLM_TIMEOUT_MS = 30_000L
+        private const val MIN_LLM_CHARS = 15
     }
 
-    /** Backward-compatible entry point (category only). */
+    /**
+     * Comprehensive multi-turn reply function grounded in rich [AssistantContext].
+     */
+    suspend fun reply(
+        context: AssistantContext,
+        message: String,
+        history: List<ChatMessage> = emptyList(),
+        onToken: (String) -> Unit = {}
+    ): AssistantResponse {
+        val rule: DisposalRule? = if (!context.specificItem.isNullOrBlank() || !context.materialCode.isNullOrBlank()) {
+            ruleEngine.getHierarchicalRule(context.category, context.specificItem, context.materialCode, context.jurisdiction)
+        } else {
+            ruleEngine.getRuleForCategory(context.category)
+        }
+
+        val safety = SafetyGuard.evaluateSafety(context.category, isUncertain = false)
+        val isHazardous = safety.isHazardous || rule?.isHazardous == true
+        val warning = rule?.safetyWarnings?.takeIf { it.isNotBlank() } ?: safety.primaryWarning
+
+        var candidateText: String? = null
+        var isLlm = false
+
+        // 1. Cloud Assistant (if enabled & online)
+        if (cloudClient.isEligible()) {
+            val cloudReply = cloudClient.generateReply(context, rule, message, history)
+            if (isValidLlmText(cloudReply)) {
+                candidateText = sanitizeLlmText(cloudReply!!)
+                isLlm = true
+                onToken(candidateText)
+            }
+        }
+
+        // 2. On-Device Llama Engine (ExecuTorch)
+        if (candidateText == null && llamaEngine.isModelAvailable) {
+            val llamaReply = generateWithLlama(context, rule, message, history, onToken)
+            if (isValidLlmText(llamaReply)) {
+                candidateText = sanitizeLlmText(llamaReply!!)
+                isLlm = true
+            }
+        }
+
+        // 3. Deterministic Offline Responder
+        if (candidateText == null) {
+            candidateText = offlineResponder.respond(context, rule, message, history)
+            isLlm = false
+            onToken(candidateText)
+        }
+
+        // 4. Strict Safety Enforcement: Hazardous items must always feature the safety advisory
+        val finalResponseText = if (isHazardous && !candidateText.contains("SAFETY", ignoreCase = true)) {
+            "⚠️ SAFETY ADVISORY (Hazardous Waste):\n$warning\n\n$candidateText"
+        } else {
+            candidateText
+        }
+
+        return AssistantResponse(
+            text = finalResponseText,
+            isLlmGenerated = isLlm,
+            isHazardous = isHazardous,
+            groundedCategory = rule?.category ?: context.category,
+            targetBinColor = rule?.targetBinColor
+        )
+    }
+
+    /**
+     * Backward-compatible entry point (category only).
+     */
     suspend fun getGuidance(
         category: String,
         userQuery: String? = null,
         onPartialToken: (String) -> Unit = {}
-    ): AssistantResponse = getGuidanceFor(category, null, null, null, userQuery, onPartialToken)
+    ): AssistantResponse = reply(
+        context = AssistantContext(category = category),
+        message = userQuery ?: "How should I dispose of $category?",
+        history = emptyList(),
+        onToken = onPartialToken
+    )
 
-    /** Uses the full hierarchy (specific item / material code / jurisdiction) when available. */
+    /**
+     * Backward-compatible entry point with full item specifics.
+     */
     suspend fun getGuidanceFor(
         category: String,
         specificItem: String?,
@@ -41,72 +120,63 @@ class AssistantService(
         jurisdiction: String?,
         userQuery: String?,
         onPartialToken: (String) -> Unit = {}
-    ): AssistantResponse {
-        val rule: DisposalRule? =
-            if (!specificItem.isNullOrBlank() || !materialCode.isNullOrBlank()) {
-                ruleEngine.getHierarchicalRule(category, specificItem, materialCode, jurisdiction)
-            } else {
-                ruleEngine.getRuleForCategory(category)
-            }
-        val safety = SafetyGuard.evaluateSafety(category, isUncertain = false)
-        val hazardous = safety.isHazardous || rule?.isHazardous == true
-        val warning = rule?.safetyWarnings?.takeIf { it.isNotBlank() } ?: safety.primaryWarning
+    ): AssistantResponse = reply(
+        context = AssistantContext(
+            category = category,
+            specificItem = specificItem,
+            materialCode = materialCode,
+            jurisdiction = jurisdiction ?: "INDIA_SWM_2016"
+        ),
+        message = userQuery ?: "How should I dispose of ${specificItem ?: category}?",
+        history = emptyList(),
+        onToken = onPartialToken
+    )
 
-        val llmText = generateWithLlm(category, rule, userQuery, onPartialToken)
-        if (llmText != null) {
-            val text = if (hazardous) "⚠️ SAFETY ADVISORY: $warning\n\n$llmText" else llmText
-            return AssistantResponse(text, true, hazardous, rule?.category ?: category, rule?.targetBinColor)
-        }
-
-        return AssistantResponse(
-            text = buildDeterministicExplanation(category, rule, userQuery, hazardous, warning),
-            isLlmGenerated = false,
-            isHazardous = hazardous,
-            groundedCategory = rule?.category ?: category,
-            targetBinColor = rule?.targetBinColor
-        )
-    }
-
-    private suspend fun generateWithLlm(
-        category: String,
+    private suspend fun generateWithLlama(
+        context: AssistantContext,
         rule: DisposalRule?,
-        query: String?,
+        query: String,
+        history: List<ChatMessage>,
         onToken: (String) -> Unit
     ): String? {
-        if (!llamaEngine.isModelAvailable) return null
         if (!llamaEngine.isReady && llamaEngine.initialize().isFailure) return null
 
-        val prompt = PromptBuilder.buildDisposalExplanationPrompt(category, rule, query)
-        val result = withTimeoutOrNull(LLM_TIMEOUT_MS) { llamaEngine.generate(prompt, 256, onToken) }
+        val prompt = PromptBuilder.buildMultiTurnPrompt(
+            context = context,
+            rule = rule,
+            history = history,
+            currentMessage = query
+        )
+
+        val result = withTimeoutOrNull(LLM_TIMEOUT_MS) {
+            llamaEngine.generate(prompt, 256, onToken)
+        }
         if (result == null) {
             llamaEngine.stop()
             return null
         }
-        return result.getOrNull()?.trim()?.takeIf { it.length >= MIN_LLM_CHARS }
+        return result.getOrNull()?.trim()
     }
 
-    private fun buildDeterministicExplanation(
-        category: String,
-        rule: DisposalRule?,
-        query: String?,
-        isHazardous: Boolean,
-        warning: String
-    ): String {
-        if (rule == null) {
-            return "No verified municipal rule is currently registered for category '$category'. Please consult your local waste authority before disposal."
-        }
-        return buildString {
-            if (isHazardous) append("⚠️ SAFETY ADVISORY (Hazardous Waste):\n$warning\n\n")
-            append("Recommended Disposal: ${rule.disposalMethod}\n")
-            append("Target Bin: ${rule.targetBinColor} BIN\n")
-            append("Recyclable: ${if (rule.isRecyclable) "Yes" else "No"}\n\n")
-            append("Preparation Steps:\n• ${rule.preparationInstructions}\n")
-            if (rule.prohibitedPathways.isNotEmpty()) {
-                append("\nDo NOT: ${rule.prohibitedPathways.joinToString("; ")}\n")
-            }
-            if (!query.isNullOrBlank()) {
-                append("\n(Offline Assistant Mode: Response grounded directly in ${rule.source})")
-            }
-        }.trim()
+    fun stop() {
+        llamaEngine.stop()
+    }
+
+    private fun isValidLlmText(text: String?): Boolean {
+        if (text == null) return false
+        val trimmed = text.trim()
+        return trimmed.length >= MIN_LLM_CHARS && !trimmed.startsWith("<|")
+    }
+
+    private fun sanitizeLlmText(text: String): String {
+        return text
+            .replace("<|begin_of_text|>", "")
+            .replace("<|end_of_text|>", "")
+            .replace("<|eot_id|>", "")
+            .replace("<|start_header_id|>", "")
+            .replace("<|end_header_id|>", "")
+            .replace("system\n\n", "")
+            .replace("assistant\n\n", "")
+            .trim()
     }
 }

@@ -38,3 +38,4 @@ SELECT current_database()                        AS database,
             THEN 'nothing seeded: no disposal_rules table (see header comment)'
             ELSE 'table exists: replace this placeholder with idempotent inserts'
        END                                       AS status;
+

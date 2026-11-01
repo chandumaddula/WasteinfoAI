@@ -283,7 +283,7 @@ fun DashboardSideDrawer(
 
                     DrawerItem(
                         icon = Icons.Default.Psychology,
-                        label = "AI Eco-Assistant",
+                        label = "Bottle AI Assistant",
                         isSelected = currentRoute.startsWith("assistant"),
                         onClick = {
                             coroutineScope.launch { drawerState.close() }

@@ -37,10 +37,10 @@ sealed class Screen(val route: String) {
         }
     }
 
-    data object Assistant : Screen("assistant?category={category}") {
-        fun createRoute(category: String = ""): String {
+    data object Assistant : Screen("assistant?category={category}&scanId={scanId}") {
+        fun createRoute(category: String = "", scanId: Long = 0L): String {
             val encCat = URLEncoder.encode(category, StandardCharsets.UTF_8.toString())
-            return "assistant?category=$encCat"
+            return "assistant?category=$encCat&scanId=$scanId"
         }
     }
 }

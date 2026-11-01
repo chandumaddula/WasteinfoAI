@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WasteinfoAI</string>
+    <string name="assistant_name">Bottle</string>
+    <string name="assistant_title">Bottle</string>
+    <string name="assistant_subtitle">Offline Environmental Assistant</string>
+    <string name="assistant_greeting">Hi! I\'m Bottle, your offline waste &amp; recycling assistant. How can I help you safely manage or upcycle this item?</string>
+    <string name="assistant_typing">Bottle is thinking…</string>
+    <string name="assistant_tts_prefix">Bottle says: </string>
+    <string name="assistant_clear_chat">Clear conversation</string>
+    <string name="assistant_voice_input">Voice Input</string>
+    <string name="assistant_offline_brain">Offline brain: Download ~650 MB</string>
+</resources>
+

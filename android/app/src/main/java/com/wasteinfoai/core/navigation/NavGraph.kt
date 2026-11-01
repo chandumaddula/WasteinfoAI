@@ -195,8 +195,8 @@ fun AppNavGraph(
                 onNavigateToCreateReport = { category, path ->
                     navController.navigate(Screen.CreateReport.createRoute(category, path))
                 },
-                onNavigateToAssistant = { category ->
-                    navController.navigate(Screen.Assistant.createRoute(category))
+                onNavigateToAssistant = { category, scanId ->
+                    navController.navigate(Screen.Assistant.createRoute(category, scanId))
                 }
             )
         }
@@ -245,20 +245,28 @@ fun AppNavGraph(
             )
         }
 
-        // Assistant
+        // Assistant ("Bottle")
         composable(
             route = Screen.Assistant.route,
-            arguments = listOf(navArgument("category") { type = NavType.StringType; defaultValue = "" })
+            arguments = listOf(
+                navArgument("category") { type = NavType.StringType; defaultValue = "" },
+                navArgument("scanId") { type = NavType.LongType; defaultValue = 0L }
+            )
         ) { backStackEntry ->
             val cat = URLDecoder.decode(backStackEntry.arguments?.getString("category") ?: "", StandardCharsets.UTF_8.toString())
+            val scanId = backStackEntry.arguments?.getLong("scanId") ?: 0L
             val vm = rememberViewModel {
                 AssistantViewModel(
                     assistantService = container.assistantService,
-                    ttsManager = container.textToSpeechManager
+                    ttsManager = container.textToSpeechManager,
+                    scanRepository = container.scanRepository,
+                    llmModelManager = container.llmModelManager,
+                    speechInputHelper = container.speechInputHelper
                 )
             }
             AssistantScreen(
                 initialCategory = cat,
+                initialScanId = scanId,
                 viewModel = vm,
                 onNavigateBack = { navController.popBackStack() }
             )

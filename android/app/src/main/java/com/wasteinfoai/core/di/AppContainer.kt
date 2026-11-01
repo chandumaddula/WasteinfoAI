@@ -2,9 +2,12 @@ package com.wasteinfoai.core.di
 
 import android.content.Context
 import com.wasteinfoai.ai.llm.AssistantService
+import com.wasteinfoai.ai.llm.CloudAssistantClient
 import com.wasteinfoai.ai.llm.LlamaEngine
+import com.wasteinfoai.ai.llm.LlmModelManager
 import com.wasteinfoai.ai.rules.DisposalRuleEngine
 import com.wasteinfoai.ai.vision.WasteClassifier
+import com.wasteinfoai.audio.SpeechInputHelper
 import com.wasteinfoai.audio.TextToSpeechManager
 import com.wasteinfoai.data.local.WasteDatabase
 import com.wasteinfoai.data.remote.ApiClient
@@ -66,8 +69,24 @@ class AppContainer(private val context: Context) {
         LlamaEngine(context)
     }
 
+    val cloudAssistantClient: CloudAssistantClient by lazy {
+        CloudAssistantClient(context)
+    }
+
+    val llmModelManager: LlmModelManager by lazy {
+        LlmModelManager(context)
+    }
+
+    val speechInputHelper: SpeechInputHelper by lazy {
+        SpeechInputHelper(context)
+    }
+
     val assistantService: AssistantService by lazy {
-        AssistantService(llamaEngine, disposalRuleEngine)
+        AssistantService(
+            llamaEngine = llamaEngine,
+            ruleEngine = disposalRuleEngine,
+            cloudClient = cloudAssistantClient
+        )
     }
 
     val textToSpeechManager: TextToSpeechManager by lazy {
