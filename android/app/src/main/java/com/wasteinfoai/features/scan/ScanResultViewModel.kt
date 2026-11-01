@@ -93,7 +93,9 @@ sealed interface ScanResultUiState {
         val resolvedJurisdiction: WasteJurisdiction = WasteJurisdiction.INDIA_NATIONAL,
         val feedbackSubmitted: Boolean = false,
         /** NEW: every item found in the photo, already classified. Index == selectedObjectIndex. */
-        val items: List<ItemAnalysis> = emptyList()
+        val items: List<ItemAnalysis> = emptyList(),
+        /** Detected regions the classifier did not accept as waste (hidden from the list). */
+        val ignoredObjectCount: Int = 0
     ) : ScanResultUiState
     data class Error(val message: String, val imageFile: File?) : ScanResultUiState
 }
@@ -178,12 +180,12 @@ class ScanResultViewModel(
                     compareByDescending<ItemAnalysis> { it.classification.isAccepted }
                         .thenByDescending { it.classification.confidence }
                 )
-                val shown = ranked
-                    .filter {
-                        it.classification.acceptanceState != AcceptanceState.LIKELY_NON_WASTE &&
-                            it.classification.acceptanceState != AcceptanceState.INVALID_OUTPUT
-                    }
-                    .ifEmpty { ranked.take(1) }
+                // Only ACCEPTED items are listed as waste. Rejected regions (hands, jeans, a bracelet) used to be
+                // listed as "Unsure - maybe paper 91%", inventing waste that is not in the photo. When nothing is
+                // accepted, ONE "not sure" result is shown (best crop) with manual selection.
+                val accepted = ranked.filter { it.classification.isAccepted }
+                val shown = accepted.ifEmpty { ranked.take(1) }
+                val ignoredCount = analyses.size - shown.size
 
                 // 7. Persist one history row per shown item
                 val saved = shown.map { it.copy(scanId = saveItem(file, it)) }
@@ -211,7 +213,8 @@ class ScanResultViewModel(
                     conflictExplanation = first.conflictExplanation,
                     resolvedJurisdiction = jurisdiction,
                     feedbackSubmitted = false,
-                    items = saved
+                    items = saved,
+                    ignoredObjectCount = ignoredCount
                 )
             }
         }
@@ -229,8 +232,22 @@ class ScanResultViewModel(
         // RESIZE_FULL matches how the model was trained; LETTERBOX (gray bars) was never seen in training.
         val strategy = if (rect != null) PreprocessingStrategy.ROI_CROP else PreprocessingStrategy.RESIZE_FULL
 
-        val classification = wasteClassifier.classify(bitmap, strategy, rect)
+        val rawClassification = wasteClassifier.classify(bitmap, strategy, rect)
             .getOrElse { return kotlin.Result.failure(it) }
+
+        // Models trained with an explicit "not_waste" class (hands, clothes, furniture, backgrounds).
+        // topK[0] is checked because a rejected result carries a generic label, not the class name.
+        val classification = if (rawClassification.topKResults.firstOrNull()?.label.equals("not_waste", ignoreCase = true)) {
+            ClassificationResult.rejected(
+                state = AcceptanceState.LIKELY_NON_WASTE,
+                reason = "This looks like a non-waste object (hand, clothing, furniture or background).",
+                durationMs = rawClassification.inferenceDurationMs,
+                topK = rawClassification.topKResults.filterNot { it.label.equals("not_waste", ignoreCase = true) },
+                policyResult = rawClassification.policyResult
+            )
+        } else {
+            rawClassification
+        }
 
         // Barcode / OCR run on this item's crop so one item's barcode never labels a different item.
         val crop = if (rect != null) ImagePreprocessor.cropRoi(bitmap, rect, 0.10f) else bitmap

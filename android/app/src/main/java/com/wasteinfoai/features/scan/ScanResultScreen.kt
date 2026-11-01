@@ -286,6 +286,14 @@ private fun SuccessContent(
             }
         }
 
+        if (state.ignoredObjectCount > 0) {
+            Text(
+                text = "${state.ignoredObjectCount} other object(s) in the photo were not recognised as waste and are hidden.",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+
         // 1.1 Every item found in the photo, each with its own bin and guidance
         if (state.items.size > 1) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

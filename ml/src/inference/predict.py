@@ -35,12 +35,16 @@ def main():
         p = Path(a)
         files += [f for f in sorted(p.rglob("*")) if f.suffix.lower() in IMAGE_EXTS] if p.is_dir() else [p]
 
+    reject_idx = ckpt["classes"].index("not_waste") if "not_waste" in ckpt["classes"] else None
+
     for f in files:
         x = eval_tf(Image.open(f).convert("RGB")).unsqueeze(0)
         probs = calibrated_probs(logits_for_tensor(model, x, device, not args.no_tta), policy["temperature"])
         conf, idx = probs.topk(3, dim=1)
         top = ", ".join(f"{ckpt['classes'][i]} {c:.2f}" for c, i in zip(conf[0].tolist(), idx[0].tolist()))
-        if accept_mask(probs, policy).item():
+        if reject_idx is not None and idx[0, 0].item() == reject_idx:
+            print(f"{f.name}: NOT WASTE (hand / clothing / furniture / background)   top3: {top}")
+        elif accept_mask(probs, policy, reject_idx).item():
             print(f"{f.name}: {ckpt['classes'][idx[0, 0]]}  ({conf[0, 0]:.1%})   top3: {top}")
         else:
             print(f"{f.name}: UNCERTAIN - retake the photo (single object, good light)   top3: {top}")

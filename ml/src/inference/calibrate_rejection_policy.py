@@ -78,12 +78,20 @@ def build_ood_logits(model, val_loader, cfg, root, device, tta, n=150):
     return out
 
 
-def evaluate_policy(id_probs, id_y, ood_probs, pol) -> dict:
-    mask = accept_mask(id_probs, pol)
+def evaluate_policy(id_probs, id_y, ood_probs, pol, reject_idx=None) -> dict:
+    if reject_idx is not None:
+        # Held-out "not_waste" photos are non-waste: score them as unknowns (false accept if accepted),
+        # and keep them out of the waste coverage / accuracy numbers.
+        nw = id_y == reject_idx
+        extra = id_probs[nw]
+        id_probs, id_y = id_probs[~nw], id_y[~nw]
+        ood_probs = extra if ood_probs is None else torch.cat([ood_probs, extra])
+    mask = accept_mask(id_probs, pol, reject_idx)
     preds = id_probs.argmax(1)
     cov = mask.float().mean().item()
     acc = (preds[mask] == id_y[mask]).float().mean().item() if mask.any() else 0.0
-    far = accept_mask(ood_probs, pol).float().mean().item() if ood_probs is not None else 0.0
+    far = (accept_mask(ood_probs, pol, reject_idx).float().mean().item()
+           if ood_probs is not None and len(ood_probs) else 0.0)
     return {"coverage": round(cov, 4), "false_rejection_rate": round(1 - cov, 4),
             "accuracy_on_accepted": round(acc, 4), "ood_false_accept_rate": round(far, 4)}
 
@@ -101,6 +109,7 @@ def main():
     model, _ = load_checkpoint(root / args.checkpoint, device)
     loaders = make_loaders(cfg, root, classes)
     tta, ev = cfg["evaluation"]["tta"], cfg["evaluation"]
+    reject_idx = classes.index("not_waste") if "not_waste" in classes else None
 
     val_logits, val_y = collect_logits(model, loaders["val"], device, tta)
     temperature = fit_temperature(val_logits, val_y)
@@ -117,7 +126,7 @@ def main():
         for mg in (0.0, 0.05, 0.10, 0.15, 0.20, 0.30):
             for ent in (0.5, 0.6, 0.7, 0.8, 1.0):
                 pol = {"confidence_threshold": round(float(c), 2), "min_margin": mg, "max_norm_entropy": ent}
-                r = evaluate_policy(val_probs, val_y, ood_probs, pol)
+                r = evaluate_policy(val_probs, val_y, ood_probs, pol, reject_idx)
                 ok = (r["accuracy_on_accepted"] >= ev["target_accuracy_on_accepted"]
                       and r["ood_false_accept_rate"] <= ev["max_false_accept_rate"])
                 key = (ok, r["coverage"]) if ok else (False, r["accuracy_on_accepted"] - r["ood_false_accept_rate"])
@@ -128,7 +137,7 @@ def main():
 
     pol, val_metrics = best
     test_logits, test_y = collect_logits(model, loaders["test"], device, tta)
-    test_metrics = evaluate_policy(calibrated_probs(test_logits, temperature), test_y, None, pol)
+    test_metrics = evaluate_policy(calibrated_probs(test_logits, temperature), test_y, None, pol, reject_idx)
     logger.info("Policy %s", pol)
     logger.info("VAL  %s", val_metrics)
     logger.info("TEST %s (OOD FAR not measured on test)", test_metrics)

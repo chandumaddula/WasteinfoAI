@@ -10,7 +10,7 @@ import math
 import random
 import sys
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import numpy as np
 import timm
@@ -240,8 +240,13 @@ def confidence_stats(probs: torch.Tensor):
     return top2[:, 0], top2[:, 0] - top2[:, 1], entropy
 
 
-def accept_mask(probs: torch.Tensor, policy: dict) -> torch.Tensor:
+def accept_mask(probs: torch.Tensor, policy: dict, reject_idx: Optional[int] = None) -> torch.Tensor:
+    """True where a prediction is trusted. `reject_idx` = index of the explicit "not_waste" class:
+    a confident "not_waste" is a correct REJECTION, never an accepted waste item."""
     top1, margin, ent = confidence_stats(probs)
-    return ((top1 >= policy["confidence_threshold"])
+    mask = ((top1 >= policy["confidence_threshold"])
             & (margin >= policy["min_margin"])
             & (ent <= policy["max_norm_entropy"]))
+    if reject_idx is not None:
+        mask = mask & (probs.argmax(dim=1) != reject_idx)
+    return mask
