@@ -2,12 +2,12 @@
 <resources>
     <string name="app_name">WasteinfoAI</string>
     <string name="app_tagline">ऑफलाइन एआय कचरा व्यवस्थापन आणि स्वच्छता</string>
-    <string name="assistant_name">बाटली (Bottle)</string>
-    <string name="assistant_title">बाटली</string>
+    <string name="assistant_name">बॉटल AI (Bottle AI)</string>
+    <string name="assistant_title">बॉटल AI</string>
     <string name="assistant_subtitle">ऑफलाइन पर्यावरण सहाय्यक</string>
     <string name="assistant_greeting">नमस्कार! मी बॉटल आहे, तुमचा ऑफलाइन कचरा आणि पुनर्वापर सहाय्यक. मी या वस्तूचे सुरक्षित व्यवस्थापन किंवा पुनर्वापर करण्यात आपल्याला कशी मदत करू शकतो?</string>
-    <string name="assistant_typing">बॉटल विचार करत आहे…</string>
-    <string name="assistant_tts_prefix">बॉटल सांगते: </string>
+    <string name="assistant_typing">बॉटल AI विचार करत आहे…</string>
+    <string name="assistant_tts_prefix"></string>
     <string name="assistant_clear_chat">संभाषण साफ करा</string>
     <string name="assistant_voice_input">व्हॉईस इनपुट</string>
     <string name="assistant_offline_brain">ऑफलाइन मेंदू: डाउनलोड करा ~650 MB</string>

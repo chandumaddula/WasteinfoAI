@@ -17,6 +17,10 @@ object CategoryLocalization {
         "cardboard" to mapOf("hi" to "गत्ता", "te" to "అట్ట", "ta" to "அட்டை", "mr" to "पुठ्ठा"),
         "organic" to mapOf("hi" to "जैविक कचरा", "te" to "సేంద్రీయ వ్యర్థాలు", "ta" to "கரிமக் கழிவு", "mr" to "सेंद्रिय कचरा"),
         "battery" to mapOf("hi" to "बैटरी", "te" to "బ్యాటరీ", "ta" to "பேட்டரி", "mr" to "बॅटरी"),
+        "mouse" to mapOf("hi" to "माउस (Mouse)", "te" to "మౌస్ (Mouse)", "ta" to "மவுஸ் (Mouse)", "mr" to "माउस (Mouse)"),
+        "keyboard" to mapOf("hi" to "कीबोर्ड (Keyboard)", "te" to "కీబోర్డ్ (Keyboard)", "ta" to "விசைப்பலகை (Keyboard)", "mr" to "कीबोर्ड (Keyboard)"),
+        "mobile" to mapOf("hi" to "मोबाइल (Mobile)", "te" to "మొబైల్ (Mobile)", "ta" to "மொபைல் (Mobile)", "mr" to "मोबाईल (Mobile)"),
+        "e-waste" to mapOf("hi" to "ई-कचरा (E-waste)", "te" to "ఇ-వ్యర్థాలు (E-waste)", "ta" to "மின்-கழிவு (E-waste)", "mr" to "ई-कचरा (E-waste)"),
         "trash" to mapOf("hi" to "कचरा", "te" to "చెత్త", "ta" to "குப்பை", "mr" to "कचरा")
     )
 

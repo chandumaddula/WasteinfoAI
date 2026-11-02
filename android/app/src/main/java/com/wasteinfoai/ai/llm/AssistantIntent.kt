@@ -20,7 +20,7 @@ object IntentDetector {
     private val SAFETY_INDIC = listOf("खतरनाक", "जहरीला", "जलाना", "आग", "ప్రమాదకర", "విషపూరిత", "కాల్చ", "మంట",
         "ஆபத்து", "விஷம்", "எரி", "தீ", "धोकादायक", "विषारी", "जाळ")
     private val CLEANING_INDIC = listOf("साफ", "धोना", "गंदा", "सफाई", "శుభ్రం", "కడగ", "మురికి",
-        "சுத்தம்", "கழுவ", "அழுக்கு", "स्वच्छ", "धुणे", "घाण")
+        "சுத்தம்", "கழுவ", "அழுக்கு", "स्वच्छ", "धुणे", "धुवा", "धु", "घाण")
     private val UPCYCLE_INDIC = listOf("दोबारा उपयोग", "पुनः उपयोग", "गमला", "क्राफ्ट", "తిరిగి ఉపయోగ", "కుండీ",
         "క్రాఫ్ట్", "மறுபயன்பாடு", "கைவினை", "पुनर्वापर", "हस्तकला")
     private val BIN_INDIC = listOf("डिब्बा", "कहाँ", "फेंक", "డబ్బా", "ఎక్కడ", "పారవేయ", "தொட்டி", "எங்கே", "அகற்ற",
@@ -33,8 +33,8 @@ object IntentDetector {
 
     /** [languageCode] is accepted for callers that pass it; every language is checked regardless. */
     @Suppress("UNUSED_PARAMETER")
-    fun detect(query: String, languageCode: String? = null): AssistantIntent {
-        val q = query.trim()
+    fun detect(query: String?, languageCode: String? = null): AssistantIntent {
+        val q = query?.trim() ?: ""
         if (q.isEmpty()) return AssistantIntent.GENERAL
         return when {
             hasWord(q, SAFETY_EN) || hasSubstring(q, SAFETY_INDIC) -> AssistantIntent.SAFETY

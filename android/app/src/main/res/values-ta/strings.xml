@@ -2,12 +2,12 @@
 <resources>
     <string name="app_name">WasteinfoAI</string>
     <string name="app_tagline">ஆஃப்லைன் AI கழிவு மேலாண்மை மற்றும் சுகாதாரம்</string>
-    <string name="assistant_name">பாட்டில் (Bottle)</string>
-    <string name="assistant_title">பாட்டில்</string>
+    <string name="assistant_name">பாட்டில் AI (Bottle AI)</string>
+    <string name="assistant_title">பாட்டில் AI</string>
     <string name="assistant_subtitle">ஆஃப்லைன் சுற்றுச்சூழல் உதவியாளர்</string>
     <string name="assistant_greeting">வணக்கம்! நான் பாட்டில், உங்கள் ஆஃப்லைன் கழிவு &amp; மறுசுழற்சி உதவியாளர். இந்த பொருளை பாதுகாப்பாக நிர்வகிக்க அல்லது மறுசுழற்சி செய்ய நான் உங்களுக்கு எவ்வாறு உதவ முடியும்?</string>
-    <string name="assistant_typing">பாட்டில் சிந்திக்கிறது…</string>
-    <string name="assistant_tts_prefix">பாட்டில் கூறுகிறது: </string>
+    <string name="assistant_typing">பாட்டில் AI யோசிக்கிறது…</string>
+    <string name="assistant_tts_prefix"></string>
     <string name="assistant_clear_chat">உரையாடலை அழிக்கவும்</string>
     <string name="assistant_voice_input">குரல் உள்ளீடு</string>
     <string name="assistant_offline_brain">ஆஃப்லைன் மூளை: பதிவிறக்கம் ~650 MB</string>

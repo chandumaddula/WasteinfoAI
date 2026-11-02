@@ -430,7 +430,7 @@ fun BottleChatBubble(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Bottle",
+                    text = stringResource(R.string.assistant_title),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary

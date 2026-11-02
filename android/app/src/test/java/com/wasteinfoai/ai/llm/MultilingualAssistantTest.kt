@@ -187,5 +187,144 @@ class MultilingualAssistantTest {
         assertTrue("Must contain Telugu target bin", replyTe.contains("నారింజ డబ్బా (ORANGE)"))
         assertTrue("Must contain Telugu prep instructions", replyTe.contains("బ్యాటరీలను తొలగించండి"))
     }
+
+    @Test
+    fun testSpeechTextFormatterMarkdownAndTransitions() {
+        val markdownText = """
+            **Guidance for PET Bottle:**
+            • Rinse clean with water.
+            • Flatten the bottle.
+            • Replace the cap!
+            Visit https://example.com/recycle for more info 😊
+        """.trimIndent()
+
+        val spokenEn = com.wasteinfoai.audio.SpeechTextFormatter.formatForSpeech(markdownText, "en")
+        org.junit.Assert.assertFalse("Spoken text must not contain markdown asterisks", spokenEn.contains("**"))
+        org.junit.Assert.assertFalse("Spoken text must not contain URLs", spokenEn.contains("https://"))
+        org.junit.Assert.assertFalse("Spoken text must not contain emojis", spokenEn.contains("😊"))
+        org.junit.Assert.assertTrue("Spoken text must contain natural transition", spokenEn.contains("First, Rinse clean with water"))
+        org.junit.Assert.assertTrue("Spoken text must contain final transition", spokenEn.contains("Finally, Replace the cap!"))
+
+        val teListText = """
+            సూచనలు:
+            • నీటితో శుభ్రం చేయండి.
+            • డబ్బాలో వేయండి.
+        """.trimIndent()
+        val spokenTe = com.wasteinfoai.audio.SpeechTextFormatter.formatForSpeech(teListText, "te")
+        org.junit.Assert.assertTrue("Must contain Telugu transition", spokenTe.contains("మొదటగా,") && spokenTe.contains("చివరగా,"))
+    }
+
+    @Test
+    fun testOfflineResponderBatteryFollowUp() {
+        val responder = OfflineResponder()
+        val mouseRule = DisposalRule(
+            id = "RULE-MOUSE-001",
+            category = "Mouse",
+            disposalMethod = "E-waste collection",
+            isRecyclable = true,
+            isHazardous = false,
+            preparationInstructions = "Remove batteries.",
+            safetyWarnings = "Do not burn.",
+            targetBinColor = "ORANGE",
+            source = "E-waste Rules"
+        )
+
+        val replyEn = responder.respond(
+            context = AssistantContext(category = "Mouse"),
+            rule = mouseRule,
+            query = "What about its battery?"
+        )
+        assertTrue("Must address battery in response", replyEn.contains("battery", ignoreCase = true))
+        assertTrue("Must warn against crushing or burning battery", replyEn.contains("puncture, crush, or burn", ignoreCase = true))
+    }
+
+    @Test
+    fun testOfflineResponderAntiBurningAdvice() {
+        val responder = OfflineResponder()
+        val plasticRule = DisposalRule(
+            id = "RULE-PLASTIC-001",
+            category = "Plastic",
+            disposalMethod = "Dry Recyclable Waste",
+            isRecyclable = true,
+            isHazardous = false,
+            preparationInstructions = "Rinse clean.",
+            safetyWarnings = "Do not burn.",
+            targetBinColor = "BLUE",
+            source = "PWM 2016"
+        )
+
+        val replyEn = responder.respond(
+            context = AssistantContext(category = "Plastic"),
+            rule = plasticRule,
+            query = "Can I burn it in my backyard?"
+        )
+        assertTrue("Must refuse burning", replyEn.contains("do not burn", ignoreCase = true) || replyEn.contains("don't burn", ignoreCase = true))
+        assertTrue("Must mention toxic fumes or pollutants", replyEn.contains("toxic fumes", ignoreCase = true))
+    }
+
+    @Test
+    fun testOfflineResponderDecompositionFollowUp() {
+        val responder = OfflineResponder()
+        val appleRule = DisposalRule(
+            id = "RULE-ORGANIC-001",
+            category = "Apple",
+            disposalMethod = "Wet Organic Compost",
+            isRecyclable = true,
+            isHazardous = false,
+            preparationInstructions = "Compost with greens.",
+            safetyWarnings = "Keep covered.",
+            targetBinColor = "GREEN",
+            source = "SWM 2016",
+            environmentalImpact = "Converts to nutrient-rich compost."
+        )
+
+        val replyEn = responder.respond(
+            context = AssistantContext(category = "Apple"),
+            rule = appleRule,
+            query = "How long does it take to decompose?"
+        )
+        assertTrue("Must mention decomposition", replyEn.contains("decompose", ignoreCase = true))
+        assertTrue("Must mention environmental impact", replyEn.contains("Converts to nutrient-rich compost"))
+    }
+
+    @Test
+    fun testOfflineResponderConversationalQueries() {
+        val responder = OfflineResponder()
+        val dummyRule = DisposalRule(
+            id = "RULE-PLASTIC-001",
+            category = "Plastic",
+            disposalMethod = "Dry Recyclable Waste",
+            isRecyclable = true,
+            isHazardous = false,
+            preparationInstructions = "Rinse clean.",
+            safetyWarnings = "Do not burn.",
+            targetBinColor = "BLUE",
+            source = "PWM 2016"
+        )
+
+        // Greeting
+        val greetingEn = responder.respond(AssistantContext(category = "Plastic"), dummyRule, "Hello Bottle!")
+        assertTrue("Greeting must welcome user friendly", greetingEn.contains("Hello! I'm Bottle AI", ignoreCase = true))
+
+        val greetingTe = responder.respond(AssistantContext(category = "Plastic", languageCode = "te"), dummyRule, "హలో!")
+        assertTrue("Telugu greeting must contain welcome", greetingTe.contains("బాటిల్ AI") && greetingTe.contains("నమస్కారం"))
+
+        // Identity
+        val identityEn = responder.respond(AssistantContext(category = "Plastic"), dummyRule, "Who are you?")
+        assertTrue("Identity must explain Bottle AI", identityEn.contains("Bottle AI") && identityEn.contains("assistant"))
+
+        // Gratitude
+        val thanksEn = responder.respond(AssistantContext(category = "Plastic"), dummyRule, "Thank you very much!")
+        assertTrue("Gratitude must be acknowledged", thanksEn.contains("welcome", ignoreCase = true))
+    }
+
+    @Test
+    fun testSpeechTextFormatterAttributionRemoval() {
+        val message = "Great job! This goes in the blue bin.\n\n(Bottle AI — based on PWM 2016)"
+        val speech = com.wasteinfoai.audio.SpeechTextFormatter.formatForSpeech(message, "en")
+        org.junit.Assert.assertFalse("Speech must strip attribution so chatbot name is not spoken", speech.contains("based on PWM 2016"))
+        org.junit.Assert.assertFalse("Speech must not recite parenthesized attribution", speech.contains("(Bottle AI"))
+        org.junit.Assert.assertTrue("Speech must contain actual guidance", speech.contains("Great job! This goes in the blue bin"))
+    }
 }
 
