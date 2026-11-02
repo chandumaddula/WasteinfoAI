@@ -195,6 +195,7 @@ fun AppNavGraph(
             ScanResultScreen(
                 imagePath = imagePath,
                 viewModel = vm,
+                userCategory = container.sessionManager.getCategory(),
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToCreateReport = { category, path ->
                     navController.navigate(Screen.CreateReport.createRoute(category, path))
@@ -244,6 +245,7 @@ fun AppNavGraph(
             val vm = rememberViewModel { MapViewModel(container.reportRepository) }
             MapScreen(
                 viewModel = vm,
+                userCategory = container.sessionManager.getCategory(),
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToCreateReport = { navController.navigate(Screen.CreateReport.createRoute()) }
             )

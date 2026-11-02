@@ -112,6 +112,9 @@ dependencies {
     // ExecuTorch Android runtime
     implementation("org.pytorch:executorch-android:0.6.0")
 
+    // OpenStreetMap for Android (100% Offline Real-World Map & Tile Caching)
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
+
     // Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20231013")

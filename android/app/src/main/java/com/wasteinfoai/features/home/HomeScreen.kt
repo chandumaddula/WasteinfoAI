@@ -53,6 +53,8 @@ fun HomeScreen(
     onLogout: (() -> Unit)? = null
 ) {
     val state by viewModel.uiState.collectAsState()
+    val userCategory by sessionManager.categoryState.collectAsState()
+    val canAccessWasteLocation = UserCategory.isWasteLocationCategory(userCategory)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     var showLanguageDialog by remember { mutableStateOf(false) }
@@ -227,24 +229,26 @@ fun HomeScreen(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    QuickActionCard(
-                        title = stringResource(R.string.scan_report_accumulation),
-                        icon = Icons.Default.AddLocationAlt,
-                        modifier = Modifier.weight(1f),
-                        onClick = onNavigateToCreateReport
-                    )
-                    QuickActionCard(
-                        title = stringResource(R.string.nav_map),
-                        icon = Icons.Default.Map,
-                        modifier = Modifier.weight(1f),
-                        onClick = onNavigateToMap
-                    )
+                if (canAccessWasteLocation) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        QuickActionCard(
+                            title = stringResource(R.string.scan_report_accumulation),
+                            icon = Icons.Default.AddLocationAlt,
+                            modifier = Modifier.weight(1f),
+                            onClick = onNavigateToCreateReport
+                        )
+                        QuickActionCard(
+                            title = stringResource(R.string.nav_map),
+                            icon = Icons.Default.Map,
+                            modifier = Modifier.weight(1f),
+                            onClick = onNavigateToMap
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
                 }
-                Spacer(modifier = Modifier.height(12.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)

@@ -45,11 +45,13 @@ import java.util.Locale
 fun ScanResultScreen(
     imagePath: String,
     viewModel: ScanResultViewModel,
+    userCategory: String = "",
     onNavigateBack: () -> Unit,
     onNavigateToCreateReport: (String, String) -> Unit,
     onNavigateToAssistant: (String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val canReport = com.wasteinfoai.features.onboarding.UserCategory.isWasteLocationCategory(userCategory)
 
     LaunchedEffect(imagePath) {
         viewModel.processImage(imagePath)
@@ -132,6 +134,7 @@ fun ScanResultScreen(
                 is ScanResultUiState.Success -> {
                     SuccessContent(
                         state = state,
+                        canReport = canReport,
                         onReportClicked = {
                             val label = state.userConfirmedLabel
                                 ?: state.hierarchicalIdentification?.specificItem
@@ -166,6 +169,7 @@ fun ScanResultScreen(
 @Composable
 private fun SuccessContent(
     state: ScanResultUiState.Success,
+    canReport: Boolean = false,
     onReportClicked: () -> Unit,
     onAssistantClicked: () -> Unit,
     onDoneClicked: () -> Unit,
@@ -935,14 +939,16 @@ private fun SuccessContent(
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(stringResource(R.string.scan_ask_ai))
             }
-            Button(
-                onClick = onReportClicked,
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Icon(Icons.Default.AddLocationAlt, contentDescription = null)
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(stringResource(R.string.scan_report))
+            if (canReport) {
+                Button(
+                    onClick = onReportClicked,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.AddLocationAlt, contentDescription = null)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(stringResource(R.string.scan_report))
+                }
             }
         }
 

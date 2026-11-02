@@ -276,25 +276,31 @@ fun DashboardSideDrawer(
                         }
                     )
 
-                    DrawerItem(
-                        icon = Icons.Default.Report,
-                        label = "Report Waste Incident",
-                        isSelected = currentRoute.startsWith("report/create"),
-                        onClick = {
-                            coroutineScope.launch { drawerState.close() }
-                            onNavigate(Screen.CreateReport.createRoute())
-                        }
-                    )
+                    // Waste accumulation location & sanitization map features are strictly restricted to:
+                    // Community recycling and Plastic waste reduction
+                    val canAccessWasteLocation = normCat.contains("community") || normCat.contains("plastic")
 
-                    DrawerItem(
-                        icon = Icons.Default.Map,
-                        label = "Eco Map & Cleanups",
-                        isSelected = currentRoute == Screen.Map.route,
-                        onClick = {
-                            coroutineScope.launch { drawerState.close() }
-                            onNavigate(Screen.Map.route)
-                        }
-                    )
+                    if (canAccessWasteLocation) {
+                        DrawerItem(
+                            icon = Icons.Default.Report,
+                            label = "Report Waste Incident",
+                            isSelected = currentRoute.startsWith("report/create"),
+                            onClick = {
+                                coroutineScope.launch { drawerState.close() }
+                                onNavigate(Screen.CreateReport.createRoute())
+                            }
+                        )
+
+                        DrawerItem(
+                            icon = Icons.Default.Map,
+                            label = "Sanitization & Hotspot Map",
+                            isSelected = currentRoute == Screen.Map.route,
+                            onClick = {
+                                coroutineScope.launch { drawerState.close() }
+                                onNavigate(Screen.Map.route)
+                            }
+                        )
+                    }
 
                     DrawerItem(
                         icon = Icons.Default.Psychology,

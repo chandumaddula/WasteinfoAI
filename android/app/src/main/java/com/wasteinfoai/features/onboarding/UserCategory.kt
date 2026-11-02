@@ -104,5 +104,17 @@ enum class UserCategory(
                 else -> HOUSEHOLD_RECYCLING
             }
         }
+
+        fun isWasteLocationCategory(categoryName: String?): Boolean {
+            val norm = categoryName?.trim()?.lowercase() ?: return false
+            return norm.contains("community") || norm.contains("plastic")
+        }
     }
+
+    /**
+     * True only for categories that require waste accumulation location tracking
+     * and area sanitization: Community Recycling and Plastic Waste Reduction.
+     */
+    val hasWasteLocationFeatures: Boolean
+        get() = this == COMMUNITY_RECYCLING || this == PLASTIC_WASTE_REDUCTION
 }
