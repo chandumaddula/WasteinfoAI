@@ -1,0 +1,901 @@
+{
+  "version": "2.0.0",
+  "updated_at": "2026-10-20T00:00:00Z",
+  "description": "Verified Hierarchical Waste Disposal Rules (HI)",
+  "rules": [
+    {
+      "id": "RULE-BATTERY-001",
+      "category": "Battery",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "घरेलू खतरनाक कचरा / अधिकृत ई-कचरा केंद्र",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "शॉर्ट सर्किट से बचने के लिए बिजली के सिरों (टर्मिनल्स) पर नॉन-कंडक्टिव टेप चिपकाएं। सूखे प्लास्टिक कंटेनर में रखें।",
+      "safety_warnings": "आग और रासायनिक रिसाव का अत्यधिक खतरा। सामान्य कचरे या नीले/हरे डिब्बे में कभी न डालें। छेद न करें या गर्मी के संपर्क में न लाएं।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized E-Waste Center",
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Household Compost (Green)",
+        "Dry Recyclables (Blue)",
+        "Open Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "भारत ठोस अपशिष्ट प्रबंधन नियम 2016 और ई-कचरा प्रबंधन नियम 2022",
+      "reuse_ideas": [
+        "रासायनिक जंग और आग के खतरे के कारण बैटरियों का सुरक्षित रूप से पुनर्चक्रण या DIY उपयोग नहीं किया जा सकता।"
+      ],
+      "cleaning_tips": "पानी से न धोएं। यदि धूल हो, तो सूखे कपड़े से पोंछें। कभी पानी में न डुबोएं।",
+      "environmental_impact": "भारी धातुएं (लेड, कैडमियम, लिथियम) भूजल में मिलकर गंभीर प्रदूषण फैलाती हैं।",
+      "condition_notes": {
+        "broken": "खतरा: लीक या टूटी बैटरी से तेजाब निकलता है। खाली हाथ न छुएं। रेत या प्लास्टिक के डिब्बे में रखें।",
+        "crushed": "गंभीर आग का खतरा: कुचली हुई बैटरी में आंतरिक शॉर्ट-सर्किट और आग लग सकती है।",
+        "wet": "पूरी तरह सूखा रखें। लिथियम बैटरी में पानी जाने से गैस विस्फोट हो सकता है।",
+        "empty": "डिस्चार्ज बैटरी में भी करंट बचा रहता है। हमेशा टर्मिनल्स पर टेप लगाएं।",
+        "full": "शॉर्ट सर्किट से बचाने के लिए आवेशित बैटरी को धातु की चीजों से दूर रखें।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-LI-ION",
+      "category": "Battery",
+      "specific_item": "Rechargeable Lithium-Ion Battery",
+      "material_code": "BATTERY_LI_ION",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "अधिकृत ई-कचरा केंद्र / समर्पित लिथियम-आयन बैटरी बैंक",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "दोनों टर्मिनल्स पर इन्सुलेशन टेप लगाएं। व्यक्तिगत रूप से सील बंद प्लास्टिक थैली में रखें।",
+      "safety_warnings": "थर्मल रनवे का अत्यधिक खतरा। कुचलें, मोड़ें या पंचर न करें। अत्यधिक गर्मी से दूर रखें।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Collection Point",
+        "Manufacturer Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Curbside Bins",
+        "Municipal Waste Truck Compactor"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ई-कचरा प्रबंधन नियम 2022 (अनुसूची 1)",
+      "reuse_ideas": [
+        "लिथियम-आयन बैटरियों को आग के खतरे के कारण घर पर DIY उपयोग में नहीं लाना चाहिए।"
+      ],
+      "cleaning_tips": "कभी भी पानी से साफ न करें। सूखे माइक्रोफाइबर कपड़े से हल्के से साफ करें।",
+      "environmental_impact": "कोबाल्ट और लिथियम जहरीले पदार्थ हैं जो भूजल को दूषित करते हैं।",
+      "condition_notes": {
+        "broken": "गंभीर खतरा: सूजी हुई या फटी बैटरी को तुरंत अग्निरोधक बॉक्स या रेत में रखें।",
+        "crushed": "आग का खतरा: कुचली हुई ली-आयन बैटरी तुरंत सुलग सकती है।",
+        "wet": "पानी के संपर्क से बचें, शॉर्ट सर्किट से आग लग सकती है।",
+        "empty": "डिस्चार्ज होने पर भी टर्मिनल सुरक्षित रखें।",
+        "full": "पूर्ण आवेशित बैटरी को अत्यधिक सावधानी से संभालें।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-ALKALINE",
+      "category": "Battery",
+      "specific_item": "Alkaline AA / AAA / 9V Battery",
+      "material_code": "BATTERY_ALKALINE",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "घरेलू खतरनाक कचरा / अधिकृत ई-कचरा केंद्र",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "9V और AA/AAA टर्मिनल्स पर टेप चिपकाएं ताकि शॉर्ट सर्किट न हो।",
+      "safety_warnings": "पोटेशियम हाइड्रोक्साइड क्षारीय रिसाव से त्वचा जल सकती है। भस्म न करें।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)",
+        "Battery Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Dry Paper/Plastic Bin (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "भारत ठोस अपशिष्ट प्रबंधन नियम 2016",
+      "reuse_ideas": [
+        "अल्केलाइन बैटरियां एकल-उपयोग वाली होती हैं, इनका सुरक्षित पुनर्चक्रण संभव नहीं।"
+      ],
+      "cleaning_tips": "सफेद पाउडर रिसाव होने पर दस्ताने पहनें और सिरके से साफ करें।",
+      "environmental_impact": "लैंडफिल में जिंक और मैंगनीज भारी मात्रा में प्रदूषण फैलाते हैं।",
+      "condition_notes": {
+        "broken": "सफेद पपड़ी या रिसाव को नंगे हाथों से न छुएं। सिरके से न्यूट्रलाइज करें।",
+        "crushed": "कुचली हुई सेल से कास्टिक रसायन बाहर आ सकते हैं।",
+        "wet": "रासायनिक रिसाव रोकने के लिए सूखा रखें।",
+        "empty": "डिस्चार्ज सेल के सिरों पर टेप लगाकर निपटान करें।",
+        "full": "चार्ज सेल को धात्विक वस्तुओं से दूर रखें।"
+      }
+    },
+    {
+      "id": "RULE-CARDBOARD-001",
+      "category": "cardboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "सूखा पुनर्चक्रण योग्य कचरा (नीला डिब्बा) / स्थानीय कबाड़ीवाला",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "सभी प्लास्टिक टेप और स्टेपल हटा दें। बक्से को चपटा मोड़कर सूखे बंडल में बांधें।",
+      "safety_warnings": "गीला या तेल से सना गत्ता नीले डिब्बे में न डालें क्योंकि यह पूरे रीसाइक्लिंग बैच को खराब कर देता है।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Door-to-door Kabadiwala Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Rain-Exposed Open Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ठोस अपशिष्ट प्रबंधन नियम 2016 (एसडब्ल्यूएम)",
+      "reuse_ideas": [
+        "भंडारण बक्से बनाएं",
+        "बगीचे में मल्चिंग या खरपतवार नियंत्रण के लिए उपयोग करें",
+        "बच्चों के शिल्प और खिलौने बनाएं"
+      ],
+      "cleaning_tips": "यदि मामूली धूल है तो झाड़ लें। यदि पानी या तेल लगा है, तो गीला हिस्सा फाड़कर अलग करें।",
+      "environmental_impact": "1 टन कार्डबोर्ड रीसायकल करने से 17 पेड़ और 7000 गैलन पानी बचता है।",
+      "condition_notes": {
+        "broken": "टूटा या फटा हुआ सूखा गत्ता पूरी तरह पुनर्चक्रण योग्य है।",
+        "crushed": "चपटा दबाया हुआ गत्ता परिवहन के लिए उत्तम है।",
+        "wet": "गीले गत्ते को नीले डिब्बे में न डालें; खाद में डालें।",
+        "greasy": "तेल लगा गत्ता काले डिब्बे में डालें।",
+        "empty": "अंदर का सारा सामान खाली करें।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-SOILED",
+      "category": "cardboard",
+      "specific_item": "Greasy / Food-Soiled Cardboard",
+      "material_code": "PAP 20",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "घरेलू गैर-पुनर्चक्रण योग्य कचरा (काला डिब्बा) या घरेलू कम्पोस्ट",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "साफ ढक्कन को फाड़कर नीले डिब्बे में डालें। तेल से सना निचला हिस्सा काले डिब्बे या कम्पोस्ट में डालें।",
+      "safety_warnings": "खाद्य ग्रीस पेपर पल्पिंग मिलों को दूषित करती है। इसे नीले डिब्बे में कभी न मिलाएं।",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "General Municipal Refuse (Black Bin)",
+        "Industrial Composting if uncoated"
+      ],
+      "prohibited_pathways": [
+        "Dry Paper Recyclables (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "एसडब्ल्यूएम नियम 2016",
+      "reuse_ideas": [
+        "यदि प्लास्टिक कोटिंग नहीं है, तो घरेलू खाद के लिए छोटे टुकड़े करें।"
+      ],
+      "cleaning_tips": "धोने की कोशिश न करें, गत्ता घुल जाएगा।",
+      "environmental_impact": "कम्पोस्टिंग करने से मीथेन गैस का उत्सर्जन रुकता है।",
+      "condition_notes": {
+        "broken": "Torn or broken cardboard pieces are fully recyclable. Flatten them for storage.",
+        "crushed": "Flattening boxes saves collection space and prevents truck overload.",
+        "wet": "गीला होने पर कम्पोस्ट में डालें।",
+        "greasy": "अत्यधिक ग्रीस होने पर काले डिब्बे में डालें।",
+        "empty": "भोजन के अवशेष हटा दें।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-TETRAPAK",
+      "category": "cardboard",
+      "specific_item": "Aseptic Liquid Carton (Tetra Pak)",
+      "material_code": "C/PAP 84",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "सूखा पुनर्चक्रण योग्य कचरा (नीला डिब्बा) / समर्पित टेट्रा पैक संकलन",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "स्ट्रॉ हटा दें। अंदर से खंगालें, चपटा दबाएं और ढक्कन वापस कस दें।",
+      "safety_warnings": "बिना धोए रखने से बदबू और फंगस फैलती है।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Tetra Pak Authorized Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "प्लास्टिक अपशिष्ट प्रबंधन नियम 2016",
+      "reuse_ideas": [
+        "छोटे पौधे उगाने के लिए गमले बनाएं",
+        "बच्चों के क्राफ्ट के लिए पुन: उपयोग करें"
+      ],
+      "cleaning_tips": "पानी से एक बार खंगालें और पूरी तरह निचोड़ें।",
+      "environmental_impact": "टेट्रा पैक से एल्युमिनियम और उच्च गुणवत्ता वाला पेपर पल्प निकाला जाता है।",
+      "condition_notes": {
+        "broken": "Torn or broken cardboard pieces are fully recyclable. Flatten them for storage.",
+        "crushed": "चपटा किया हुआ टेट्रा पैक परिवहन के लिए सर्वोत्तम है।",
+        "wet": "Wet cardboard breaks down pulp fibers and molds; dry it first if clean, or compost if chemical-free.",
+        "greasy": "Greasy sections (e.g. pizza oil) cannot be pulped. Tear off clean parts for recycling and bin the oily parts in general waste.",
+        "empty": "अंदर कोई तरल पदार्थ न छोड़ें।"
+      }
+    },
+    {
+      "id": "RULE-GLASS-001",
+      "category": "glass",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "कांच पुनर्चक्रण (नीला डिब्बा) / स्थानीय कबाड़ीवाला",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "बोतल को पानी से खंगालें। धातु या प्लास्टिक के ढक्कन अलग करें। साबुत रखें।",
+      "safety_warnings": "टूटा हुआ कांच नीले डिब्बे में खुला न डालें; सफाई कर्मचारियों को गंभीर चोट लग सकती है।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Merchant / Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Unwrapped Glass in Trash"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ठोस अपशिष्ट प्रबंधन नियम 2016",
+      "reuse_ideas": [
+        "रसोई में मसाले या दालें रखने के जार बनाएं",
+        "फूलदान या सजावटी दीये बनाएं",
+        "पेन स्टैंड के रूप में उपयोग करें"
+      ],
+      "cleaning_tips": "गर्म साबुन के पानी से धोएं और सुखाएं।",
+      "environmental_impact": "कांच 100% और अनंत बार पुनर्चक्रण योग्य है, इसकी गुणवत्ता कभी कम नहीं होती।",
+      "condition_notes": {
+        "broken": "टूटा हुआ कांच लाल डिब्बे में कागज या कपड़े में लपेटकर डालें।",
+        "crushed": "Place crushed glass inside a sturdy rigid box or tin to prevent lacerating sanitation workers.",
+        "wet": "Wet rinsed glass is completely fine in the dry recyclables bin.",
+        "empty": "पूरी तरह खाली करके धोएं।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-GLASS-BROKEN",
+      "category": "glass",
+      "specific_item": "Broken Glass / Shards",
+      "material_code": "GL 70",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "घरेलू खतरनाक कचरा (लाल डिब्बा) - सुरक्षित रूप से पैक किया हुआ",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "कांच के टुकड़ों को मोटे अखबार या गत्ते में अच्छी तरह लपेटें। टेप से सील करें और ऊपर 'खतरा: टूटा कांच' लिखें।",
+      "safety_warnings": "गंभीर कटने और घाव का खतरा। कभी भी खुले नीले डिब्बे या पॉलीथिन में न फेंकें।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Wrapped Domestic Hazardous Waste (Red Bin)"
+      ],
+      "prohibited_pathways": [
+        "Loose in Plastic Carry Bags",
+        "Loose in Curbside Bins"
+      ],
+      "review_status": "VERIFIED",
+      "source": "एसडब्ल्यूएम नियम 2016 (सफाई मित्र सुरक्षा प्रोटोकॉल)",
+      "reuse_ideas": [
+        "टूटा कांच खतरनाक है, इसे घर पर क्राफ्ट या मोज़ेक के लिए पुनः उपयोग न करें।"
+      ],
+      "cleaning_tips": "टुकड़ों को हाथ से न धोएं; झाड़ू और डस्टपैन का उपयोग करें।",
+      "environmental_impact": "सुरक्षित पैकेजिंग से सफाई कर्मियों की जानलेवा चोटों से रक्षा होती है।",
+      "condition_notes": {
+        "broken": "हमेशा मोटे गत्ते में लपेटकर टेप लगाएं।",
+        "crushed": "Place crushed glass inside a sturdy rigid box or tin to prevent lacerating sanitation workers.",
+        "wet": "Wet rinsed glass is completely fine in the dry recyclables bin.",
+        "empty": "Never dispose of pressurized or sealed full containers."
+      }
+    },
+    {
+      "id": "RULE-KEYBOARD-001",
+      "category": "Keyboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ई-कचरा पुनर्चक्रण (नारंगी डिब्बा) / अधिकृत ई-कचरा केंद्र",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "तार समेटें या बैटरियां निकाल दें। गीला होने से बचाएं।",
+      "safety_warnings": "सर्किट बोर्ड में भारी धातुएं होती हैं। आग में न जलाएं।",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility",
+        "Manufacturer EPR Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Municipal Garbage Dump",
+        "Open Scrap Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ई-अपशिष्ट प्रबंधन नियम 2022",
+      "reuse_ideas": [
+        "काम कर रहा हो तो दान करें",
+        "कुंजी बटन (कीकैप्स) का क्राफ्ट में उपयोग करें"
+      ],
+      "cleaning_tips": "सूखे कपड़े से पोंछें।",
+      "environmental_impact": "ई-कचरा लैंडफिल में जाने से जहरीली धातुएं निकलती हैं।",
+      "condition_notes": {
+        "broken": "टूटे कीबोर्ड के आंतरिक हिस्सों को रीसायकल किया जा सकता है।",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
+    },
+    {
+      "id": "RULE-METAL-001",
+      "category": "metal",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "धातु पुनर्चक्रण (नीला डिब्बा) / स्थानीय कबाड़ीवाला",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "खाद्य अवशेष धोकर सुखाएं। धारदार किनारों से बचें।",
+      "safety_warnings": "कटे हुए धातु के किनारों से टेटनस का खतरा हो सकता है।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Metal Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ठोस अपशिष्ट प्रबंधन नियम 2016",
+      "reuse_ideas": [
+        "कलमदान बनाएं",
+        "बागवानी के छोटे गमले बनाएं"
+      ],
+      "cleaning_tips": "पानी से धोकर तेल व भोजन साफ करें।",
+      "environmental_impact": "धातु को रीसायकल करने से 95% ऊर्जा की बचत होती है।",
+      "condition_notes": {
+        "crushed": "दबाया हुआ डिब्बा जगह बचाता है।",
+        "broken": "Sharp metal edges must be folded in or wrapped to prevent worker lacerations.",
+        "greasy": "Wash greasy metal tins with soapy water before dry bin recycling.",
+        "empty": "Empty completely. Aerosols must have residual pressure discharged safely outdoors."
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-ALU-CAN",
+      "category": "metal",
+      "specific_item": "Aluminum Beverage Can",
+      "material_code": "ALU 41",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "एल्युमिनियम पुनर्चक्रण (नीला डिब्बा) / कबाड़ीवाला",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "अंदर से पानी से खंगालें और पैर से चपटा दबाएं।",
+      "safety_warnings": "कटी हुई कैन के किनारे तेज होते हैं।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Recyclers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ठोस अपशिष्ट नियम 2016",
+      "reuse_ideas": [
+        "पेन स्टैंड बनाएं",
+        "सजावटी दीये बनाएं"
+      ],
+      "cleaning_tips": "एक बार पानी से धो लें।",
+      "environmental_impact": "कैन 60 दिनों में दोबारा नई कैन बनकर बाजार में आ जाती है।",
+      "condition_notes": {
+        "crushed": "चपटा करना सबसे अच्छा है।",
+        "broken": "Sharp metal edges must be folded in or wrapped to prevent worker lacerations.",
+        "greasy": "Wash greasy metal tins with soapy water before dry bin recycling.",
+        "empty": "Empty completely. Aerosols must have residual pressure discharged safely outdoors."
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-AEROSOL",
+      "category": "metal",
+      "specific_item": "Aerosol Spray Container",
+      "material_code": "FE 40",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "घरेलू खतरनाक कचरा (लाल डिब्बा) / अधिकृत केंद्र",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "दबाव पूरी तरह खाली करें। कैन में छेद न करें या चपटा न करें।",
+      "safety_warnings": "विस्फोट और आग का अत्यंत गंभीर खतरा। कभी आग में न फेंकें।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Municipal Truck Compactor",
+        "Open Fire",
+        "Puncturing"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ठोस अपशिष्ट प्रबंधन नियम 2016",
+      "reuse_ideas": [
+        "दबाव युक्त कैन का पुन: उपयोग खतरनाक है।"
+      ],
+      "cleaning_tips": "धोने की आवश्यकता नहीं।",
+      "environmental_impact": "प्रोपेलेंट गैसें वायुमंडल को नुकसान पहुंचाती हैं।",
+      "condition_notes": {
+        "crushed": "Crushing aluminum beverage cans is recommended to save collection space.",
+        "broken": "Sharp metal edges must be folded in or wrapped to prevent worker lacerations.",
+        "greasy": "Wash greasy metal tins with soapy water before dry bin recycling.",
+        "empty": "पूरी तरह खाली होने पर ही निपटान करें।"
+      }
+    },
+    {
+      "id": "RULE-MICROWAVE-001",
+      "category": "Microwave",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "अधिकृत ई-कचरा केंद्र / विशेष नगर निगम डिपो",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "प्लग निकालें, अंदर की कांच की ट्रे निकालें। स्वयं न खोलें।",
+      "safety_warnings": "कैपेसिटर में जानलेवा उच्च वोल्टेज रहता है, स्वयं कभी न खोलें।",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycling Center",
+        "Appliance Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Informal Disassembly",
+        "Standard Garbage"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ई-अपशिष्ट प्रबंधन नियम 2022",
+      "reuse_ideas": [
+        "काम कर रहा हो तो किसी जरूरतमंद को दान करें।"
+      ],
+      "cleaning_tips": "अंदर भोजन के अवशेष पोंछ लें।",
+      "environmental_impact": "ई-कचरा विषाक्तता को रोकता है।",
+      "condition_notes": {
+        "broken": "टूटे ओवन को खुद खोलने की कोशिश न करें।",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
+    },
+    {
+      "id": "RULE-MOBILE-001",
+      "category": "Mobile",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "अधिकृत ई-कचरा केंद्र / मोबाइल ब्रांड रीसाइक्लिंग बिन",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "डेटा पूरी तरह मिटाएं (फैक्ट्री रीसेट)। सिम और मेमोरी कार्ड निकालें।",
+      "safety_warnings": "बैटरी में आग का खतरा। भस्म न करें।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Kiosks",
+        "Electronics Retailer Take-Back",
+        "Registered Recycler"
+      ],
+      "prohibited_pathways": [
+        "Curbside Dustbin",
+        "Landfill Dumpsite"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ई-अपशिष्ट प्रबंधन नियम 2022",
+      "reuse_ideas": [
+        "सुरक्षा कैमरा या म्यूजिक प्लेयर के रूप में उपयोग करें",
+        "पुराना फोन एक्सचेंज करें"
+      ],
+      "cleaning_tips": "सूखे कपड़े से पोंछें।",
+      "environmental_impact": "सोना, तांबा और दुर्लभ धातुओं की पुनर्प्राप्ति होती है।",
+      "condition_notes": {
+        "broken": "फूली हुई बैटरी वाले फोन को रेत में रखें।",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
+    },
+    {
+      "id": "RULE-MOUSE-001",
+      "category": "Mouse",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ई-कचरा पुनर्चक्रण (नारंगी डिब्बा) / ई-कचरा केंद्र",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "तार लपेटें या वायरलेस माउस की बैटरी निकाल लें।",
+      "safety_warnings": "प्लास्टिक और पीसीबी को न जलाएं।",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Municipal General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ई-अपशिष्ट नियम 2022",
+      "reuse_ideas": [
+        "कार्यरत हो तो दान करें।"
+      ],
+      "cleaning_tips": "धूल झाड़ लें।",
+      "environmental_impact": "प्लास्टिक और तांबे का पुनर्चक्रण होता है।",
+      "condition_notes": {
+        "broken": "टूटा हुआ माउस ई-कचरे में जाता है।",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
+    },
+    {
+      "id": "RULE-ORGANIC-001",
+      "category": "organic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "गीला जैविक कचरा (हरा डिब्बा) / घरेलू खाद गड्ढा",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "प्लास्टिक रैपर, रबर बैंड या स्टीकर हटा दें। सीधे हरे डिब्बे में डालें।",
+      "safety_warnings": "जैविक कचरे में कभी प्लास्टिक या बैटरी न मिलाएं। लैंडफिल में मीथेन गैस बनती है।",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ठोस अपशिष्ट प्रबंधन नियम 2016",
+      "reuse_ideas": [
+        "घरेलू खाद (कंपोस्ट) बनाएं",
+        "बायोगैस संयंत्र में उपयोग करें"
+      ],
+      "cleaning_tips": "धोने की आवश्यकता नहीं।",
+      "environmental_impact": "कम्पोस्टिंग से मिट्टी उपजाऊ बनती है और रासायनिक खाद की जरूरत घटती है।",
+      "condition_notes": {
+        "wet": "गीला कचरा खाद के लिए सर्वथा उपयुक्त है।",
+        "greasy": "पका हुआ तैलीय भोजन भी जैविक कचरे में जाता है।",
+        "broken": "Chopping food scraps into smaller pieces speeds up decomposition."
+      }
+    },
+    {
+      "id": "RULE-PAPER-001",
+      "category": "paper",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "सूखा कागज़ पुनर्चक्रण (नीला डिब्बा) / स्थानीय रद्दीवाला",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "सूखा रखें, प्लास्टिक लैमिनेशन हटा दें। बंडल बनाकर बांधें।",
+      "safety_warnings": "गीला या गंदा कागज़ नीले डिब्बे में न डालें।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Raddi / Kabadiwala Merchants"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ठोस अपशिष्ट प्रबंधन नियम 2016",
+      "reuse_ideas": [
+        "रफ काम या नोट्स के लिए खाली पन्नों का उपयोग करें",
+        "कागज़ के लिफाफे या बैग बनाएं"
+      ],
+      "cleaning_tips": "धोएं नहीं, सूखा रखें।",
+      "environmental_impact": "कागज़ रीसायकल करने से लाखों पेड़ और पानी बचते हैं।",
+      "condition_notes": {
+        "wet": "गीला कागज़ खाद में डालें।",
+        "greasy": "तेल लगा कागज़ काले डिब्बे में डालें।",
+        "crushed": "Crumpled paper is recyclable, but keeping flat bundles saves storage space."
+      }
+    },
+    {
+      "id": "RULE-PCB-001",
+      "category": "PCB",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "अधिकृत ई-कचरा रीसाइक्लिंग केंद्र (लाल डिब्बा)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "सुरक्षित डिब्बे में रखें। स्वयं घटक न निकालें या न तोड़ें।",
+      "safety_warnings": "सीसा (लेड), ब्रोमीन और पारा का गंभीर जहर। कभी न जलाएं।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized Central Pollution Control Board (CPCB) Dismantler"
+      ],
+      "prohibited_pathways": [
+        "Informal Scrap Acid Baths",
+        "Open Burning",
+        "Landfills"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ई-अपशिष्ट प्रबंधन नियम 2022",
+      "reuse_ideas": [
+        "इंजीनियरिंग छात्रों के प्रोजेक्ट या ई-कचरा आर्ट में उपयोग करें।"
+      ],
+      "cleaning_tips": "धोने की आवश्यकता नहीं।",
+      "environmental_impact": "अनौपचारिक जलाने से अत्यधिक विषैले डाइऑक्सिन निकलते हैं।",
+      "condition_notes": {
+        "broken": "टूटे पीसीबी को दस्ताने पहनकर संभालें।",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
+    },
+    {
+      "id": "RULE-PLASTIC-001",
+      "category": "plastic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "प्लास्टिक पुनर्चक्रण (नीला डिब्बा) / कबाड़ीवाला",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "अंदर से धोकर सुखाएं। चपटा दबाएं।",
+      "safety_warnings": "प्लास्टिक को कभी न जलाएं; इससे कैंसरकारी धुआं निकलता है।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Plastic Collection Kiosk",
+        "Scrap Merchant"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Drains / Water Bodies",
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "प्लास्टिक अपशिष्ट प्रबंधन नियम 2016",
+      "reuse_ideas": [
+        "पौधों के गमले बनाएं",
+        "घरेलू सामान रखने के डिब्बे बनाएं"
+      ],
+      "cleaning_tips": "पानी से खंगालें।",
+      "environmental_impact": "प्लास्टिक सैकड़ों साल तक नष्ट नहीं होता; पुनर्चक्रण आवश्यक है।",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "दबाकर छोटा करें।",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "Must be 100% empty of liquids before collection.",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-PET",
+      "category": "plastic",
+      "specific_item": "PET Beverage Bottle (RIC 1)",
+      "material_code": "PET 01",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "पीईटी प्लास्टिक रीसाइक्लिंग (नीला डिब्बा) / प्लास्टिक रिवर्स वेंडिंग",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "खंगालें, चपटा दबाएं और ढक्कन वापस कस दें।",
+      "safety_warnings": "धूप में रखी पुरानी पीईटी बोतल से पानी न पिएं।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Blue Dry Waste Bin",
+        "Bottle Return Kiosk",
+        "Door-to-door Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Littering",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "पीडब्लूएम नियम 2016 (आरआईसी 1)",
+      "reuse_ideas": [
+        "ड्रिप सिंचाई के लिए बोतल का उपयोग करें",
+        "चिड़ियों के लिए दाना-पानी का पात्र बनाएं"
+      ],
+      "cleaning_tips": "पानी से खंगालें।",
+      "environmental_impact": "पीईटी से पॉलिएस्टर धागा और टी-शर्ट बनते हैं।",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "चपटा करना परिवहन में मदद करता है।",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "Must be 100% empty of liquids before collection.",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-HDPE",
+      "category": "plastic",
+      "specific_item": "HDPE Rigid Bottle / Jug (RIC 2)",
+      "material_code": "HDPE 02",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "एचडीपीई पुनर्चक्रण (नीला डिब्बा) / कबाड़ीवाला",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "साबुन या तेल के डिब्बे को अच्छी तरह खंगालें।",
+      "safety_warnings": "रसायनों के डिब्बे को बच्चों से दूर रखें।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "पीडब्लूएम नियम 2016 (आरआईसी 2)",
+      "reuse_ideas": [
+        "गार्डन वाटरिंग कैन या टूलबॉक्स बनाएं।"
+      ],
+      "cleaning_tips": "गर्म पानी से खंगालें।",
+      "environmental_impact": "मजबूत प्लास्टिक पाइप और डस्टबिन में पुनर्चक्रित होता है।",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "Flattening bottles saves bin volume and is highly recommended. Fasten cap back on after flattening.",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "पूरी तरह खाली करें।",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-MLP",
+      "category": "plastic",
+      "specific_item": "Multi-Layer Plastic Pouch (RIC 7)",
+      "material_code": "OTHER 07",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "मल्टी-लेयर प्लास्टिक संकलन (नीला डिब्बा) / सीमेंट भट्ठी सह-प्रसंस्करण",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "चिप्स या बिस्कुट के पैकेट को अंदर से झाड़ें। सूखा रखें।",
+      "safety_warnings": "कभी भी प्लास्टिक के पैकेट को न जलाएं।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Cement Kiln Co-Processing",
+        "Road Construction Bitumen Blend"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Organic Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "पीडब्लूएम नियम 2016 (ईपीआर दिशानिर्देश)",
+      "reuse_ideas": [
+        "इको-ब्रिक्स (प्लास्टिक बोतल में भरकर मजबूत ईंट) बनाएं।"
+      ],
+      "cleaning_tips": "सूखा झाड़ लें।",
+      "environmental_impact": "सड़क निर्माण और सीमेंट उद्योग में ऊर्जा के लिए उपयोग होता है।",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "Flattening bottles saves bin volume and is highly recommended. Fasten cap back on after flattening.",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "भोजन के टुकड़े निकालें।",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
+    },
+    {
+      "id": "RULE-PLAYER-001",
+      "category": "Player",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ई-कचरा पुनर्चक्रण (नारंगी डिब्बा) / अधिकृत ई-कचरा केंद्र",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "बैटरी निकालें। तार बंडल करें।",
+      "safety_warnings": "आग में न डालें।",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility"
+      ],
+      "prohibited_pathways": [
+        "Household General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ई-अपशिष्ट नियम 2022",
+      "reuse_ideas": [
+        "कार्यरत हो तो दान करें या ब्लूटूथ स्पीकर से जोड़ें।"
+      ],
+      "cleaning_tips": "सूखे कपड़े से पोंछें।",
+      "environmental_impact": "धातुओं की पुनर्प्राप्ति होती है।",
+      "condition_notes": {
+        "broken": "ई-कचरा केंद्र को सौंपें।",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
+    },
+    {
+      "id": "RULE-PRINTER-001",
+      "category": "Printer",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "अधिकृत ई-कचरा केंद्र / विशेष नगर निगम डिपो",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "इंक कार्ट्रिज या टोनर निकालें और अलग सुरक्षित प्लास्टिक बैग में रखें।",
+      "safety_warnings": "टोनर पाउडर फेफड़ों के लिए हानिकारक है, सांस के जरिए अंदर न जाने दें।",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Brand Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Dumping with General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ई-अपशिष्ट प्रबंधन नियम 2022",
+      "reuse_ideas": [
+        "कार्यरत प्रिंटर को स्थानीय स्कूल या एनजीओ को दान करें।"
+      ],
+      "cleaning_tips": "टोनर गिरा हो तो गीले कपड़े से पोंछें, वैक्यूम न करें।",
+      "environmental_impact": "प्लास्टिक, मोटर और टोनर का सुरक्षित पृथक्करण होता है।",
+      "condition_notes": {
+        "broken": "टोनर लीक होने से बचाएं।",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
+    },
+    {
+      "id": "RULE-TELEVISION-001",
+      "category": "Television",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "अधिकृत ई-कचरा केंद्र / विशेष नगर निगम डिपो",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "स्क्रीन टूटने से बचाएं। पुराने सीआरटी टीवी को कभी स्वयं न तोड़ें।",
+      "safety_warnings": "सीआरटी स्क्रीन वैक्यूम इम्प्लोसिव होती है और इसमें भारी मात्रा में सीसा (लेड) व फास्फोरस होता है।",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Depot",
+        "Manufacturer Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Manual Screen Smashing",
+        "Informal Scrap Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ई-अपशिष्ट प्रबंधन नियम 2022",
+      "reuse_ideas": [
+        "कार्यरत टीवी को सामुदायिक केंद्र को दान करें।"
+      ],
+      "cleaning_tips": "धूल झाड़ लें।",
+      "environmental_impact": "ग्लास और भारी धातुओं को पर्यावरण में रिसने से रोकता है।",
+      "condition_notes": {
+        "broken": "फूटी हुई स्क्रीन को कपड़े से ढंककर सावधानी से ले जाएं।",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
+    },
+    {
+      "id": "RULE-TRASH-001",
+      "category": "trash",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "घरेलू गैर-पुनर्चक्रण योग्य कचरा (काला डिब्बा)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "कूड़ा बैग में बांधकर काले डिब्बे में डालें।",
+      "safety_warnings": "इसमें कभी भी बैटरी, दवाइयां या गीला कचरा न मिलाएं। खुले में न जलाएं।",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "Municipal Inert Waste Collection (Black Bin)"
+      ],
+      "prohibited_pathways": [
+        "Recycling Bins",
+        "Compost"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ठोस अपशिष्ट प्रबंधन नियम 2016",
+      "reuse_ideas": [
+        "सामान्य गैर-पुनर्चक्रण योग्य कचरे का पुनः उपयोग संभव नहीं।"
+      ],
+      "cleaning_tips": "लागू नहीं।",
+      "environmental_impact": "यह कचरा सैनिटरी लैंडफिल में वैज्ञानिक रूप से दबाया जाता है।",
+      "condition_notes": {
+        "broken": "Wrap sharp fragments safely before disposal.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "गीला कचरा अलग करके हरे डिब्बे में डालें।"
+      }
+    },
+    {
+      "id": "RULE-WASHING_MACHINE-001",
+      "category": "Washing Machine",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "अधिकृत ई-कचरा केंद्र / नगरपालिका भारी अपशिष्ट संग्रह",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "पानी पूरी तरह निकालें, बिजली का प्लग अलग करें।",
+      "safety_warnings": "अत्यधिक भारी उपकरण, उठाते समय पीठ की चोट से बचें।",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized White-Goods Recycler",
+        "Brand Exchange Schemes"
+      ],
+      "prohibited_pathways": [
+        "Curbside Abandonment"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ई-अपशिष्ट प्रबंधन नियम 2022",
+      "reuse_ideas": [
+        "अंदर का ड्रम निकालकर बगीचे का फायरपिट या प्लांटर बनाएं।"
+      ],
+      "cleaning_tips": "सूखा रखें।",
+      "environmental_impact": "स्टील, कॉपर मोटर और प्लास्टिक का पुनर्चक्रण होता है।",
+      "condition_notes": {
+        "broken": "Wrap sharp fragments safely before disposal.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "पाइप से सारा पानी निकाल दें।"
+      }
+    }
+  ]
+}

@@ -111,11 +111,22 @@ def create_or_load_split(cfg: dict, root: Path, class_names: List[str]) -> dict:
             if p.is_dir():
                 folders.setdefault(p.name.lower(), []).append(p)
 
+    def resolve_class_folders(name: str) -> List[Path]:
+        key = name.lower().replace("-", "").replace("_", "")
+        matches = []
+        for f_name, f_paths in folders.items():
+            f_key = f_name.lower().replace("-", "").replace("_", "")
+            if f_key == key or f_key == key + "s" or key == f_key + "s":
+                matches.extend(f_paths)
+        return matches
+
     paths, labels, seen, dupes, bad = [], [], set(), 0, 0
+    class_counts = {}
     for idx, name in enumerate(class_names):
-        class_folders = folders.get(name.lower())
+        class_folders = resolve_class_folders(name)
         if not class_folders:
             raise FileNotFoundError(f"No folder for class '{name}' in {roots}. Found: {sorted(folders)}")
+        count = 0
         for p in sorted(f for fo in class_folders for f in fo.rglob("*")):
             if p.suffix.lower() not in IMAGE_EXTS:
                 continue
@@ -133,8 +144,20 @@ def create_or_load_split(cfg: dict, root: Path, class_names: List[str]) -> dict:
             rel = p.relative_to(root).as_posix()
             paths.append(rel)
             labels.append(idx)
+            count += 1
             if any(par in extra_roots for par in p.parents):
                 extra_set.add(rel)
+        class_counts[name] = count
+
+    for name, cnt in class_counts.items():
+        logger.info("Class '%s': %d valid images", name, cnt)
+
+    zero_classes = [name for name, cnt in class_counts.items() if cnt == 0]
+    if zero_classes:
+        raise ValueError(
+            f"The following class(es) have 0 images: {zero_classes}.\n"
+            f"Please place training images inside their respective folders (e.g. data/waste/<category>/) before generating the split."
+        )
     logger.info("Found %d images (%d exact duplicates and %d unreadable files skipped)", len(paths), dupes, bad)
 
     seed = ds["random_seed"]

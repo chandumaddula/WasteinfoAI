@@ -27,6 +27,10 @@ import com.wasteinfoai.core.theme.EmeraldDark
 import com.wasteinfoai.core.theme.EmeraldPrimary
 import com.wasteinfoai.core.theme.MintAccent
 
+import androidx.compose.ui.res.stringResource
+import com.wasteinfoai.R
+import com.wasteinfoai.features.common.LanguageSelectionDialog
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategorySelectionScreen(
@@ -34,6 +38,14 @@ fun CategorySelectionScreen(
     onCategorySelected: (UserCategory) -> Unit,
     onNavigateBack: () -> Unit
 ) {
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
+    if (showLanguageDialog) {
+        LanguageSelectionDialog(
+            onDismissRequest = { showLanguageDialog = false }
+        )
+    }
+
     // Condition: Do not show selected option initially
     var selectedCategory by remember {
         mutableStateOf(initialSelectedCategory?.let { UserCategory.fromId(it) })
@@ -72,6 +84,11 @@ fun CategorySelectionScreen(
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
+                },
+                actions = {
+                    IconButton(onClick = { showLanguageDialog = true }) {
+                        Icon(Icons.Default.Translate, contentDescription = "Change Language")
+                    }
                 }
             )
         },
@@ -101,7 +118,7 @@ fun CategorySelectionScreen(
                     ) {
                         if (selectedCategory != null) {
                             Text(
-                                text = "Continue as ${selectedCategory!!.title}",
+                                text = stringResource(R.string.btn_continue_as, stringResource(selectedCategory!!.titleRes)),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
@@ -113,7 +130,7 @@ fun CategorySelectionScreen(
                             )
                         } else {
                             Text(
-                                text = "Choose a Category to Continue",
+                                text = stringResource(R.string.btn_choose_category_continue),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -134,7 +151,7 @@ fun CategorySelectionScreen(
             item {
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Choose Your Category",
+                    text = stringResource(R.string.category_selection_title),
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.5).sp
@@ -142,7 +159,7 @@ fun CategorySelectionScreen(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Select your operational profile below. Tap an option to configure your personalized dashboard and tools.",
+                    text = stringResource(R.string.category_selection_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -195,17 +212,22 @@ private fun CategoryCard(
         colors = CardDefaults.cardColors(containerColor = cardColor),
         border = BorderStroke(2.dp, borderColor)
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp),
-            contentAlignment = Alignment.CenterStart
+                .padding(horizontal = 20.dp, vertical = 16.dp)
         ) {
             Text(
-                text = category.title,
+                text = stringResource(category.titleRes),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
                 color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(category.subtitleRes),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

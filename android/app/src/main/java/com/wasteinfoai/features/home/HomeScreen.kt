@@ -22,12 +22,16 @@ import androidx.compose.ui.unit.sp
 import com.wasteinfoai.core.theme.EmeraldPrimary
 import com.wasteinfoai.core.theme.MintAccent
 import com.wasteinfoai.data.local.entity.ScanHistoryEntity
+import com.wasteinfoai.core.language.CategoryLocalization
+import com.wasteinfoai.features.onboarding.UserCategory
 import java.text.SimpleDateFormat
 import java.util.*
 
 import com.wasteinfoai.core.navigation.Screen
 import com.wasteinfoai.data.remote.SessionManager
 import com.wasteinfoai.features.common.DashboardSideDrawer
+import com.wasteinfoai.R
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +55,14 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
+    if (showLanguageDialog) {
+        com.wasteinfoai.features.common.LanguageSelectionDialog(
+            sessionManager = sessionManager,
+            onDismissRequest = { showLanguageDialog = false }
+        )
+    }
 
     DashboardSideDrawer(
         drawerState = drawerState,
@@ -96,6 +108,13 @@ fun HomeScreen(
                         }
                     },
                 actions = {
+                    IconButton(onClick = { showLanguageDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Translate,
+                            contentDescription = stringResource(R.string.language_menu_item),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                     // Role Badge (Static indicator)
                     Surface(
                         shape = RoundedCornerShape(16.dp),
@@ -106,8 +125,9 @@ fun HomeScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
                         ) {
+                            val categoryTitleRes = UserCategory.fromId(state.userCategory).titleRes
                             Text(
-                                text = state.userCategory.uppercase(),
+                                text = stringResource(categoryTitleRes).uppercase(),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -139,14 +159,14 @@ fun HomeScreen(
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
                         Text(
-                            text = "AI Waste Scanner",
+                            text = stringResource(R.string.home_ai_scanner_title),
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "On-device ReXNet-150 classification & offline disposal guidance with zero cloud dependency.",
+                            text = stringResource(R.string.home_ai_scanner_subtitle),
                             style = MaterialTheme.typography.bodyMedium,
                             color = Color.White.copy(alpha = 0.9f)
                         )
@@ -161,7 +181,7 @@ fun HomeScreen(
                         ) {
                             Icon(Icons.Default.CameraAlt, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Scan Waste Item", fontWeight = FontWeight.SemiBold)
+                            Text(stringResource(R.string.home_start_scan), fontWeight = FontWeight.SemiBold)
                         }
                     }
                 }
@@ -186,13 +206,13 @@ fun HomeScreen(
                                 Icon(Icons.Default.Sync, contentDescription = null)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    "${state.pendingSyncCount} report(s) pending sync",
+                                    stringResource(R.string.home_sync_pending, state.pendingSyncCount),
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Medium
                                 )
                             }
                             TextButton(onClick = { viewModel.triggerSync() }) {
-                                Text("Sync Now")
+                                Text(stringResource(R.string.home_sync_now))
                             }
                         }
                     }
@@ -202,7 +222,7 @@ fun HomeScreen(
             // Quick Navigation Grid
             item {
                 Text(
-                    "Quick Access",
+                    stringResource(R.string.home_quick_actions),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -212,13 +232,13 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     QuickActionCard(
-                        title = "Report Hotspot",
+                        title = stringResource(R.string.scan_report_accumulation),
                         icon = Icons.Default.AddLocationAlt,
                         modifier = Modifier.weight(1f),
                         onClick = onNavigateToCreateReport
                     )
                     QuickActionCard(
-                        title = "Hotspot Map",
+                        title = stringResource(R.string.nav_map),
                         icon = Icons.Default.Map,
                         modifier = Modifier.weight(1f),
                         onClick = onNavigateToMap
@@ -230,13 +250,13 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     QuickActionCard(
-                        title = "Bottle AI",
+                        title = stringResource(R.string.assistant_title),
                         icon = Icons.Default.Psychology,
                         modifier = Modifier.weight(1f),
                         onClick = onNavigateToAssistant
                     )
                     QuickActionCard(
-                        title = "Scan History",
+                        title = stringResource(R.string.nav_history),
                         icon = Icons.Default.History,
                         modifier = Modifier.weight(1f),
                         onClick = onNavigateToHistory
@@ -248,7 +268,7 @@ fun HomeScreen(
             if (state.userRole != "RESIDENT" && state.userRole in listOf("SANITATION_WORKER", "REVIEWER", "ADMIN")) {
                 item {
                     Text(
-                        "Administrative Shortcuts",
+                        stringResource(R.string.home_admin_shortcuts),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -256,25 +276,25 @@ fun HomeScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (state.userRole in listOf("SANITATION_WORKER", "ADMIN")) {
                             RoleDashboardRow(
-                                title = "Sanitation Worker Tasks",
+                                title = stringResource(R.string.home_worker_tasks),
                                 icon = Icons.Default.Assignment,
-                                subtitle = "View assigned cleanups & update status",
+                                subtitle = stringResource(R.string.home_worker_tasks_subtitle),
                                 onClick = onNavigateToTasks
                             )
                         }
                         if (state.userRole in listOf("REVIEWER", "ADMIN")) {
                             RoleDashboardRow(
-                                title = "Reviewer Verification Dashboard",
+                                title = stringResource(R.string.home_reviewer_dashboard),
                                 icon = Icons.Default.RateReview,
-                                subtitle = "Verify, reject, or duplicate citizen reports",
+                                subtitle = stringResource(R.string.home_reviewer_dashboard_subtitle),
                                 onClick = onNavigateToReviewer
                             )
                         }
                         if (state.userRole == "ADMIN") {
                             RoleDashboardRow(
-                                title = "Administrator Operational Overview",
+                                title = stringResource(R.string.home_admin_overview),
                                 icon = Icons.Default.AdminPanelSettings,
-                                subtitle = "Full system analytics & management",
+                                subtitle = stringResource(R.string.home_admin_overview_subtitle),
                                 onClick = onNavigateToAdmin
                             )
                         }
@@ -290,13 +310,13 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "Recent Scans",
+                        stringResource(R.string.home_recent_scans),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     if (state.recentScans.isNotEmpty()) {
                         TextButton(onClick = onNavigateToHistory) {
-                            Text("See All")
+                            Text(stringResource(R.string.home_see_all))
                         }
                     }
                 }
@@ -305,7 +325,7 @@ fun HomeScreen(
             if (state.recentScans.isEmpty()) {
                 item {
                     Text(
-                        "No waste scans recorded yet. Tap 'Scan Waste Item' to test on-device inference.",
+                        stringResource(R.string.home_no_scans),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(vertical = 12.dp)
@@ -439,7 +459,7 @@ fun RecentScanCard(scan: ScanHistoryEntity) {
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        scan.category,
+                        CategoryLocalization.localizedCategory(scan.category),
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -456,7 +476,7 @@ fun RecentScanCard(scan: ScanHistoryEntity) {
                     color = MaterialTheme.colorScheme.surfaceVariant
                 ) {
                     Text(
-                        text = scan.targetBinColor,
+                        text = CategoryLocalization.localizedBinColor(scan.targetBinColor),
                         style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         fontWeight = FontWeight.Bold

@@ -17,7 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.wasteinfoai.R
+import com.wasteinfoai.features.common.LanguageSelectionDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,11 +40,19 @@ fun LoginScreen(
     var isRegisterMode by remember { mutableStateOf(false) }
     var localError by remember { mutableStateOf<String?>(null) }
     var showServerDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
 
     val isFullNameValid = fullNameInput.trim().length >= 2
     val isEmailValid = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$").matches(emailInput.trim())
     val isPasswordValid = passwordInput.length >= 6
     val isConfirmValid = confirmPasswordInput.isNotEmpty() && confirmPasswordInput == passwordInput
+
+    if (showLanguageDialog) {
+        LanguageSelectionDialog(
+            sessionManager = viewModel.sessionManager,
+            onDismissRequest = { showLanguageDialog = false }
+        )
+    }
 
     if (showServerDialog) {
         com.wasteinfoai.features.common.ServerConfigDialog(
@@ -53,13 +64,16 @@ fun LoginScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (uiState.isLoggedIn) "User Profile" else "Account & Authentication") },
+                title = { Text(if (uiState.isLoggedIn) stringResource(R.string.auth_account_profile) else stringResource(R.string.auth_account_auth)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showLanguageDialog = true }) {
+                        Icon(Icons.Default.Translate, contentDescription = "Change Language")
+                    }
                     IconButton(onClick = { showServerDialog = true }) {
                         Icon(Icons.Default.Public, contentDescription = "Server Settings")
                     }
@@ -107,12 +121,12 @@ fun LoginScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.VerifiedUser, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Active Session", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.auth_active_session), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Text("Email: ${uiState.email}", style = MaterialTheme.typography.bodyMedium)
-                        Text("Active Category: ${uiState.category}", style = MaterialTheme.typography.bodyMedium)
-                        Text("Active Role: ${uiState.role}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.auth_active_category, uiState.category), style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.auth_active_role, uiState.role), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -124,7 +138,7 @@ fun LoginScreen(
                                 ) {
                                     Icon(Icons.Default.Dashboard, contentDescription = null, modifier = Modifier.size(18.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Open Dashboard")
+                                    Text(stringResource(R.string.auth_open_dashboard))
                                 }
                             }
                             OutlinedButton(
@@ -137,7 +151,7 @@ fun LoginScreen(
                             ) {
                                 Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Log Out")
+                                Text(stringResource(R.string.auth_logout))
                             }
                         }
                     }
@@ -152,15 +166,15 @@ fun LoginScreen(
                         verticalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
                         Text(
-                            text = if (isRegisterMode) "Register Resident Account" else "Log In",
+                            text = if (isRegisterMode) stringResource(R.string.auth_register_resident_title) else stringResource(R.string.auth_login_btn),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = if (isRegisterMode) {
-                                "Complete the registration rule requirements to set up your account. You will then sign in using these credentials."
+                                stringResource(R.string.auth_register_resident_desc)
                             } else {
-                                "Fast authentication with automatic offline and internet compatibility."
+                                stringResource(R.string.auth_fast_auth_desc)
                             },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant

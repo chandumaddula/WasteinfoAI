@@ -29,6 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wasteinfoai.R
+import com.wasteinfoai.core.language.CategoryLocalization
+import androidx.compose.ui.res.stringResource
 import com.wasteinfoai.ai.rules.HazardSeverity
 import com.wasteinfoai.ai.taxonomy.IdentificationSource
 import com.wasteinfoai.ai.taxonomy.SpecificWasteCandidate
@@ -55,10 +58,10 @@ fun ScanResultScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Classification & Guidance") },
+                title = { Text(stringResource(R.string.scan_result_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
@@ -67,7 +70,7 @@ fun ScanResultScreen(
                         IconButton(onClick = {
                             if (current.items.size > 1) viewModel.speakAllItems() else viewModel.speakGuidance()
                         }) {
-                            Icon(Icons.Default.VolumeUp, contentDescription = "Read Aloud")
+                            Icon(Icons.Default.VolumeUp, contentDescription = stringResource(R.string.action_read_aloud))
                         }
                     }
                 }
@@ -89,7 +92,7 @@ fun ScanResultScreen(
                         CircularProgressIndicator()
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            "Finding and classifying each item...",
+                            stringResource(R.string.scan_finding_classifying),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
@@ -110,7 +113,7 @@ fun ScanResultScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            "Classification Error",
+                            stringResource(R.string.scan_classification_error),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
@@ -122,7 +125,7 @@ fun ScanResultScreen(
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Button(onClick = onNavigateBack) {
-                            Text("Try Another Photo")
+                            Text(stringResource(R.string.scan_try_another))
                         }
                     }
                 }
@@ -255,7 +258,7 @@ private fun SuccessContent(
                         .align(Alignment.BottomEnd)
                         .padding(12.dp)
                 ) {
-                    val detectionBadge = if (state.detectedObjectsCount > 0) "Item #${state.selectedObjectIndex + 1}" else "Full image"
+                    val detectionBadge = if (state.detectedObjectsCount > 0) stringResource(R.string.scan_item_badge, state.selectedObjectIndex + 1) else stringResource(R.string.scan_full_image)
                     Text(
                         text = "${String.format(Locale.US, "%.1f%%", state.classification.confidence * 100)} conf • $detectionBadge",
                         style = MaterialTheme.typography.labelSmall,
@@ -288,7 +291,7 @@ private fun SuccessContent(
 
         if (state.ignoredObjectCount > 0) {
             Text(
-                text = "${state.ignoredObjectCount} other object(s) in the photo were not recognised as waste and are hidden.",
+                text = stringResource(R.string.scan_ignored_objects, state.ignoredObjectCount),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -298,7 +301,7 @@ private fun SuccessContent(
         if (state.items.size > 1) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    text = "Items found (${state.items.size})",
+                    text = stringResource(R.string.scan_items_found, state.items.size),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
@@ -315,7 +318,7 @@ private fun SuccessContent(
                     )
                 }
                 Text(
-                    text = "Details for item #${state.selectedObjectIndex + 1}",
+                    text = stringResource(R.string.scan_details_for_item, state.selectedObjectIndex + 1),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(top = 4.dp)
@@ -368,9 +371,10 @@ private fun SuccessContent(
         // 2. Primary Identified Category / Rejection Guidance Card
         val isRejected = !state.classification.isAccepted && !state.isUserConfirmed
         val policy = state.classification.policyResult
-        val displayTitle = state.userConfirmedLabel
+        val rawDisplayTitle = state.userConfirmedLabel
             ?: state.hierarchicalIdentification?.specificItem
-            ?: if (isRejected) "No Clear Waste Detected" else state.classification.label
+            ?: if (isRejected) stringResource(R.string.scan_no_clear_waste) else state.classification.label
+        val displayTitle = if (isRejected) rawDisplayTitle else CategoryLocalization.localizedCategory(rawDisplayTitle)
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -421,11 +425,11 @@ private fun SuccessContent(
                             overflow = TextOverflow.Ellipsis
                         )
                         val sourceText = when {
-                            isRejected -> "Status: ${state.classification.acceptanceState.name.replace('_', ' ')}"
-                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.BARCODE_LOOKUP -> "Source: Barcode packaging database"
-                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.USER_CONFIRMED -> "Source: User confirmed"
-                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.OBJECT_CROP_CLASSIFIER -> "Source: Object ROI classifier"
-                            else -> "Source: On-device classifier"
+                            isRejected -> stringResource(R.string.scan_status_prefix, state.classification.acceptanceState.name.replace('_', ' '))
+                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.BARCODE_LOOKUP -> stringResource(R.string.scan_source_barcode)
+                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.USER_CONFIRMED -> stringResource(R.string.scan_source_user_confirmed)
+                            state.hierarchicalIdentification?.identificationSource == IdentificationSource.OBJECT_CROP_CLASSIFIER -> stringResource(R.string.scan_source_roi_classifier)
+                            else -> stringResource(R.string.scan_source_on_device)
                         }
                         Text(
                             text = sourceText,
@@ -434,18 +438,18 @@ private fun SuccessContent(
                         )
                         Text(
                             text = if (isRejected) {
-                                policy?.diagnosticDetails ?: "The scanned scene did not match verified waste categories."
+                                policy?.diagnosticDetails ?: stringResource(R.string.scan_rejected_default)
                             } else if (state.safety.isHazardous) {
-                                "Hazardous Material • Handle with Care"
+                                stringResource(R.string.scan_hazardous_warning)
                             } else {
-                                "Non-Hazardous Solid Waste"
+                                stringResource(R.string.scan_non_hazardous)
                             },
                             style = MaterialTheme.typography.bodySmall,
                             color = if (state.safety.isHazardous) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     IconButton(onClick = onSpeakClicked) {
-                        Icon(Icons.Default.VolumeUp, contentDescription = "Speak Guidance")
+                        Icon(Icons.Default.VolumeUp, contentDescription = stringResource(R.string.scan_speak_guidance))
                     }
                 }
 
@@ -475,13 +479,13 @@ private fun SuccessContent(
                         ) {
                             Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Scan Again")
+                            Text(stringResource(R.string.scan_again))
                         }
                         Button(
                             onClick = { showCategorySelector = true },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text("Select Manually")
+                            Text(stringResource(R.string.scan_select_manually))
                         }
                     }
                 }
@@ -501,19 +505,19 @@ private fun SuccessContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Top-3 Candidates",
+                        text = stringResource(R.string.scan_top_candidates),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Tap to select",
+                        text = stringResource(R.string.scan_tap_select),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Scores are softmax-normalized classifier outputs across 17 categories.",
+                    text = stringResource(R.string.scan_candidates_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -534,7 +538,7 @@ private fun SuccessContent(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = candidate.label,
+                                text = CategoryLocalization.localizedCategory(candidate.label),
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
                             )
@@ -570,12 +574,12 @@ private fun SuccessContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Not what you scanned?",
+                        text = stringResource(R.string.scan_not_what_you_scanned),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     TextButton(onClick = { showCategorySelector = !showCategorySelector }) {
-                        Text(if (showCategorySelector) "Hide" else "Choose another")
+                        Text(if (showCategorySelector) stringResource(R.string.scan_hide) else stringResource(R.string.scan_choose_another))
                     }
                 }
 
@@ -723,7 +727,7 @@ private fun SuccessContent(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            "Safety Guidance",
+                            stringResource(R.string.scan_safety_guidance),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -746,7 +750,7 @@ private fun SuccessContent(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        "Disposal & Segregation",
+                        stringResource(R.string.scan_disposal_segregation),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -757,7 +761,7 @@ private fun SuccessContent(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Column {
-                            Text("Target Bin", style = MaterialTheme.typography.labelSmall)
+                            Text(stringResource(R.string.scan_target_bin), style = MaterialTheme.typography.labelSmall)
                             val binColor = state.rule.targetBinColor
                             val binBg = when (binColor.uppercase()) {
                                 "BLUE" -> Color(0xFF1976D2)
@@ -772,7 +776,7 @@ private fun SuccessContent(
                                 modifier = Modifier.padding(top = 2.dp)
                             ) {
                                 Text(
-                                    text = binColor,
+                                    text = CategoryLocalization.localizedBinColor(binColor),
                                     color = Color.White,
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
@@ -781,15 +785,15 @@ private fun SuccessContent(
                             }
                         }
                         Column {
-                            Text("Recyclable", style = MaterialTheme.typography.labelSmall)
+                            Text(stringResource(R.string.scan_recyclable), style = MaterialTheme.typography.labelSmall)
                             Text(
-                                if (state.rule.isRecyclable) "Yes" else "No",
+                                if (state.rule.isRecyclable) stringResource(R.string.scan_yes) else stringResource(R.string.scan_no),
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                         Column {
-                            Text("Jurisdiction", style = MaterialTheme.typography.labelSmall)
+                            Text(stringResource(R.string.scan_jurisdiction), style = MaterialTheme.typography.labelSmall)
                             Text(state.resolvedJurisdiction.displayName, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
                         }
                     }
@@ -798,11 +802,11 @@ private fun SuccessContent(
                     HorizontalDivider()
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    Text("Preparation Instructions:", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.scan_prep_instructions), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
                     Text(state.rule.preparationInstructions, style = MaterialTheme.typography.bodyMedium)
 
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("Recommended Method:", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.scan_recommended_method), style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Bold)
                     Text(state.rule.disposalMethod, style = MaterialTheme.typography.bodyMedium)
 
                     if (state.rule.acceptedPathways.isNotEmpty()) {
@@ -828,14 +832,14 @@ private fun SuccessContent(
                     Icon(Icons.Default.Feedback, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Is this identification correct?",
+                        text = stringResource(R.string.scan_feedback_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Help improve waste classification accuracy for your neighborhood.",
+                    text = stringResource(R.string.scan_feedback_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -854,7 +858,7 @@ private fun SuccessContent(
                             Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Thank you! Your feedback has been recorded locally.",
+                                text = stringResource(R.string.scan_feedback_thank_you),
                                 style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Medium
                             )
@@ -908,7 +912,7 @@ private fun SuccessContent(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Consent to share anonymized metadata to improve AI",
+                            text = stringResource(R.string.scan_feedback_consent),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -929,7 +933,7 @@ private fun SuccessContent(
             ) {
                 Icon(Icons.Default.ChatBubbleOutline, contentDescription = null)
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Ask AI")
+                Text(stringResource(R.string.scan_ask_ai))
             }
             Button(
                 onClick = onReportClicked,
@@ -938,7 +942,7 @@ private fun SuccessContent(
             ) {
                 Icon(Icons.Default.AddLocationAlt, contentDescription = null)
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Report")
+                Text(stringResource(R.string.scan_report))
             }
         }
 
@@ -948,7 +952,7 @@ private fun SuccessContent(
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text("Done", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.scan_done), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -1051,7 +1055,7 @@ private fun ItemSummaryCard(
                 }
                 if (ready) {
                     Spacer(modifier = Modifier.width(8.dp))
-                    MiniChip(item.rule.targetBinColor, binColorFor(item.rule.targetBinColor), Color.White)
+                    MiniChip(CategoryLocalization.localizedBinColor(item.rule.targetBinColor), binColorFor(item.rule.targetBinColor), Color.White)
                 }
             }
 

@@ -20,10 +20,12 @@ data class DisposalRule(
     val prohibitedPathways: List<String> = emptyList(),
     val reviewStatus: String = "VERIFIED",
     val source: String,
-    val reuseIdeas: List<String> = emptyList(),
+    // Optional "Bottle" chatbot content (disposal_rules.json keys: condition_notes, cleaning_tips, reuse_ideas,
+    // environmental_impact). Appended with defaults so every existing DisposalRule(...) call still compiles.
+    val conditionNotes: Map<String, String> = emptyMap(),   // keys: broken, crushed, wet, greasy, empty, full
     val cleaningTips: String? = null,
-    val environmentalImpact: String? = null,
-    val conditionNotes: Map<String, String> = emptyMap()
+    val reuseIdeas: List<String> = emptyList(),
+    val environmentalImpact: String? = null
 )
 
 data class DisposalRulesPayload(

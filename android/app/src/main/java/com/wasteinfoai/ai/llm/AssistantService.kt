@@ -41,10 +41,13 @@ class AssistantService(
         history: List<ChatMessage> = emptyList(),
         onToken: (String) -> Unit = {}
     ): AssistantResponse {
+        val lang = context.languageCode ?: "en"
+        ruleEngine.loadRulesForLanguage(lang)
+
         val rule: DisposalRule? = if (!context.specificItem.isNullOrBlank() || !context.materialCode.isNullOrBlank()) {
-            ruleEngine.getHierarchicalRule(context.category, context.specificItem, context.materialCode, context.jurisdiction)
+            ruleEngine.getHierarchicalRule(context.category, context.specificItem, context.materialCode, context.jurisdiction, lang)
         } else {
-            ruleEngine.getRuleForCategory(context.category)
+            ruleEngine.getRuleForCategory(context.category, lang)
         }
 
         val safety = SafetyGuard.evaluateSafety(context.category, isUncertain = false)

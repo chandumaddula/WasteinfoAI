@@ -22,7 +22,9 @@ class SessionManager(context: Context) {
         private const val KEY_CATEGORY = "user_category"
         private const val KEY_SERVER_URL = "server_base_url"
         private const val KEY_OFFLINE_MODE = "offline_mode"
+        private const val KEY_LANGUAGE = "app_language"
         const val DEFAULT_SERVER_URL = "http://10.0.2.2:8000/"
+        const val DEFAULT_LANGUAGE = "en"
     }
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -45,6 +47,9 @@ class SessionManager(context: Context) {
     private val _isOfflineModeState = MutableStateFlow(prefs.getBoolean(KEY_OFFLINE_MODE, false))
     val isOfflineModeState: StateFlow<Boolean> = _isOfflineModeState.asStateFlow()
 
+    private val _languageState = MutableStateFlow(prefs.getString(KEY_LANGUAGE, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE)
+    val languageState: StateFlow<String> = _languageState.asStateFlow()
+
     val isLoggedIn: Boolean
         get() = !_tokenState.value.isNullOrBlank()
 
@@ -61,6 +66,14 @@ class SessionManager(context: Context) {
     fun getServerUrl(): String = prefs.getString(KEY_SERVER_URL, DEFAULT_SERVER_URL) ?: DEFAULT_SERVER_URL
 
     fun isOfflineMode(): Boolean = prefs.getBoolean(KEY_OFFLINE_MODE, false)
+
+    fun getLanguage(): String = prefs.getString(KEY_LANGUAGE, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
+
+    fun setLanguage(language: String) {
+        val clean = language.trim().lowercase().take(2).ifBlank { DEFAULT_LANGUAGE }
+        prefs.edit().putString(KEY_LANGUAGE, clean).apply()
+        _languageState.value = clean
+    }
 
     fun setServerUrl(url: String) {
         val formatted = if (url.endsWith("/")) url else "$url/"

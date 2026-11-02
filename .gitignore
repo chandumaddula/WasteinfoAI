@@ -19,6 +19,8 @@ android/.idea/
 *.hprof
 
 # ML Datasets (keep large data outside Git)
+ml/data/waste/
+ml/data/real_world/
 ml/data/balanced_waste_images/
 ml/data/ood/
 ml/data/raw/*

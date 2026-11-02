@@ -11,6 +11,9 @@ venv/
 env/
 
 # Datasets - large media kept outside Git
+data/waste/
+data/real_world/
+data/ood/
 data/raw/*
 !data/raw/.gitkeep
 data/processed/*

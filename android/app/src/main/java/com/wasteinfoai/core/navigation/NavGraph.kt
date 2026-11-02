@@ -48,10 +48,14 @@ fun AppNavGraph(
         composable(Screen.Splash.route) {
             SplashScreen(
                 onNavigateToCategorySelection = {
-                    navController.navigate(Screen.CategorySelection.route)
+                    navController.navigate(Screen.CategorySelection.route) {
+                        launchSingleTop = true
+                    }
                 },
                 onQuickScan = {
-                    navController.navigate(Screen.Camera.route)
+                    navController.navigate(Screen.Camera.route) {
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -261,7 +265,8 @@ fun AppNavGraph(
                     ttsManager = container.textToSpeechManager,
                     scanRepository = container.scanRepository,
                     llmModelManager = container.llmModelManager,
-                    speechInputHelper = container.speechInputHelper
+                    speechInputHelper = container.speechInputHelper,
+                    languageManager = container.languageManager
                 )
             }
             AssistantScreen(

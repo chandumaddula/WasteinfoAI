@@ -9,13 +9,24 @@ import android.speech.SpeechRecognizer
 import android.util.Log
 
 /**
- * Handles offline voice-to-text recognition using Android's native SpeechRecognizer.
+ * Handles multilingual offline voice-to-text recognition using Android's native SpeechRecognizer.
+ * Supports: en-IN, hi-IN, te-IN, ta-IN, mr-IN.
  * Configured with [RecognizerIntent.EXTRA_PREFER_OFFLINE] for offline-first operation.
  */
 class SpeechInputHelper(private val context: Context) {
 
     companion object {
         private const val TAG = "SpeechInputHelper"
+
+        fun getRecognitionLocaleTag(languageCode: String?): String {
+            return when (languageCode?.trim()?.lowercase()?.take(2)) {
+                "hi" -> "hi-IN"
+                "te" -> "te-IN"
+                "ta" -> "ta-IN"
+                "mr" -> "mr-IN"
+                else -> "en-IN"
+            }
+        }
     }
 
     private var speechRecognizer: SpeechRecognizer? = null
@@ -24,6 +35,7 @@ class SpeechInputHelper(private val context: Context) {
         get() = SpeechRecognizer.isRecognitionAvailable(context)
 
     fun startListening(
+        languageCode: String? = null,
         onResult: (String) -> Unit,
         onError: (String) -> Unit,
         onListeningStateChanged: (Boolean) -> Unit
@@ -34,6 +46,8 @@ class SpeechInputHelper(private val context: Context) {
         }
 
         stopListening()
+
+        val targetLocaleTag = getRecognitionLocaleTag(languageCode)
 
         try {
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context).apply {
@@ -55,16 +69,17 @@ class SpeechInputHelper(private val context: Context) {
                         val message = when (error) {
                             SpeechRecognizer.ERROR_AUDIO -> "Audio recording error."
                             SpeechRecognizer.ERROR_CLIENT -> "Client error in speech recognition."
-                            SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Audio permission required."
-                            SpeechRecognizer.ERROR_NETWORK -> "Network required for online speech recognition."
-                            SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Speech timeout."
+                            SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "Microphone permission required for voice input."
+                            SpeechRecognizer.ERROR_NETWORK -> "Network may be required for $targetLocaleTag voice recognition."
+                            SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "Speech recognition connection timed out."
                             SpeechRecognizer.ERROR_NO_MATCH -> "No speech detected. Please try speaking again."
-                            SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Recognition service busy."
+                            SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "Speech recognition service is currently busy."
                             SpeechRecognizer.ERROR_SERVER -> "Recognition server error."
-                            SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech heard."
+                            SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "No speech heard before timeout."
+                            12 -> "Language $targetLocaleTag is not supported by the on-device recognizer."
                             else -> "Voice input error ($error)."
                         }
-                        Log.w(TAG, "SpeechRecognizer error: $message (code $error)")
+                        Log.w(TAG, "SpeechRecognizer error for $targetLocaleTag: $message (code $error)")
                         onError(message)
                     }
 
@@ -86,17 +101,37 @@ class SpeechInputHelper(private val context: Context) {
 
             val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                 putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, targetLocaleTag)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, targetLocaleTag)
+                putExtra("android.speech.extra.EXTRA_ADDITIONAL_LANGUAGES", arrayOf(targetLocaleTag, "en-IN"))
                 putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false)
                 putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
                 putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
             }
 
             speechRecognizer?.startListening(intent)
+            Log.i(TAG, "Speech recognizer started listening with locale: $targetLocaleTag")
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to initialize SpeechRecognizer", e)
+            Log.e(TAG, "Failed to initialize SpeechRecognizer for $targetLocaleTag", e)
             onListeningStateChanged(false)
             onError("Failed to start speech recognizer: ${e.message}")
         }
+    }
+
+    /**
+     * Backward-compatible startListening overload.
+     */
+    fun startListening(
+        onResult: (String) -> Unit,
+        onError: (String) -> Unit,
+        onListeningStateChanged: (Boolean) -> Unit
+    ) {
+        startListening(
+            languageCode = null,
+            onResult = onResult,
+            onError = onError,
+            onListeningStateChanged = onListeningStateChanged
+        )
     }
 
     fun stopListening() {
@@ -110,4 +145,3 @@ class SpeechInputHelper(private val context: Context) {
         }
     }
 }
-

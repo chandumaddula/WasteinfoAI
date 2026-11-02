@@ -1,5 +1,8 @@
 package com.wasteinfoai.features.onboarding
 
+import androidx.annotation.StringRes
+import com.wasteinfoai.R
+
 enum class UserCategory(
     val id: String,
     val title: String,
@@ -9,7 +12,9 @@ enum class UserCategory(
     val loginTitle: String,
     val loginSubtitle: String,
     val idFieldLabel: String,
-    val idFieldPlaceholder: String
+    val idFieldPlaceholder: String,
+    @StringRes val titleRes: Int,
+    @StringRes val subtitleRes: Int
 ) {
     HOUSEHOLD_RECYCLING(
         id = "Household recycling",
@@ -20,7 +25,9 @@ enum class UserCategory(
         loginTitle = "Household Recycling Sign In",
         loginSubtitle = "Log in to track your recycling score, disposal history & domestic waste segregation.",
         idFieldLabel = "Email Address",
-        idFieldPlaceholder = "resident@example.com"
+        idFieldPlaceholder = "resident@example.com",
+        titleRes = R.string.category_household_title,
+        subtitleRes = R.string.category_household_desc
     ),
     E_WASTE_MANAGEMENT(
         id = "E-waste management",
@@ -31,7 +38,9 @@ enum class UserCategory(
         loginTitle = "E-Waste Management Portal",
         loginSubtitle = "Authenticate with your Specialist ID to view e-waste collection routes and tasks.",
         idFieldLabel = "Specialist ID or Official Email",
-        idFieldPlaceholder = "EW-7482 or staff@citywaste.gov"
+        idFieldPlaceholder = "EW-7482 or staff@citywaste.gov",
+        titleRes = R.string.category_ewaste_title,
+        subtitleRes = R.string.category_ewaste_desc
     ),
     COMMUNITY_RECYCLING(
         id = "Community recycling",
@@ -42,7 +51,9 @@ enum class UserCategory(
         loginTitle = "Community Recycling Portal",
         loginSubtitle = "Sign in to coordinate community recycling drop points and neighborhood cleanup drives.",
         idFieldLabel = "Community Lead Email",
-        idFieldPlaceholder = "community@wasteinfo.ai"
+        idFieldPlaceholder = "community@wasteinfo.ai",
+        titleRes = R.string.category_community_title,
+        subtitleRes = R.string.category_community_desc
     ),
     PLASTIC_WASTE_REDUCTION(
         id = "Plastic waste reduction",
@@ -53,7 +64,9 @@ enum class UserCategory(
         loginTitle = "Plastic Waste Reduction Portal",
         loginSubtitle = "Sign in to log plastic audit manifests, track reduction compliance & certificates.",
         idFieldLabel = "Facility ID / Corporate Email",
-        idFieldPlaceholder = "PWR-104 or plant.manager@company.com"
+        idFieldPlaceholder = "PWR-104 or plant.manager@company.com",
+        titleRes = R.string.category_plastic_title,
+        subtitleRes = R.string.category_plastic_desc
     ),
     SUSTAINABILITY_EDUCATION(
         id = "Sustainability education",
@@ -64,7 +77,9 @@ enum class UserCategory(
         loginTitle = "Sustainability Education Portal",
         loginSubtitle = "Access educational curriculums, sustainability guides & environmental audit metrics.",
         idFieldLabel = "Staff / Educator Email",
-        idFieldPlaceholder = "educator@wasteinfo.ai"
+        idFieldPlaceholder = "educator@wasteinfo.ai",
+        titleRes = R.string.category_sustainability_title,
+        subtitleRes = R.string.category_sustainability_desc
     );
 
     companion object {

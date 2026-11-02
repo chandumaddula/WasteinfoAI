@@ -30,6 +30,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.wasteinfoai.R
+import androidx.compose.ui.res.stringResource
 import com.wasteinfoai.ai.llm.ModelDownloadState
 import kotlinx.coroutines.launch
 
@@ -92,9 +94,9 @@ fun AssistantScreen(
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
-                            Text("Bottle", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                            Text(stringResource(R.string.assistant_title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                             Text(
-                                if (uiState.isModelDownloaded) "On-Device Llama 3.2 AI" else "Offline Grounded AI",
+                                if (uiState.isModelDownloaded) "On-Device Llama 3.2 AI" else stringResource(R.string.assistant_subtitle),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -103,12 +105,12 @@ fun AssistantScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { viewModel.clearChat() }) {
-                        Icon(Icons.Default.DeleteSweep, contentDescription = "Clear Chat")
+                        Icon(Icons.Default.DeleteSweep, contentDescription = stringResource(R.string.assistant_clear_chat))
                     }
                 }
             )
@@ -153,7 +155,7 @@ fun AssistantScreen(
                             CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                "Bottle is thinking...",
+                                stringResource(R.string.assistant_typing),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -162,7 +164,7 @@ fun AssistantScreen(
                                 onClick = { viewModel.stopGeneration() },
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
                             ) {
-                                Text("Stop", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
+                                Text(stringResource(R.string.assistant_stop), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
                             }
                         }
                     }
@@ -202,10 +204,10 @@ fun AssistantScreen(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(Icons.Default.Mic, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Listening... Speak now", style = MaterialTheme.typography.bodySmall)
+                            Text(stringResource(R.string.speech_listening), style = MaterialTheme.typography.bodySmall)
                         }
                         TextButton(onClick = { viewModel.stopListening() }) {
-                            Text("Cancel", style = MaterialTheme.typography.labelSmall)
+                            Text(stringResource(R.string.action_cancel), style = MaterialTheme.typography.labelSmall)
                         }
                     }
                 }
@@ -245,7 +247,7 @@ fun AssistantScreen(
                     ) {
                         Icon(
                             Icons.Default.Mic,
-                            contentDescription = "Voice Input",
+                            contentDescription = stringResource(R.string.assistant_voice_input),
                             tint = if (uiState.isListening) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -255,7 +257,7 @@ fun AssistantScreen(
                     OutlinedTextField(
                         value = inputText,
                         onValueChange = { inputText = it },
-                        placeholder = { Text("Ask Bottle about disposal, reuse...") },
+                        placeholder = { Text(stringResource(R.string.assistant_input_placeholder)) },
                         modifier = Modifier.weight(1f),
                         maxLines = 3,
                         shape = RoundedCornerShape(24.dp)
@@ -471,7 +473,7 @@ fun BottleChatBubble(
                         CircularProgressIndicator(modifier = Modifier.size(12.dp), strokeWidth = 2.dp)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Generating response...",
+                            text = stringResource(R.string.assistant_typing),
                             style = MaterialTheme.typography.bodySmall,
                             color = textColor.copy(alpha = 0.7f)
                         )

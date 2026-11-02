@@ -34,6 +34,13 @@ class DisposalRuleEngine(
     @Volatile private var rulesVersion: String = "2.0.0"
     @Volatile private var isLoaded = false
     private var loadAttempted = false // a missing/bad asset used to be re-read (and re-logged) on every lookup
+    private var loadGeneration = 0     // bumped on every successful rule load
+
+    /** Language of the rules currently loaded ("en", "hi", "te", ...). */
+    @Volatile var currentLanguage: String = "en"
+        private set
+    /** Last language asked for, even when it had no file and English was used (stops reload on every lookup). */
+    @Volatile private var requestedLanguage: String = "en"
 
     init {
         if (context != null) {
@@ -53,6 +60,60 @@ class DisposalRuleEngine(
         } catch (e: Exception) {
             runCatching { Log.e(TAG, "Failed to load disposal rules from asset $rulesAssetPath", e) }
         }
+    }
+
+    /**
+     * Loads the rules for [languageCode] (e.g. "hi", "te-IN"): `rules/disposal_rules_<lang>.json` from assets when that
+     * file exists and parses, otherwise the base `disposal_rules.json`. Safe to call repeatedly, for example when the
+     * user changes the app language. Returns true when a language-specific file was used.
+     */
+    @Synchronized
+    fun loadRulesForLanguage(languageCode: String? = null): Boolean {
+        val lang = languageCode?.trim()?.lowercase()?.take(2)?.takeIf { it.length == 2 } ?: "en"
+        requestedLanguage = lang
+        val ctx = context
+        if (ctx == null) {            // engines built from a JSON string / rule list (tests) have no assets
+            currentLanguage = lang
+            return false
+        }
+        loadAttempted = true
+
+        if (lang != "en") {
+            val localizedPath = rulesAssetPath.replace(".json", "_$lang.json")
+            val localizedJson = readAssetOrNull(ctx, localizedPath)
+            if (localizedJson != null && applyJson(localizedJson)) {
+                currentLanguage = lang
+                return true
+            }
+            runCatching { Log.i(TAG, "No usable $localizedPath; using the base rules") }
+        }
+        val baseJson = readAssetOrNull(ctx, rulesAssetPath)
+        if (baseJson != null && applyJson(baseJson)) {
+            currentLanguage = "en"
+        } else {
+            runCatching { Log.e(TAG, "Could not load $rulesAssetPath") }
+        }
+        return false
+    }
+
+    /** Lookups may carry the user's language; rules are switched only when it actually changed. */
+    private fun ensureLanguage(languageCode: String?) {
+        val lang = languageCode?.trim()?.lowercase()?.take(2)?.takeIf { it.length == 2 } ?: return
+        if (context != null && lang != requestedLanguage) loadRulesForLanguage(lang)
+    }
+
+    private fun readAssetOrNull(ctx: Context, path: String): String? =
+        try {
+            ctx.assets.open(path).bufferedReader().use { it.readText() }
+        } catch (e: Exception) {
+            null
+        }
+
+    /** Parses and installs [json]; true only if the rules were actually replaced (a bad file keeps the old rules). */
+    private fun applyJson(json: String): Boolean {
+        val before = loadGeneration
+        loadFromJson(json)
+        return loadGeneration != before
     }
 
     @Synchronized
@@ -80,20 +141,17 @@ class DisposalRuleEngine(
                     for (j in 0 until prohibitedArr.length()) prohibited.add(prohibitedArr.getString(j))
                 }
 
-                val reuseList = mutableListOf<String>()
-                val reuseArr = obj.optJSONArray("reuse_ideas")
-                if (reuseArr != null) {
-                    for (j in 0 until reuseArr.length()) reuseList.add(reuseArr.getString(j))
-                }
-
-                val conditionMap = mutableMapOf<String, String>()
-                val condObj = obj.optJSONObject("condition_notes")
-                if (condObj != null) {
-                    val keys = condObj.keys()
+                val conditionNotes = mutableMapOf<String, String>()
+                obj.optJSONObject("condition_notes")?.let { notes ->
+                    val keys = notes.keys()
                     while (keys.hasNext()) {
-                        val key = keys.next()
-                        conditionMap[key.lowercase()] = condObj.getString(key)
+                        val k = keys.next()
+                        notes.optString(k).takeIf { it.isNotBlank() }?.let { conditionNotes[k.lowercase()] = it }
                     }
+                }
+                val reuseIdeas = mutableListOf<String>()
+                obj.optJSONArray("reuse_ideas")?.let { arr ->
+                    for (j in 0 until arr.length()) arr.getString(j).takeIf { it.isNotBlank() }?.let { reuseIdeas.add(it) }
                 }
 
                 val rule = DisposalRule(
@@ -112,10 +170,10 @@ class DisposalRuleEngine(
                     prohibitedPathways = prohibited,
                     reviewStatus = obj.optString("review_status", "VERIFIED"),
                     source = obj.optString("source", "India Solid Waste Management Rules 2016"),
-                    reuseIdeas = reuseList,
+                    conditionNotes = conditionNotes,
                     cleaningTips = obj.optString("cleaning_tips").takeIf { it.isNotBlank() },
-                    environmentalImpact = obj.optString("environmental_impact").takeIf { it.isNotBlank() },
-                    conditionNotes = conditionMap
+                    reuseIdeas = reuseIdeas,
+                    environmentalImpact = obj.optString("environmental_impact").takeIf { it.isNotBlank() }
                 )
 
                 rulesList.add(rule)
@@ -152,13 +210,15 @@ class DisposalRuleEngine(
         rulesBySpecificItem = itemMap
         rulesByMaterialCode = matMap
         isLoaded = true
+        loadGeneration++
     }
 
     /**
      * Backward-compatible category lookup.
      */
-    fun getRuleForCategory(category: String): DisposalRule? {
+    fun getRuleForCategory(category: String, languageCode: String? = null): DisposalRule? {
         if (!isLoaded) loadRules()
+        ensureLanguage(languageCode)
         return rulesByCategory[category] ?: rulesByCategory[category.lowercase()]
     }
 
@@ -176,9 +236,11 @@ class DisposalRuleEngine(
         category: String,
         specificItem: String? = null,
         materialCode: String? = null,
-        jurisdiction: String? = null
+        jurisdiction: String? = null,
+        languageCode: String? = null
     ): DisposalRule {
         if (!isLoaded) loadRules()
+        ensureLanguage(languageCode)
 
         val targetJur = jurisdiction?.uppercase()?.trim()?.takeIf { it.isNotEmpty() }
         val rules = allRules

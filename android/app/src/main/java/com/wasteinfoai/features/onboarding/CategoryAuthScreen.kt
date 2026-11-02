@@ -21,9 +21,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wasteinfoai.R
 import com.wasteinfoai.features.auth.LoginViewModel
+import com.wasteinfoai.features.common.LanguageSelectionDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +55,14 @@ fun CategoryAuthScreen(
     val isConfirmValid = confirmPasswordInput.isNotEmpty() && confirmPasswordInput == passwordInput
 
     var showServerDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
+    if (showLanguageDialog) {
+        LanguageSelectionDialog(
+            sessionManager = viewModel.sessionManager,
+            onDismissRequest = { showLanguageDialog = false }
+        )
+    }
 
     if (showServerDialog) {
         com.wasteinfoai.features.common.ServerConfigDialog(
@@ -74,7 +85,7 @@ fun CategoryAuthScreen(
                 title = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = category.title,
+                            text = stringResource(category.titleRes),
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleMedium
                         )
@@ -84,7 +95,7 @@ fun CategoryAuthScreen(
                             color = MaterialTheme.colorScheme.primaryContainer
                         ) {
                             Text(
-                                text = "Authentication",
+                                text = stringResource(R.string.auth_title),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -99,6 +110,13 @@ fun CategoryAuthScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showLanguageDialog = true }) {
+                        Icon(
+                            imageVector = Icons.Default.Translate,
+                            contentDescription = "Language",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
                     IconButton(onClick = { showServerDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.Public,
@@ -225,7 +243,7 @@ fun CategoryAuthScreen(
                     verticalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     Text(
-                        text = if (isRegisterMode) "Create ${category.title} Account" else "Sign In to Your Workspace",
+                        text = if (isRegisterMode) stringResource(R.string.auth_register) + " — " + stringResource(category.titleRes) else stringResource(R.string.auth_sign_in) + " — " + stringResource(category.titleRes),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -583,7 +601,7 @@ fun CategoryAuthScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = if (isRegisterMode) "Register Account" else "Log In",
+                                    text = if (isRegisterMode) stringResource(R.string.auth_register_btn) else stringResource(R.string.auth_login_btn),
                                     fontWeight = FontWeight.Bold,
                                     style = MaterialTheme.typography.titleMedium
                                 )

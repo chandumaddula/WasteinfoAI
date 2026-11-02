@@ -20,18 +20,33 @@ Always follow these strict safety rules:
 4. Keep the response friendly, conversational, and under 120 words."""
 
     /**
+     * Returns the strict language instruction corresponding to the target locale tag.
+     */
+    fun getLanguageInstruction(languageCode: String?): String {
+        return when (languageCode?.trim()?.lowercase()?.take(2)) {
+            "hi" -> "Respond strictly in Hindi using Devanagari script."
+            "te" -> "Respond strictly in Telugu using Telugu script."
+            "ta" -> "Respond strictly in Tamil using Tamil script."
+            "mr" -> "Respond strictly in Marathi using Devanagari script."
+            else -> "Respond in clear English."
+        }
+    }
+
+    /**
      * Backward-compatible single-turn prompt builder.
      */
     fun buildDisposalExplanationPrompt(
         category: String,
         rule: DisposalRule?,
-        userQuestion: String? = null
+        userQuestion: String? = null,
+        languageCode: String? = null
     ): String {
         return buildMultiTurnPrompt(
-            context = AssistantContext(category = category),
+            context = AssistantContext(category = category, languageCode = languageCode),
             rule = rule,
             history = emptyList(),
-            currentMessage = userQuestion ?: "How should I dispose of $category?"
+            currentMessage = userQuestion ?: "How should I dispose of $category?",
+            languageCode = languageCode
         )
     }
 
@@ -43,13 +58,18 @@ Always follow these strict safety rules:
         rule: DisposalRule?,
         history: List<ChatMessage>,
         currentMessage: String,
-        template: ChatTemplate = defaultTemplate
+        template: ChatTemplate = defaultTemplate,
+        languageCode: String? = null
     ): String {
+        val effectiveLang = languageCode ?: context.languageCode
+        val langInstruction = getLanguageInstruction(effectiveLang)
+        val effectiveSystemPrompt = "$SYSTEM_PROMPT\n5. $langInstruction"
+
         val groundingData = buildRuleGroundingText(context, rule)
         val sanitizedQuery = sanitize(currentMessage).take(MAX_QUESTION_CHARS)
 
         return template.format(
-            systemPrompt = SYSTEM_PROMPT,
+            systemPrompt = effectiveSystemPrompt,
             history = history,
             currentMessage = sanitizedQuery,
             groundingData = groundingData

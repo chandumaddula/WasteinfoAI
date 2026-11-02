@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Eco
 import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Recycling
+import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,20 +20,37 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wasteinfoai.R
 import com.wasteinfoai.core.theme.EmeraldDark
 import com.wasteinfoai.core.theme.EmeraldLight
 import com.wasteinfoai.core.theme.EmeraldPrimary
 import com.wasteinfoai.core.theme.MintAccent
+import com.wasteinfoai.features.common.LanguageSelectionDialog
 
 @Composable
 fun SplashScreen(
     onNavigateToCategorySelection: () -> Unit,
     onQuickScan: () -> Unit
 ) {
+    var showLanguageDialog by remember { mutableStateOf(false) }
+
+    if (showLanguageDialog) {
+        LanguageSelectionDialog(
+            onDismissRequest = {
+                showLanguageDialog = false
+            },
+            onLanguageSelected = { _ ->
+                showLanguageDialog = false
+                onNavigateToCategorySelection()
+            }
+        )
+    }
+
     // Breathing pulse animation for the logo
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val pulseScale by infiniteTransition.animateFloat(
@@ -76,7 +94,18 @@ fun SplashScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(onClick = { showLanguageDialog = true }) {
+                    Icon(
+                        imageVector = Icons.Default.Translate,
+                        contentDescription = stringResource(R.string.language_menu_item),
+                        tint = Color.White.copy(alpha = 0.85f)
+                    )
+                }
+            }
 
             // Center: Brand Logo & Typography
             Column(
@@ -192,7 +221,7 @@ fun SplashScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Button(
-                    onClick = onNavigateToCategorySelection,
+                    onClick = { showLanguageDialog = true },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),

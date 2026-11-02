@@ -21,6 +21,16 @@ class WasteInfoAIApp : Application() {
         Log.i(TAG, "Initializing WasteInfoAI application...")
         appContainer = AppContainer(this)
 
+        // Initialize and apply user-selected language preference
+        try {
+            val savedLang = appContainer.languageManager.getCurrentLanguageOption().code
+            appContainer.disposalRuleEngine.loadRulesForLanguage(savedLang)
+            appContainer.textToSpeechManager.setLanguage(savedLang)
+            Log.i(TAG, "Multilingual support initialized with language: $savedLang")
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not initialize language manager", e)
+        }
+
         // Schedule background periodic sync for pending reports
         try {
             appContainer.syncScheduler.schedulePeriodicSync()

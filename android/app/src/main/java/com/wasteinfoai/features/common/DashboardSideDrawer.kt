@@ -26,6 +26,9 @@ import com.wasteinfoai.core.theme.EmeraldDark
 import com.wasteinfoai.core.theme.EmeraldPrimary
 import com.wasteinfoai.core.theme.MintAccent
 import com.wasteinfoai.data.remote.SessionManager
+import com.wasteinfoai.core.language.LanguageManager
+import com.wasteinfoai.R
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 
 @Composable
@@ -39,16 +42,28 @@ fun DashboardSideDrawer(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var showServerDialog by remember { mutableStateOf(false) }
+    var showLanguageDialog by remember { mutableStateOf(false) }
 
     val userRole by sessionManager.roleState.collectAsState()
     val userCategory by sessionManager.categoryState.collectAsState()
     val userEmail by sessionManager.emailState.collectAsState()
     val serverUrl by sessionManager.serverUrlState.collectAsState()
+    val currentLangCode by sessionManager.languageState.collectAsState()
+    val currentLangOption = remember(currentLangCode) {
+        LanguageManager.findSupportedLanguage(currentLangCode)
+    }
 
     if (showServerDialog) {
         ServerConfigDialog(
             sessionManager = sessionManager,
             onDismissRequest = { showServerDialog = false }
+        )
+    }
+
+    if (showLanguageDialog) {
+        LanguageSelectionDialog(
+            sessionManager = sessionManager,
+            onDismissRequest = { showLanguageDialog = false }
         )
     }
 
@@ -324,6 +339,17 @@ fun DashboardSideDrawer(
                         onClick = {
                             coroutineScope.launch { drawerState.close() }
                             showServerDialog = true
+                        }
+                    )
+
+                    DrawerItem(
+                        icon = Icons.Default.Translate,
+                        label = stringResource(R.string.language_menu_item),
+                        subtitle = currentLangOption.displayName,
+                        isSelected = false,
+                        onClick = {
+                            coroutineScope.launch { drawerState.close() }
+                            showLanguageDialog = true
                         }
                     )
 

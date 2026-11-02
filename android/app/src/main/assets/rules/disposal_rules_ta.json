@@ -1,0 +1,898 @@
+{
+  "version": "2.0.0",
+  "updated_at": "2026-10-20T00:00:00Z",
+  "description": "Verified Hierarchical Waste Disposal Rules (TA)",
+  "rules": [
+    {
+      "id": "RULE-BATTERY-001",
+      "category": "Battery",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "வீட்டு அபாயகரமான கழிவு / அங்கீகரிக்கப்பட்ட மின் கழிவு மையம்",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "மின்கசிவு மற்றும் தீ விபத்தைத் தடுக்க முனையங்களில் மின்கடத்தா டேப் ஒட்டவும். உலர்ந்த பிளாஸ்டிக் கொள்கலனில் வைக்கவும்.",
+      "safety_warnings": "தீ மற்றும் ரசாயன ஆபத்து அதிகம். சாதாரண குப்பையிலோ அல்லது நீலம்/பச்சை தொட்டிகளிலோ போடக்கூடாது. வெப்பத்தில் வைக்காதீர்கள்.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized E-Waste Center",
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Household Compost (Green)",
+        "Dry Recyclables (Blue)",
+        "Open Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "இந்திய திடக் கழிவு மேலாண்மை விதிகள் 2016 & மின் கழிவு மேலாண்மை விதிகள் 2022",
+      "reuse_ideas": [
+        "ரசாயன அரிப்பு மற்றும் தீ ஆபத்துகள் காரணமாக பேட்டரிகளை மீண்டும் பயன்படுத்த முடியாது."
+      ],
+      "cleaning_tips": "தண்ணீரில் கழுவக் கூடாது. முனையங்களில் தூசி இருந்தால் உலர்ந்த துணியால் துடைக்கவும்.",
+      "environmental_impact": "ஈயம், காட்மியம் போன்ற கன உலோகங்கள் நிலத்தடி நீரில் கலந்து கடுமையான நச்சுத்தன்மையை உண்டாக்கும்.",
+      "condition_notes": {
+        "broken": "ஆபத்து: உடைந்த பேட்டரியிலிருந்து அரிக்கும் அமிலம் கசியும். வெறும் கைகளால் தொடாதீர்கள். மணல் உள்ள கொள்கலனில் வைக்கவும்.",
+        "crushed": "தீ ஆபத்து: நசுக்கப்பட்ட பேட்டரிகள் உடனே தீப்பிடிக்கும் அபாயம் கொண்டவை.",
+        "wet": "முற்றிலும் உலர்ந்த நிலையில் வைத்திருங்கள். லித்தியம் செல்களில் தண்ணீர் பட்டால் ஆபத்து.",
+        "empty": "சார்ஜ் தீர்ந்த பேட்டரியிலும் மின்சாரம் எஞ்சியிருக்கும். முனையங்களில் டேப் ஒட்டி அகற்றவும்.",
+        "full": "உலோகப் பொருட்களுடன் மின்கசிவு ஏற்படாமல் இருக்க பாதுகாப்பாக சேமிக்கவும்."
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-LI-ION",
+      "category": "Battery",
+      "specific_item": "Rechargeable Lithium-Ion Battery",
+      "material_code": "BATTERY_LI_ION",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "அங்கீகரிக்கப்பட்ட மின் கழிவு மையம் / லித்தியம்-அயன் பேட்டரி சேகரிப்பு மையம்",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "இரண்டு முனையங்களிலும் இன்சுலேடிங் டேப் ஒட்டவும். தனி பிளாஸ்டிக் பையில் வைக்கவும்.",
+      "safety_warnings": "திடீர் தீப்பிடிக்கும் ஆபத்து அதிகம். நசுக்கவோ, துளையிடவோ கூடாது. அதிக வெப்பத்திலிருந்து விலக்கி வைக்கவும்.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Collection Point",
+        "Manufacturer Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Curbside Bins",
+        "Municipal Waste Truck Compactor"
+      ],
+      "review_status": "VERIFIED",
+      "source": "மின் கழிவு மேலாண்மை விதிகள் 2022",
+      "reuse_ideas": [
+        "தீ ஆபத்து காரணமாக லித்தியம் பேட்டரிகளை மீண்டும் பயன்படுத்தக் கூடாது."
+      ],
+      "cleaning_tips": "தண்ணீரால் சுத்தம் செய்யாதீர்கள். உலர் துணியால் துடைக்கவும்.",
+      "environmental_impact": "கோபால்ட் மற்றும் லித்தியம் நிலத்தடி நீரை விஷமாக்கும்.",
+      "condition_notes": {
+        "broken": "வீங்கிய அல்லது விரிசல் அடைந்த பேட்டரியை உடனே மணலில் வைக்கவும்.",
+        "crushed": "நசுக்கப்பட்ட பேட்டரி உடனடியாக தீப்பிடிக்கும்.",
+        "wet": "தண்ணீர் படாமல் பாதுகாக்கவும்.",
+        "empty": "முனையங்களை எப்போதும் மூடி வைக்கவும்.",
+        "full": "முழுமையாக சார்ஜ் செய்யப்பட்ட பேட்டரிகளை கவனமாக கையாளவும்."
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-ALKALINE",
+      "category": "Battery",
+      "specific_item": "Alkaline AA / AAA / 9V Battery",
+      "material_code": "BATTERY_ALKALINE",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "வீட்டு அபாயகரமான கழிவு / மின் கழிவு சேகரிப்பு மையம்",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "முனையங்களில் டேப் ஒட்டி வைக்கவும்.",
+      "safety_warnings": "பொட்டாசியம் ஹைட்ராக்சைடு கசிவு தோலை எரிக்கும். எரிக்க வேண்டாம்.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)",
+        "Battery Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Dry Paper/Plastic Bin (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "இந்திய திடக் கழிவு விதிகள் 2016",
+      "reuse_ideas": [
+        "ஆல்கலைன் பேட்டரிகள் ஒற்றைப் பயன்பாட்டுக்கு உரியவை."
+      ],
+      "cleaning_tips": "வெள்ளை தூள் கசிந்தால் கையுறை அணிந்து வினிகரால் துடைக்கவும்.",
+      "environmental_impact": "துத்தநாகம் நிலத்தை மாசுபடுத்தும்.",
+      "condition_notes": {
+        "broken": "வெறும் கைகளால் கசிவைத் தொடாதீர்கள்.",
+        "crushed": "நசுக்கப்பட்ட பேட்டரியிலிருந்து திரவம் கசியும்.",
+        "wet": "ஈரமில்லாமல் வைக்கவும்.",
+        "empty": "முனையங்களில் டேப் ஒட்டவும்.",
+        "full": "உலோகப் பொருட்களிலிருந்து தள்ளி வைக்கவும்."
+      }
+    },
+    {
+      "id": "RULE-CARDBOARD-001",
+      "category": "cardboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "உலர்ந்த மறுசுழற்சி கழிவு (நீலத் தொட்டி) / பழைய பேப்பர் கடை",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "பிளாஸ்டிக் டேப், ஸ்டேப்லர்களை அகற்றவும். பெட்டிகளை தட்டையாக மடித்து கட்டவும்.",
+      "safety_warnings": "எண்ணெய் அல்லது உணவு படிந்த அட்டையை நீலத் தொட்டியில் போடாதீர்கள்.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Door-to-door Kabadiwala Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Rain-Exposed Open Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "திடக் கழிவு மேலாண்மை விதிகள் 2016",
+      "reuse_ideas": [
+        "பொருட்கள் சேமிக்க பெட்டிகளாக பயன்படுத்தலாம்",
+        "தோட்டத்தில் களை தடுப்பாக பயன்படுத்தலாம்",
+        "கைவினைப் பொருட்கள் செய்யலாம்"
+      ],
+      "cleaning_tips": "ஈரமில்லாமல் உலர வைக்கவும். எண்ணெய் படிந்த பகுதியை வெட்டி எறியுங்கள்.",
+      "environmental_impact": "அட்டைப்பெட்டி மறுசுழற்சி மரங்களை வெட்டுவதைத் தடுக்கிறது.",
+      "condition_notes": {
+        "broken": "கிழிந்த உலர்ந்த அட்டைப்பெட்டிகளை மறுசுழற்சி செய்யலாம்.",
+        "crushed": "தட்டையாக மடிக்கப்பட்டவை நல்லது.",
+        "wet": "ஈரமான அட்டையை உரமாக்கலாம்.",
+        "greasy": "எண்ணெய் அட்டையை கருப்பு தொட்டியில் போடவும்.",
+        "empty": "முழுமையாக காலி செய்யவும்."
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-SOILED",
+      "category": "cardboard",
+      "specific_item": "Greasy / Food-Soiled Cardboard",
+      "material_code": "PAP 20",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "மறுசுழற்சி செய்ய முடியாத குப்பை (கருப்பு தொட்டி) அல்லது உரம்",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "சுத்தமான பகுதியை நீலத் தொட்டியிலும், எண்ணெய் பகுதியை கருப்புத் தொட்டியிலும் போடவும்.",
+      "safety_warnings": "உணவு எண்ணெய் காகித மறுசுழற்சியைப் பாதிக்கும்.",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "General Municipal Refuse (Black Bin)",
+        "Industrial Composting if uncoated"
+      ],
+      "prohibited_pathways": [
+        "Dry Paper Recyclables (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "SWM விதிகள் 2016",
+      "reuse_ideas": [
+        "பிளாஸ்டிக் பூச்சு இல்லை என்றால் மட்கும் உரமாக்கலாம்."
+      ],
+      "cleaning_tips": "கழுவ வேண்டாம்.",
+      "environmental_impact": "உரமாக்குவது நல்லது.",
+      "condition_notes": {
+        "broken": "Torn or broken cardboard pieces are fully recyclable. Flatten them for storage.",
+        "crushed": "Flattening boxes saves collection space and prevents truck overload.",
+        "wet": "ஈரமானவற்றை உரத்தில் சேர்க்கவும்.",
+        "greasy": "எண்ணெய் படிந்தவற்றை கருப்பு தொட்டியில் போடவும்.",
+        "empty": "உணவு மிச்சங்களை அப்புறப்படுத்தவும்."
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-TETRAPAK",
+      "category": "cardboard",
+      "specific_item": "Aseptic Liquid Carton (Tetra Pak)",
+      "material_code": "C/PAP 84",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "உலர்ந்த மறுசுழற்சி (நீலத் தொட்டி) / டெட்ரா பேக் சேகரிப்பு",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ஸ்ட்ராவை அகற்றவும். அலசிவிட்டு தட்டையாக நசுக்கவும்.",
+      "safety_warnings": "அலசாமல் வைத்தால் துர்நாற்றம் வீசும்.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Tetra Pak Authorized Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "பிளாஸ்டிக் கழிவு விதிகள் 2016",
+      "reuse_ideas": [
+        "செடி வளர்க்கும் தொட்டியாகப் பயன்படுத்தலாம்",
+        "கைவினைப் பொருட்கள் செய்யலாம்"
+      ],
+      "cleaning_tips": "தண்ணீரில் அலசி உலர வைக்கவும்.",
+      "environmental_impact": "இதிலிருந்து நல்ல காகிதக்கூழ் மற்றும் அலுமினியம் பிரித்தெடுக்கப்படுகிறது.",
+      "condition_notes": {
+        "broken": "Torn or broken cardboard pieces are fully recyclable. Flatten them for storage.",
+        "crushed": "நசுக்கி மடிப்பது நல்லது.",
+        "wet": "Wet cardboard breaks down pulp fibers and molds; dry it first if clean, or compost if chemical-free.",
+        "greasy": "Greasy sections (e.g. pizza oil) cannot be pulped. Tear off clean parts for recycling and bin the oily parts in general waste.",
+        "empty": "முழுமையாக காலி செய்யவும்."
+      }
+    },
+    {
+      "id": "RULE-GLASS-001",
+      "category": "glass",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "கண்ணாடி மறுசுழற்சி (நீலத் தொட்டி) / பழைய இரும்பு கடை",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "பாட்டிலை தண்ணீரில் அலசவும். மூடிகளை அகற்றவும். உடையாமல் வைக்கவும்.",
+      "safety_warnings": "உடைந்த கண்ணாடியை சாதாரணமாகப் போடாதீர்கள்; துப்புரவுப் பணியாளர்களுக்கு காயம் ஏற்படும்.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Merchant / Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Unwrapped Glass in Trash"
+      ],
+      "review_status": "VERIFIED",
+      "source": "திடக் கழிவு விதிகள் 2016",
+      "reuse_ideas": [
+        "மளிகைப் பொருட்கள் வைக்க ஜாடிகளாகப் பயன்படுத்தலாம்",
+        "பூந்தொட்டி அல்லது அலங்கார விளக்காகப் பயன்படுத்தலாம்"
+      ],
+      "cleaning_tips": "சோப்பு நீரில் கழுவி உலர வைக்கவும்.",
+      "environmental_impact": "கண்ணாடி எத்தனை முறை வேண்டுமானாலும் மறுசுழற்சி செய்யப்படலாம்.",
+      "condition_notes": {
+        "broken": "உடைந்த கண்ணாடியை தடிமனான காகிதத்தில் சுற்றி சிவப்பு தொட்டியில் போடவும்.",
+        "crushed": "Place crushed glass inside a sturdy rigid box or tin to prevent lacerating sanitation workers.",
+        "wet": "Wet rinsed glass is completely fine in the dry recyclables bin.",
+        "empty": "முழுமையாக காலி செய்யவும்."
+      }
+    },
+    {
+      "id": "RULE-ITEM-GLASS-BROKEN",
+      "category": "glass",
+      "specific_item": "Broken Glass / Shards",
+      "material_code": "GL 70",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "வீட்டு அபாயகரமான கழிவு (சிவப்பு தொட்டி) - பாதுகாப்பாக மூடப்பட்டது",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "உடைந்த கண்ணாடியை தடிமனான காகிதத்தில் சுற்றி டேப் ஒட்டவும். 'கண்ணாடித் துண்டுகள்' என எழுதவும்.",
+      "safety_warnings": "ஆழமான வெட்டுக் காயங்கள் ஏற்படும் அபாயம். சாதாரணமாக வீசாதீர்கள்.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Wrapped Domestic Hazardous Waste (Red Bin)"
+      ],
+      "prohibited_pathways": [
+        "Loose in Plastic Carry Bags",
+        "Loose in Curbside Bins"
+      ],
+      "review_status": "VERIFIED",
+      "source": "SWM விதிகள் 2016",
+      "reuse_ideas": [
+        "உடைந்த கண்ணாடியை வீட்டில் மீண்டும் பயன்படுத்தக் கூடாது."
+      ],
+      "cleaning_tips": "துடைப்பம் கொண்டு கூட்டி எடுக்கவும்.",
+      "environmental_impact": "பணியாளர்களுக்கு பாதுகாப்பு அளிக்கிறது.",
+      "condition_notes": {
+        "broken": "கட்டாயமாக காகிதத்தில் சுற்ற வேண்டும்.",
+        "crushed": "Place crushed glass inside a sturdy rigid box or tin to prevent lacerating sanitation workers.",
+        "wet": "Wet rinsed glass is completely fine in the dry recyclables bin.",
+        "empty": "Never dispose of pressurized or sealed full containers."
+      }
+    },
+    {
+      "id": "RULE-KEYBOARD-001",
+      "category": "Keyboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "மின் கழிவு மறுசுழற்சி (ஆரஞ்சு தொட்டி) / அங்கீகரிக்கப்பட்ட மையம்",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "பேட்டரிகளை அகற்றவும். கேபிள்களை சுருட்டி வைக்கவும்.",
+      "safety_warnings": "தீயில் எரிக்கக் கூடாது.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility",
+        "Manufacturer EPR Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Municipal Garbage Dump",
+        "Open Scrap Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "மின் கழிவு விதிகள் 2022",
+      "reuse_ideas": [
+        "வேலை செய்தால் தானம் செய்யவும்",
+        "கலைப் பணிகளுக்கு பயன்படுத்தலாம்"
+      ],
+      "cleaning_tips": "உலர் துணியால் துடைக்கவும்.",
+      "environmental_impact": "நிலத்தடி நீரை நச்சாக்குகிறது.",
+      "condition_notes": {
+        "broken": "உடைந்தாலும் மறுசுழற்சிக்கு அனுப்பவும்.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
+    },
+    {
+      "id": "RULE-METAL-001",
+      "category": "metal",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "உலோக மறுசுழற்சி (நீலத் தொட்டி) / பழைய இரும்பு கடை",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "உணவு மிச்சங்களை அலசி காயவைக்கவும்.",
+      "safety_warnings": "கூர்மையான விளிம்புகள் காயம் ஏற்படுத்தலாம்.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Metal Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "திடக் கழிவு விதிகள் 2016",
+      "reuse_ideas": [
+        "பேனா வைக்கும் பாத்திரமாக மாற்றலாம்",
+        "தோட்டக்கலைக்கு பயன்படுத்தலாம்"
+      ],
+      "cleaning_tips": "தண்ணீரில் அலசவும்.",
+      "environmental_impact": "95% ஆற்றல் சேமிக்கப்படுகிறது.",
+      "condition_notes": {
+        "crushed": "நசுக்கி போடுவது நல்லது.",
+        "broken": "Sharp metal edges must be folded in or wrapped to prevent worker lacerations.",
+        "greasy": "Wash greasy metal tins with soapy water before dry bin recycling.",
+        "empty": "Empty completely. Aerosols must have residual pressure discharged safely outdoors."
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-ALU-CAN",
+      "category": "metal",
+      "specific_item": "Aluminum Beverage Can",
+      "material_code": "ALU 41",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "அலுமினியம் மறுசுழற்சி (நீலத் தொட்டி) / பழைய இரும்பு கடை",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "அலசிவிட்டு நசுக்கவும்.",
+      "safety_warnings": "கூர்மையான விளிம்புகள் உள்ளதால் கவனம் தேவை.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Recyclers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "திடக் கழிவு விதிகள் 2016",
+      "reuse_ideas": [
+        "அலங்காரப் பொருட்கள் செய்யலாம்"
+      ],
+      "cleaning_tips": "தண்ணீரில் அலசவும்.",
+      "environmental_impact": "மிகக் குறைந்த ஆற்றலில் மறுசுழற்சி செய்யலாம்.",
+      "condition_notes": {
+        "crushed": "நசுக்குவது சிறந்தது.",
+        "broken": "Sharp metal edges must be folded in or wrapped to prevent worker lacerations.",
+        "greasy": "Wash greasy metal tins with soapy water before dry bin recycling.",
+        "empty": "Empty completely. Aerosols must have residual pressure discharged safely outdoors."
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-AEROSOL",
+      "category": "metal",
+      "specific_item": "Aerosol Spray Container",
+      "material_code": "FE 40",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "வீட்டு அபாயகரமான கழிவு (சிவப்பு தொட்டி)",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "முழுமையாக காலி செய்யவும். துளையிடக் கூடாது.",
+      "safety_warnings": "வெடிக்கும் ஆபத்து அதிகம். நெருப்பில் போடக்கூடாது.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Municipal Truck Compactor",
+        "Open Fire",
+        "Puncturing"
+      ],
+      "review_status": "VERIFIED",
+      "source": "திடக் கழிவு விதிகள் 2016",
+      "reuse_ideas": [
+        "மீண்டும் பயன்படுத்தக் கூடாது."
+      ],
+      "cleaning_tips": "கழுவ வேண்டாம்.",
+      "environmental_impact": "வாயுக்கள் வளிமண்டலத்தைப் பாதிக்கின்றன.",
+      "condition_notes": {
+        "crushed": "Crushing aluminum beverage cans is recommended to save collection space.",
+        "broken": "Sharp metal edges must be folded in or wrapped to prevent worker lacerations.",
+        "greasy": "Wash greasy metal tins with soapy water before dry bin recycling.",
+        "empty": "முழுமையாக காலி செய்யவும்."
+      }
+    },
+    {
+      "id": "RULE-MICROWAVE-001",
+      "category": "Microwave",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "அங்கீகரிக்கப்பட்ட மின் கழிவு மையம் / நகராட்சி சிறப்பு மையம்",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "பிளக்கை கழற்றவும். தாங்களாகவே பிரிக்க வேண்டாம்.",
+      "safety_warnings": "அதிக மின்னழுத்த அதிர்ச்சி ஆபத்து. திறக்க வேண்டாம்.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycling Center",
+        "Appliance Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Informal Disassembly",
+        "Standard Garbage"
+      ],
+      "review_status": "VERIFIED",
+      "source": "மின் கழிவு விதிகள் 2022",
+      "reuse_ideas": [
+        "வேலை செய்தால் பிறருக்கு வழங்கலாம்."
+      ],
+      "cleaning_tips": "உணவு மிச்சங்களை துடைக்கவும்.",
+      "environmental_impact": "சுற்றுச்சூழலை பாதுகாக்கிறது.",
+      "condition_notes": {
+        "broken": "உடைந்ததை நீங்களே பழுதுபார்க்க வேண்டாம்.",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
+    },
+    {
+      "id": "RULE-MOBILE-001",
+      "category": "Mobile",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "மின் கழிவு மையம் / கைபேசி விற்பனையாளர் சேகரிப்பு மையம்",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "தரவை முழுமையாக அழிக்கவும் (Factory Reset). சிம் கார்டை எடுக்கவும்.",
+      "safety_warnings": "பேட்டரி வெடிக்கும் ஆபத்து. எரிக்கக் கூடாது.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Kiosks",
+        "Electronics Retailer Take-Back",
+        "Registered Recycler"
+      ],
+      "prohibited_pathways": [
+        "Curbside Dustbin",
+        "Landfill Dumpsite"
+      ],
+      "review_status": "VERIFIED",
+      "source": "மின் கழிவு விதிகள் 2022",
+      "reuse_ideas": [
+        "பாதுகாப்பு கேமராவாக பயன்படுத்தலாம்",
+        "பழைய போனை எக்ஸ்சேஞ்ச் செய்யலாம்"
+      ],
+      "cleaning_tips": "உலர் துணியால் துடைக்கவும்.",
+      "environmental_impact": "தங்கம், தாமிரம் போன்றவற்றை மீட்டெடுக்கலாம்.",
+      "condition_notes": {
+        "broken": "பேட்டரி வீங்கியிருந்தால் எச்சரிக்கை தேவை.",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
+    },
+    {
+      "id": "RULE-MOUSE-001",
+      "category": "Mouse",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "மின் கழிவு மறுசுழற்சி (ஆரஞ்சு தொட்டி)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "பேட்டரிகளை எடுக்கவும்.",
+      "safety_warnings": "எரிக்கக் கூடாது.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Municipal General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "மின் கழிவு விதிகள் 2022",
+      "reuse_ideas": [
+        "வேலை செய்தால் மற்றவர்களுக்கு வழங்கவும்."
+      ],
+      "cleaning_tips": "துடைக்கவும்.",
+      "environmental_impact": "மறுசுழற்சி செய்யப்படுகிறது.",
+      "condition_notes": {
+        "broken": "மின் கழிவுத் தொட்டியில் போடவும்.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
+    },
+    {
+      "id": "RULE-ORGANIC-001",
+      "category": "organic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ஈர மக்கும் கழிவுகள் (பச்சைத் தொட்டி) / உரக் குழி",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "பிளாஸ்டிக் கவர்கள் மற்றும் ஸ்டிக்கர்களை அகற்றவும்.",
+      "safety_warnings": "பிளாஸ்டிக் அல்லது பேட்டரிகளை இதில் கலக்கக் கூடாது.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "review_status": "VERIFIED",
+      "source": "திடக் கழிவு விதிகள் 2016",
+      "reuse_ideas": [
+        "இயற்கை உரம் தயாரிக்கலாம்",
+        "பயோகேஸ் உற்பத்திக்கு பயன்படுத்தலாம்"
+      ],
+      "cleaning_tips": "கழுவ தேவையில்லை.",
+      "environmental_impact": "மண்ணின் வளத்தை அதிகரிக்கிறது.",
+      "condition_notes": {
+        "wet": "ஈரக்கழிவு உரத்திற்கு மிகவும் நல்லது.",
+        "greasy": "சமைத்த உணவையும் உரமாக்கலாம்.",
+        "broken": "Chopping food scraps into smaller pieces speeds up decomposition."
+      }
+    },
+    {
+      "id": "RULE-PAPER-001",
+      "category": "paper",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "காகித மறுசுழற்சி (நீலத் தொட்டி) / பழைய பேப்பர் கடை",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "உலர்ந்த நிலையில் கட்டுகளாக வைக்கவும்.",
+      "safety_warnings": "ஈரமான அல்லது எண்ணெய் படிந்த காகிதத்தை போடக்கூடாது.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Raddi / Kabadiwala Merchants"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "திடக் கழிவு விதிகள் 2016",
+      "reuse_ideas": [
+        "குறிப்புகள் எழுத பயன்படுத்தலாம்",
+        "காகிதப் பைகள் செய்யலாம்"
+      ],
+      "cleaning_tips": "உலர வைக்கவும்.",
+      "environmental_impact": "மரங்களை வெட்டுவதைத் தடுக்கிறது.",
+      "condition_notes": {
+        "wet": "ஈரமான காகிதத்தை உரமாக்கலாம்.",
+        "greasy": "எண்ணெய் படிந்ததை கருப்பு தொட்டியில் போடவும்.",
+        "crushed": "Crumpled paper is recyclable, but keeping flat bundles saves storage space."
+      }
+    },
+    {
+      "id": "RULE-PCB-001",
+      "category": "PCB",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "அங்கீகரிக்கப்பட்ட மின் கழிவு மையம் (சிவப்பு தொட்டி)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "பாதுகாப்பாக பெட்டியில் வைக்கவும். உடைக்க வேண்டாம்.",
+      "safety_warnings": "ஈயம் மற்றும் பாதரசம் உள்ளது. எரிக்கக் கூடாது.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized Central Pollution Control Board (CPCB) Dismantler"
+      ],
+      "prohibited_pathways": [
+        "Informal Scrap Acid Baths",
+        "Open Burning",
+        "Landfills"
+      ],
+      "review_status": "VERIFIED",
+      "source": "மின் கழிவு விதிகள் 2022",
+      "reuse_ideas": [
+        "கலைப்படைப்புகளுக்கு பயன்படுத்தலாம்."
+      ],
+      "cleaning_tips": "கழுவ வேண்டாம்.",
+      "environmental_impact": "எரித்தால் நச்சுப்புகை வெளிப்படும்.",
+      "condition_notes": {
+        "broken": "கையுறை அணிந்து கையாளவும்.",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
+    },
+    {
+      "id": "RULE-PLASTIC-001",
+      "category": "plastic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "பிளாஸ்டிக் மறுசுழற்சி (நீலத் தொட்டி) / பழைய பிளாஸ்டிக் கடை",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "அலசி உலர வைக்கவும். நசுக்கவும்.",
+      "safety_warnings": "பிளாஸ்டிக்கை எரிக்கக் கூடாது; நச்சுப் புகை உண்டாகும்.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Plastic Collection Kiosk",
+        "Scrap Merchant"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Drains / Water Bodies",
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "பிளாஸ்டிக் கழிவு விதிகள் 2016",
+      "reuse_ideas": [
+        "செடி வளர்க்கலாம்",
+        "பொருட்கள் வைக்கலாம்"
+      ],
+      "cleaning_tips": "தண்ணீரில் அலசவும்.",
+      "environmental_impact": "மறுசுழற்சி செய்வது மிக முக்கியம்.",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "நசுக்கி போடவும்.",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "Must be 100% empty of liquids before collection.",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-PET",
+      "category": "plastic",
+      "specific_item": "PET Beverage Bottle (RIC 1)",
+      "material_code": "PET 01",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "PET பிளாஸ்டிக் மறுசுழற்சி (நீலத் தொட்டி)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "அலசி நசுக்கி மூடியை மூடவும்.",
+      "safety_warnings": "வெயிலில் கிடந்த பாட்டிலில் நீர் அருந்தாதீர்கள்.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Blue Dry Waste Bin",
+        "Bottle Return Kiosk",
+        "Door-to-door Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Littering",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "PWM விதிகள் 2016",
+      "reuse_ideas": [
+        "செடிகளுக்கு சொட்டு நீர் பாசனம் செய்யலாம்"
+      ],
+      "cleaning_tips": "அலசவும்.",
+      "environmental_impact": "நூலிழைகளாக மாற்றப்படுகிறது.",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "நசுக்குவது சிறந்தது.",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "Must be 100% empty of liquids before collection.",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-HDPE",
+      "category": "plastic",
+      "specific_item": "HDPE Rigid Bottle / Jug (RIC 2)",
+      "material_code": "HDPE 02",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "HDPE மறுசுழற்சி (நீலத் தொட்டி)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "உள்ளிருக்கும் திரவங்களை அலசி அகற்றவும்.",
+      "safety_warnings": "இரசாயன கேன்களை கவனமாக கையாளவும்.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "PWM விதிகள் 2016",
+      "reuse_ideas": [
+        "தோட்டத்து நீர் கேனாக மாற்றலாம்."
+      ],
+      "cleaning_tips": "அலசவும்.",
+      "environmental_impact": "குழாய்களாக மறுசுழற்சி செய்யப்படுகிறது.",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "Flattening bottles saves bin volume and is highly recommended. Fasten cap back on after flattening.",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "முழுமையாக காலி செய்யவும்.",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-MLP",
+      "category": "plastic",
+      "specific_item": "Multi-Layer Plastic Pouch (RIC 7)",
+      "material_code": "OTHER 07",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "மல்டி-லேயர் பிளாஸ்டிக் (நீலத் தொட்டி) / சிமெண்ட் ஆலை",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "உணவுத் துகள்களை உதறி உலர வைக்கவும்.",
+      "safety_warnings": "எரிக்கக் கூடாது.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Cement Kiln Co-Processing",
+        "Road Construction Bitumen Blend"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Organic Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "PWM விதிகள் 2016",
+      "reuse_ideas": [
+        "ஈகோ-செங்கற்கள் செய்யலாம்."
+      ],
+      "cleaning_tips": "உதறவும்.",
+      "environmental_impact": "சாலை அமைக்க பயன்படுகிறது.",
+      "condition_notes": {
+        "broken": "Broken plastic pieces can still be placed in the blue dry recycling bin; wrap sharp jagged edges.",
+        "crushed": "Flattening bottles saves bin volume and is highly recommended. Fasten cap back on after flattening.",
+        "wet": "Drain water completely before binning; moisture fosters mold in paper/plastic recycling sorting lines.",
+        "greasy": "Wash greasy plastic with dish soap. If grease cannot be removed, place in domestic general waste.",
+        "empty": "காலி செய்யவும்.",
+        "full": "Empty all contents completely. Sorters reject filled containers."
+      }
+    },
+    {
+      "id": "RULE-PLAYER-001",
+      "category": "Player",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "மின் கழிவு மறுசுழற்சி (ஆரஞ்சு தொட்டி)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "பேட்டரிகளை கழற்றவும்.",
+      "safety_warnings": "எரிக்கக் கூடாது.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility"
+      ],
+      "prohibited_pathways": [
+        "Household General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "மின் கழிவு விதிகள் 2022",
+      "reuse_ideas": [
+        "வேலை செய்தால் பிறருக்கு வழங்கவும்."
+      ],
+      "cleaning_tips": "துடைக்கவும்.",
+      "environmental_impact": "மறுசுழற்சி செய்யப்படுகிறது.",
+      "condition_notes": {
+        "broken": "மின் கழிவு மையத்தில் ஒப்படைக்கவும்.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "Dry wet items before adding to dry recyclable bins."
+      }
+    },
+    {
+      "id": "RULE-PRINTER-001",
+      "category": "Printer",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "அங்கீகரிக்கப்பட்ட மின் கழிவு மையம் / நகராட்சி மையம்",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "டோனர் கார்ட்ரிட்ஜை அகற்றி தனி பையில் வைக்கவும்.",
+      "safety_warnings": "டோனர் பொடியை சுவாசிப்பது ஆபத்தானது.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Brand Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Dumping with General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "மின் கழிவு விதிகள் 2022",
+      "reuse_ideas": [
+        "பள்ளிகளுக்கு தானம் செய்யலாம்."
+      ],
+      "cleaning_tips": "ஈரத் துணியால் துடைக்கவும்.",
+      "environmental_impact": "பாதுகாப்பான மறுசுழற்சி உறுதி செய்யப்படுகிறது.",
+      "condition_notes": {
+        "broken": "மை கசியாமல் கவனமாக கையாளவும்.",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
+    },
+    {
+      "id": "RULE-TELEVISION-001",
+      "category": "Television",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "அங்கீகரிக்கப்பட்ட மின் கழிவு மையம்",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "திரை உடையாமல் பாதுகாக்கவும். தாங்களாகவே பிரிக்க வேண்டாம்.",
+      "safety_warnings": "பழைய தொலைக்காட்சிகளில் ஈயம் அதிகம் உள்ளது.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Depot",
+        "Manufacturer Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Manual Screen Smashing",
+        "Informal Scrap Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "மின் கழிவு விதிகள் 2022",
+      "reuse_ideas": [
+        "சமூக மையங்களுக்கு தானம் செய்யலாம்."
+      ],
+      "cleaning_tips": "துடைக்கவும்.",
+      "environmental_impact": "சுற்றுச்சூழலை நச்சிலிருந்து பாதுகாக்கிறது.",
+      "condition_notes": {
+        "broken": "உடைந்த திரையை கவனமாக மூடவும்.",
+        "crushed": "Crushed electronics can ignite internal batteries and release toxic dust.",
+        "wet": "Keep water away from electronics to prevent short-circuits and corrosion."
+      }
+    },
+    {
+      "id": "RULE-TRASH-001",
+      "category": "trash",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "மறுசுழற்சி செய்ய முடியாத வீட்டுக் குப்பை (கருப்பு தொட்டி)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "பையில் கட்டி கருப்பு தொட்டியில் போடவும்.",
+      "safety_warnings": "மருந்துகள் அல்லது பேட்டரிகளை இதில் போடக்கூடாது. எரிக்கக் கூடாது.",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "Municipal Inert Waste Collection (Black Bin)"
+      ],
+      "prohibited_pathways": [
+        "Recycling Bins",
+        "Compost"
+      ],
+      "review_status": "VERIFIED",
+      "source": "திடக் கழிவு விதிகள் 2016",
+      "reuse_ideas": [
+        "மறுபயன்பாடு செய்ய முடியாது."
+      ],
+      "cleaning_tips": "பொருந்தாது.",
+      "environmental_impact": "முறையாக நிலத்தில் புதைக்கப்படுகிறது.",
+      "condition_notes": {
+        "broken": "Wrap sharp fragments safely before disposal.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "ஈரக்கழிவை பச்சை தொட்டியில் போடவும்."
+      }
+    },
+    {
+      "id": "RULE-WASHING_MACHINE-001",
+      "category": "Washing Machine",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "அங்கீகரிக்கப்பட்ட மின் கழிவு மையம் / நகராட்சி கனரக கழிவு சேகரிப்பு",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "தண்ணீரை முழுமையாக வெளியேற்றவும், பிளக்கை கழற்றவும்.",
+      "safety_warnings": "மிகவும் கனமானது, தூக்கும்போது கவனம் தேவை.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized White-Goods Recycler",
+        "Brand Exchange Schemes"
+      ],
+      "prohibited_pathways": [
+        "Curbside Abandonment"
+      ],
+      "review_status": "VERIFIED",
+      "source": "மின் கழிவு விதிகள் 2022",
+      "reuse_ideas": [
+        "உள் சுழல் தொட்டியை தோட்டத்தில் செடி வளர்க்க பயன்படுத்தலாம்."
+      ],
+      "cleaning_tips": "உலர வைக்கவும்.",
+      "environmental_impact": "எஃகு, தாமிரம் மற்றும் பிளாஸ்டிக் மறுசுழற்சி செய்யப்படுகிறது.",
+      "condition_notes": {
+        "broken": "Wrap sharp fragments safely before disposal.",
+        "crushed": "Flatten clean items to optimize storage space.",
+        "wet": "நீரை முழுமையாக அகற்றவும்."
+      }
+    }
+  ]
+}

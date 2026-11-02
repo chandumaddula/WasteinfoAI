@@ -33,6 +33,10 @@ class AppContainer(private val context: Context) {
         SessionManager(context)
     }
 
+    val languageManager: com.wasteinfoai.core.language.LanguageManager by lazy {
+        com.wasteinfoai.core.language.LanguageManager(context, sessionManager)
+    }
+
     val apiService: ApiService by lazy {
         ApiClient.create(sessionManager)
     }
