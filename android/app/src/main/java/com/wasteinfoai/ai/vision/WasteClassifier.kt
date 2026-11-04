@@ -38,8 +38,7 @@ class WasteClassifier(
     companion object {
         private const val TAG = "WasteClassifier"
         val FALLBACK_LABELS = listOf(
-            // must match labels/class_names.json of the 4-stream model
-            "biodegradable", "E-waste", "hazardous", "Recyclables", "not_waste"
+            "biodegradable", "E-waste", "hazardous", "Recyclables", "Trash", "not_waste"
         )
         val LEGACY_17_CLASSES = listOf(
             "Battery", "Keyboard", "Microwave", "Mobile", "Mouse", "PCB",
@@ -54,7 +53,7 @@ class WasteClassifier(
             "washing machine" to "E-waste", "e-waste" to "E-waste",
             "cardboard" to "Recyclables", "glass" to "Recyclables", "metal" to "Recyclables",
             "paper" to "Recyclables", "plastic" to "Recyclables", "recyclables" to "Recyclables",
-            "trash" to "hazardous", "chemical_waste" to "hazardous", "medial_wastes" to "hazardous",
+            "trash" to "Trash", "chemical_waste" to "hazardous", "medial_wastes" to "hazardous",
             "medical_waste" to "hazardous", "pesticides" to "hazardous", "hazardous" to "hazardous",
             "not_waste" to "not_waste"
         )

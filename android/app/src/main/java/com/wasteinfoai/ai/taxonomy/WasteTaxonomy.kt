@@ -172,6 +172,7 @@ object WasteTaxonomy {
                 .flatMap { CANDIDATES_BY_CATEGORY[it].orEmpty() }
             "hazardous" -> CANDIDATES_BY_CATEGORY["Battery"].orEmpty() +
                 CANDIDATES_BY_CATEGORY["metal"].orEmpty().filter { it.id == "item-aerosol-can" } + HAZARDOUS_EXTRA
+            "trash" -> CANDIDATES_BY_CATEGORY["trash"].orEmpty()
             else -> emptyList()
         }
 

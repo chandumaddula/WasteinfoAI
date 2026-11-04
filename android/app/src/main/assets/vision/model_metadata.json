@@ -6,13 +6,14 @@
     "E-waste",
     "hazardous",
     "Recyclables",
+    "Trash",
     "not_waste"
   ],
   "input_shape": [
     1,
     3,
-    224,
-    224
+    256,
+    256
   ],
   "trained_classes": [
     "biodegradable/organic",
@@ -31,8 +32,10 @@
     "hazardous/pesticides",
     "Recyclables/cardboard",
     "Recyclables/glass",
+    "Recyclables/Metal",
     "Recyclables/paper",
     "Recyclables/plastic",
+    "Trash",
     "not_waste"
   ],
   "leaf_to_stream": [
@@ -54,12 +57,14 @@
     3,
     3,
     3,
-    4
+    3,
+    4,
+    5
   ],
   "preprocess": {
     "resize": [
-      224,
-      224
+      256,
+      256
     ],
     "center_crop": false,
     "normalization": {
