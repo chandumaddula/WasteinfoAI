@@ -37,16 +37,32 @@ class WasteClassifier(
 
     companion object {
         private const val TAG = "WasteClassifier"
-        private val FALLBACK_LABELS = listOf(
-            "Battery", "Keyboard", "Microwave", "Mobile", "Mouse",
-            "PCB", "Player", "Printer", "Television", "Washing Machine",
-            "cardboard", "glass", "metal", "organic", "paper",
-            "plastic", "trash"
+        val FALLBACK_LABELS = listOf(
+            // must match labels/class_names.json of the 4-stream model
+            "biodegradable", "E-waste", "hazardous", "Recyclables", "not_waste"
+        )
+        val LEGACY_17_CLASSES = listOf(
+            "Battery", "Keyboard", "Microwave", "Mobile", "Mouse", "PCB",
+            "Player", "Printer", "Television", "Washing Machine",
+            "cardboard", "glass", "metal", "organic", "paper", "plastic", "trash"
+        )
+        val SUBITEM_TO_STREAM = mapOf(
+            "organic" to "biodegradable", "biodegradable" to "biodegradable",
+            "battery" to "E-waste", "keyboard" to "E-waste", "microwave" to "E-waste",
+            "mobile" to "E-waste", "mouse" to "E-waste", "pcb" to "E-waste",
+            "player" to "E-waste", "printer" to "E-waste", "television" to "E-waste",
+            "washing machine" to "E-waste", "e-waste" to "E-waste",
+            "cardboard" to "Recyclables", "glass" to "Recyclables", "metal" to "Recyclables",
+            "paper" to "Recyclables", "plastic" to "Recyclables", "recyclables" to "Recyclables",
+            "trash" to "hazardous", "chemical_waste" to "hazardous", "medial_wastes" to "hazardous",
+            "medical_waste" to "hazardous", "pesticides" to "hazardous", "hazardous" to "hazardous",
+            "not_waste" to "not_waste"
         )
     }
 
     @Volatile private var module: Module? = null
     @Volatile private var classLabels: List<String> = emptyList()
+    @Volatile private var modelOutputClasses: List<String> = emptyList()
     @Volatile private var isInitialized = false
     @Volatile private var modelVersion = "unknown"
     @Volatile private var policy: PredictionAcceptancePolicy = acceptancePolicy ?: PredictionAcceptancePolicy(
@@ -97,8 +113,11 @@ class WasteClassifier(
         modelVersion = "${meta.optString("version", "?")}-${meta.optString("architecture", "model")}"
 
         val metaClasses = meta.optJSONArray("classes")
+        if (metaClasses != null) {
+            modelOutputClasses = List(metaClasses.length()) { i -> metaClasses.getString(i) }
+        }
         if (metaClasses != null && metaClasses.length() != classLabels.size) {
-            Log.e(TAG, "Metadata has ${metaClasses.length()} classes but class_names.json has ${classLabels.size}")
+            Log.i(TAG, "Model metadata has ${metaClasses.length()} classes (sub-items); class_names.json has ${classLabels.size} main streams. Stream mapping enabled.")
         }
         // Explicitly injected policy / threshold wins over metadata.
         if (acceptancePolicy == null && confidenceThreshold == null) {
@@ -213,21 +232,53 @@ class WasteClassifier(
     }
 
     private fun parseInferenceOutput(values: FloatArray, durationMs: Long): ClassificationResult {
-        val labels = classLabels
-        if (values.size != labels.size) {
+        val isProb = looksLikeProbabilities(values)
+        val rawProbabilities = if (isProb) values else policy.computeSoftmax(values)
+
+        val finalProbabilities: FloatArray
+        val finalLabels: List<String>
+        var detectedSubItem: String? = null
+
+        val subItemClasses = if (modelOutputClasses.size == values.size) modelOutputClasses else LEGACY_17_CLASSES
+
+        if (values.size != classLabels.size && values.size == subItemClasses.size) {
+            // Model outputs sub-item classes (e.g. 17 classes).
+            // Aggregate sub-item probabilities into target municipal streams (e.g. 5 streams).
+            val streamSums = FloatArray(classLabels.size)
+            val subItemByStream = mutableMapOf<Int, Pair<String, Float>>()
+
+            for (i in values.indices) {
+                val subName = subItemClasses[i]
+                val targetStream = SUBITEM_TO_STREAM[subName.lowercase()] ?: subName
+                val streamIdx = classLabels.indexOfFirst { it.equals(targetStream, ignoreCase = true) }
+                if (streamIdx >= 0) {
+                    streamSums[streamIdx] += rawProbabilities[i]
+                    val currentBest = subItemByStream[streamIdx]
+                    if (currentBest == null || rawProbabilities[i] > currentBest.second) {
+                        subItemByStream[streamIdx] = Pair(subName, rawProbabilities[i])
+                    }
+                }
+            }
+            finalProbabilities = streamSums
+            finalLabels = classLabels
+
+            val topStreamIdx = finalProbabilities.indices.maxByOrNull { finalProbabilities[it] } ?: 0
+            detectedSubItem = subItemByStream[topStreamIdx]?.first
+        } else if (values.size == classLabels.size) {
+            finalProbabilities = rawProbabilities
+            finalLabels = classLabels
+        } else {
             return ClassificationResult.uncertain(
-                reason = "Model output size ${values.size} does not match ${labels.size} class labels.",
+                reason = "Model output size ${values.size} does not match ${classLabels.size} class labels.",
                 durationMs = durationMs,
                 state = AcceptanceState.INVALID_OUTPUT
             )
         }
 
-        val isProb = looksLikeProbabilities(values)
-        val evalResult = if (isProb) policy.evaluateProbabilities(values, labels) else policy.evaluate(values, labels)
-        val probabilities = if (isProb) values else policy.computeSoftmax(values)
+        val evalResult = policy.evaluateProbabilities(finalProbabilities, finalLabels)
 
-        val topK = probabilities.indices
-            .map { ClassScore(it, labels[it], probabilities[it]) }
+        val topK = finalProbabilities.indices
+            .map { ClassScore(it, finalLabels[it], finalProbabilities[it]) }
             .sortedByDescending { it.score }
             .take(3)
 
@@ -241,7 +292,8 @@ class WasteClassifier(
                 isUncertain = false,
                 topKResults = topK,
                 acceptanceState = AcceptanceState.ACCEPTED,
-                policyResult = evalResult
+                policyResult = evalResult,
+                specificSubItem = detectedSubItem
             )
         } else {
             ClassificationResult.uncertain(
@@ -250,7 +302,10 @@ class WasteClassifier(
                 topK = topK,
                 state = evalResult.state,
                 policyResult = evalResult
-            ).copy(confidence = evalResult.confidence) // keep the real top-1 score so the UI does not show 0.0%
+            ).copy(
+                confidence = evalResult.confidence,
+                specificSubItem = detectedSubItem
+            )
         }
     }
 

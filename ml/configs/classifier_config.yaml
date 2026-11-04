@@ -13,7 +13,8 @@ model:
 dataset:
   image_dir: "data/waste"                   # one sub-folder per class (case-insensitive match)
   extra_image_dirs: ["data/real_world"]     # OPTIONAL: your own phone photos / TACO crops, same class sub-folders
-  extra_repeat: 3                           # repeat real-world train images x3 (different augmentation each time)
+  extra_repeat: 3                           # repeat real-world train images x3 (not applied to not_waste)
+  not_waste_max_ratio: 2.0                  # train not_waste <= 2x the median waste-class size (stops it dominating)
   splits_dir: "data/splits"                 # split_manifest.json is written here once and reused everywhere
   labels_file: "labels/class_names.json"
   train_split: 0.70
@@ -34,6 +35,8 @@ training:
   weight_decay: 0.0001
   min_lr: 0.00001
   label_smoothing: 0.1
+  balance_power: 0.5        # 0 = off, 1 = fully balanced. 0.5 samples classes in proportion to sqrt(size):
+                            # E-waste (63% of the images) stops drowning hazardous (3%) without repeating 130 photos 40x
   device: "auto"
   checkpoint_dir: "checkpoints"
   early_stopping_patience: 6

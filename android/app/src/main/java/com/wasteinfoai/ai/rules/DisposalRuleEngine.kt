@@ -250,7 +250,7 @@ class DisposalRuleEngine(
         if (!specificItem.isNullOrBlank()) {
             val query = specificItem.lowercase().trim()
             (bestItemMatch(sameCategory, query, targetJur)
-                ?: bestItemMatch(rules.filter { it.specificItem?.lowercase()?.trim() == query }, query, targetJur)
+                ?: bestItemMatch(rules.filter { it.specificItem?.lowercase()?.trim() == query || it.category.lowercase().trim() == query }, query, targetJur)
                 )?.let { return preserveSafety(it, category) }
         }
 

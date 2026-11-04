@@ -47,6 +47,7 @@ fun ScanResultScreen(
     viewModel: ScanResultViewModel,
     userCategory: String = "",
     onNavigateBack: () -> Unit,
+    onDone: (() -> Unit)? = null,
     onNavigateToCreateReport: (String, String) -> Unit,
     onNavigateToAssistant: (String) -> Unit
 ) {
@@ -147,7 +148,7 @@ fun ScanResultScreen(
                                 ?: state.classification.label
                             onNavigateToAssistant(label)
                         },
-                        onDoneClicked = onNavigateBack,
+                        onDoneClicked = onDone ?: onNavigateBack,
                         onSpeakClicked = { viewModel.speakGuidance() },
                         onSelectCategory = { cat, subItem ->
                             viewModel.confirmCategory(cat, subItem)
@@ -376,9 +377,11 @@ private fun SuccessContent(
         val isRejected = !state.classification.isAccepted && !state.isUserConfirmed
         val policy = state.classification.policyResult
         val rawDisplayTitle = state.userConfirmedLabel
-            ?: state.hierarchicalIdentification?.specificItem
             ?: if (isRejected) stringResource(R.string.scan_no_clear_waste) else state.classification.label
         val displayTitle = if (isRejected) rawDisplayTitle else CategoryLocalization.localizedCategory(rawDisplayTitle)
+        val detectedSubItem = state.hierarchicalIdentification?.specificItem?.takeIf {
+            !it.equals(rawDisplayTitle, ignoreCase = true) && !it.equals(state.classification.label, ignoreCase = true)
+        }
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -428,6 +431,14 @@ private fun SuccessContent(
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
+                        if (detectedSubItem != null) {
+                            Text(
+                                text = "Item: $detectedSubItem",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.85f)
+                            )
+                        }
                         val sourceText = when {
                             isRejected -> stringResource(R.string.scan_status_prefix, state.classification.acceptanceState.name.replace('_', ' '))
                             state.hierarchicalIdentification?.identificationSource == IdentificationSource.BARCODE_LOOKUP -> stringResource(R.string.scan_source_barcode)
@@ -954,12 +965,15 @@ private fun SuccessContent(
 
         Button(
             onClick = onDoneClicked,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(stringResource(R.string.scan_done), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+        Spacer(modifier = Modifier.height(28.dp))
     }
 }
 
@@ -974,9 +988,9 @@ private fun binColorFor(name: String): Color = when (name.uppercase()) {
 
 private fun ItemAnalysis.summaryTitle(): String =
     userConfirmedLabel
-        ?: identification.specificItem
         ?: if (!identification.needsUserConfirmation) identification.coarseCategory
-        else classification.topKResults.firstOrNull()?.let { "Unsure \u2014 maybe ${it.label}" }
+        else identification.specificItem
+        ?: classification.topKResults.firstOrNull()?.let { "Unsure \u2014 maybe ${it.label}" }
         ?: "Unidentified item"
 
 @Composable

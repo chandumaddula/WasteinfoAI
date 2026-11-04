@@ -3,504 +3,335 @@
     "arch": "mobilenetv3_large_100",
     "checkpoint": "checkpoints/best_model.pth",
     "tta": false,
-    "evaluated_at": "2026-10-23T18:49:16.718797+00:00",
+    "evaluated_at": "2026-11-04T04:59:29.840940+00:00",
     "classes": [
-      "Battery",
-      "Keyboard",
-      "Microwave",
-      "Mobile",
-      "Mouse",
-      "PCB",
-      "Player",
-      "Printer",
-      "Television",
-      "Washing Machine",
-      "cardboard",
-      "glass",
-      "metal",
-      "organic",
-      "paper",
-      "plastic",
-      "trash"
+      "biodegradable",
+      "E-waste",
+      "hazardous",
+      "Recyclables",
+      "not_waste"
+    ],
+    "trained_classes": [
+      "biodegradable/organic",
+      "E-waste/Battery",
+      "E-waste/Keyboard",
+      "E-waste/Microwave",
+      "E-waste/Mobile",
+      "E-waste/Mouse",
+      "E-waste/PCB",
+      "E-waste/Player",
+      "E-waste/Printer",
+      "E-waste/Television",
+      "E-waste/Washing Machine",
+      "hazardous/chemical_waste",
+      "hazardous/MEDIAL_WASTES",
+      "hazardous/pesticides",
+      "Recyclables/cardboard",
+      "Recyclables/glass",
+      "Recyclables/paper",
+      "Recyclables/plastic",
+      "not_waste"
     ]
   },
   "overall": {
-    "test_loss": 0.2294,
-    "accuracy": 0.9654,
-    "top3_accuracy": 0.9961,
-    "macro_f1": 0.9654,
-    "ece_uncalibrated": 0.1037,
-    "samples": 1013
+    "test_loss": 0.1365,
+    "accuracy": 0.9858,
+    "top3_accuracy": 0.9975,
+    "macro_f1": 0.9624,
+    "ece_uncalibrated": 0.097,
+    "samples": 1193
   },
   "per_class": {
-    "Battery": {
-      "precision": 0.9516,
-      "recall": 1.0,
-      "f1-score": 0.9752,
-      "support": 59.0
-    },
-    "Keyboard": {
-      "precision": 1.0,
-      "recall": 0.9833,
-      "f1-score": 0.9916,
-      "support": 60.0
-    },
-    "Microwave": {
-      "precision": 1.0,
-      "recall": 0.95,
-      "f1-score": 0.9744,
-      "support": 60.0
-    },
-    "Mobile": {
-      "precision": 1.0,
-      "recall": 0.9833,
-      "f1-score": 0.9916,
-      "support": 60.0
-    },
-    "Mouse": {
-      "precision": 1.0,
-      "recall": 0.9661,
-      "f1-score": 0.9828,
-      "support": 59.0
-    },
-    "PCB": {
-      "precision": 0.9831,
-      "recall": 1.0,
-      "f1-score": 0.9915,
-      "support": 58.0
-    },
-    "Player": {
-      "precision": 0.9661,
-      "recall": 0.9661,
-      "f1-score": 0.9661,
-      "support": 59.0
-    },
-    "Printer": {
-      "precision": 0.9516,
-      "recall": 1.0,
-      "f1-score": 0.9752,
-      "support": 59.0
-    },
-    "Television": {
-      "precision": 0.9677,
-      "recall": 1.0,
-      "f1-score": 0.9836,
-      "support": 60.0
-    },
-    "Washing Machine": {
-      "precision": 1.0,
+    "biodegradable": {
+      "precision": 0.9508,
       "recall": 0.9667,
-      "f1-score": 0.9831,
+      "f1-score": 0.9587,
       "support": 60.0
     },
-    "cardboard": {
-      "precision": 0.9649,
-      "recall": 0.9167,
-      "f1-score": 0.9402,
-      "support": 60.0
+    "E-waste": {
+      "precision": 0.995,
+      "recall": 0.9966,
+      "f1-score": 0.9958,
+      "support": 594.0
     },
-    "glass": {
-      "precision": 0.9322,
-      "recall": 0.9167,
-      "f1-score": 0.9244,
-      "support": 60.0
+    "hazardous": {
+      "precision": 0.9615,
+      "recall": 0.8333,
+      "f1-score": 0.8929,
+      "support": 30.0
     },
-    "metal": {
-      "precision": 0.9048,
-      "recall": 0.95,
-      "f1-score": 0.9268,
-      "support": 60.0
+    "Recyclables": {
+      "precision": 0.9802,
+      "recall": 0.9764,
+      "f1-score": 0.9783,
+      "support": 254.0
     },
-    "organic": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1-score": 1.0,
-      "support": 60.0
-    },
-    "paper": {
-      "precision": 0.95,
-      "recall": 0.95,
-      "f1-score": 0.95,
-      "support": 60.0
-    },
-    "plastic": {
-      "precision": 0.9123,
-      "recall": 0.8667,
-      "f1-score": 0.8889,
-      "support": 60.0
-    },
-    "trash": {
-      "precision": 0.9365,
-      "recall": 1.0,
-      "f1-score": 0.9672,
-      "support": 59.0
+    "not_waste": {
+      "precision": 0.9806,
+      "recall": 0.9922,
+      "f1-score": 0.9864,
+      "support": 255.0
     }
   },
   "most_confused": [
     {
-      "count": 4,
-      "true": "plastic",
-      "predicted": "metal"
-    },
-    {
-      "count": 4,
-      "true": "glass",
-      "predicted": "plastic"
+      "count": 3,
+      "true": "hazardous",
+      "predicted": "Recyclables"
     },
     {
       "count": 3,
-      "true": "cardboard",
-      "predicted": "paper"
-    },
-    {
-      "count": 2,
-      "true": "plastic",
-      "predicted": "trash"
-    },
-    {
-      "count": 2,
-      "true": "plastic",
-      "predicted": "glass"
+      "true": "Recyclables",
+      "predicted": "not_waste"
     },
     {
       "count": 1,
-      "true": "paper",
-      "predicted": "trash"
+      "true": "not_waste",
+      "predicted": "Recyclables"
     },
     {
       "count": 1,
-      "true": "paper",
-      "predicted": "metal"
+      "true": "not_waste",
+      "predicted": "E-waste"
     },
     {
       "count": 1,
-      "true": "paper",
-      "predicted": "cardboard"
+      "true": "hazardous",
+      "predicted": "not_waste"
+    },
+    {
+      "count": 1,
+      "true": "hazardous",
+      "predicted": "biodegradable"
+    },
+    {
+      "count": 1,
+      "true": "biodegradable",
+      "predicted": "Recyclables"
+    },
+    {
+      "count": 1,
+      "true": "biodegradable",
+      "predicted": "E-waste"
     }
   ],
   "confusion_matrix": [
     [
-      59,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    [
-      1,
-      59,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    [
-      1,
-      0,
-      57,
-      0,
-      0,
-      0,
-      1,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      59,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      57,
-      0,
-      1,
-      1,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
       58,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      1,
-      57,
-      0,
       1,
       0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      59,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      60,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
+      1,
       0
     ],
     [
       1,
+      592,
       0,
       0,
-      0,
-      0,
-      0,
-      0,
-      1,
-      0,
-      58,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0
+      1
     ],
     [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      55,
-      1,
       1,
       0,
+      25,
       3,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      55,
-      0,
-      0,
-      0,
-      4,
       1
     ],
     [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
       1,
       1,
-      57,
-      0,
-      0,
       1,
-      0
+      248,
+      3
     ],
     [
       0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      60,
-      0,
-      0,
-      0
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
       1,
       0,
       1,
-      0,
-      57,
-      0,
-      1
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      2,
-      4,
-      0,
-      0,
-      52,
-      2
-    ],
-    [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      59
+      253
     ]
-  ]
+  ],
+  "leaf_level": {
+    "accuracy": 0.9631,
+    "macro_f1": 0.9226,
+    "per_class": {
+      "biodegradable/organic": {
+        "precision": 0.9508,
+        "recall": 0.9667,
+        "f1-score": 0.9587,
+        "support": 60.0
+      },
+      "E-waste/Battery": {
+        "precision": 0.9219,
+        "recall": 0.9833,
+        "f1-score": 0.9516,
+        "support": 60.0
+      },
+      "E-waste/Keyboard": {
+        "precision": 1.0,
+        "recall": 0.9833,
+        "f1-score": 0.9916,
+        "support": 60.0
+      },
+      "E-waste/Microwave": {
+        "precision": 0.9672,
+        "recall": 0.9833,
+        "f1-score": 0.9752,
+        "support": 60.0
+      },
+      "E-waste/Mobile": {
+        "precision": 1.0,
+        "recall": 0.9833,
+        "f1-score": 0.9916,
+        "support": 60.0
+      },
+      "E-waste/Mouse": {
+        "precision": 0.9667,
+        "recall": 0.9831,
+        "f1-score": 0.9748,
+        "support": 59.0
+      },
+      "E-waste/PCB": {
+        "precision": 1.0,
+        "recall": 0.9655,
+        "f1-score": 0.9825,
+        "support": 58.0
+      },
+      "E-waste/Player": {
+        "precision": 0.9194,
+        "recall": 0.9661,
+        "f1-score": 0.9421,
+        "support": 59.0
+      },
+      "E-waste/Printer": {
+        "precision": 0.9828,
+        "recall": 0.9828,
+        "f1-score": 0.9828,
+        "support": 58.0
+      },
+      "E-waste/Television": {
+        "precision": 0.9821,
+        "recall": 0.9167,
+        "f1-score": 0.9483,
+        "support": 60.0
+      },
+      "E-waste/Washing Machine": {
+        "precision": 1.0,
+        "recall": 0.9167,
+        "f1-score": 0.9565,
+        "support": 60.0
+      },
+      "hazardous/chemical_waste": {
+        "precision": 0.75,
+        "recall": 0.5455,
+        "f1-score": 0.6316,
+        "support": 11.0
+      },
+      "hazardous/MEDIAL_WASTES": {
+        "precision": 1.0,
+        "recall": 0.5,
+        "f1-score": 0.6667,
+        "support": 4.0
+      },
+      "hazardous/pesticides": {
+        "precision": 0.75,
+        "recall": 0.8,
+        "f1-score": 0.7742,
+        "support": 15.0
+      },
+      "Recyclables/cardboard": {
+        "precision": 0.95,
+        "recall": 0.95,
+        "f1-score": 0.95,
+        "support": 60.0
+      },
+      "Recyclables/glass": {
+        "precision": 0.9836,
+        "recall": 1.0,
+        "f1-score": 0.9917,
+        "support": 60.0
+      },
+      "Recyclables/paper": {
+        "precision": 0.9062,
+        "recall": 0.9667,
+        "f1-score": 0.9355,
+        "support": 60.0
+      },
+      "Recyclables/plastic": {
+        "precision": 0.9577,
+        "recall": 0.9189,
+        "f1-score": 0.9379,
+        "support": 74.0
+      },
+      "not_waste": {
+        "precision": 0.9769,
+        "recall": 0.9961,
+        "f1-score": 0.9864,
+        "support": 255.0
+      }
+    },
+    "most_confused": [
+      {
+        "count": 3,
+        "true": "Recyclables/plastic",
+        "predicted": "not_waste"
+      },
+      {
+        "count": 3,
+        "true": "Recyclables/cardboard",
+        "predicted": "Recyclables/paper"
+      },
+      {
+        "count": 2,
+        "true": "hazardous/chemical_waste",
+        "predicted": "hazardous/pesticides"
+      },
+      {
+        "count": 2,
+        "true": "hazardous/chemical_waste",
+        "predicted": "Recyclables/paper"
+      },
+      {
+        "count": 2,
+        "true": "E-waste/Washing Machine",
+        "predicted": "E-waste/Player"
+      },
+      {
+        "count": 2,
+        "true": "E-waste/Washing Machine",
+        "predicted": "E-waste/Battery"
+      },
+      {
+        "count": 2,
+        "true": "E-waste/Television",
+        "predicted": "E-waste/Microwave"
+      },
+      {
+        "count": 2,
+        "true": "E-waste/Player",
+        "predicted": "E-waste/Mouse"
+      },
+      {
+        "count": 1,
+        "true": "not_waste",
+        "predicted": "Recyclables/cardboard"
+      },
+      {
+        "count": 1,
+        "true": "hazardous/pesticides",
+        "predicted": "hazardous/chemical_waste"
+      },
+      {
+        "count": 1,
+        "true": "hazardous/pesticides",
+        "predicted": "biodegradable/organic"
+      },
+      {
+        "count": 1,
+        "true": "hazardous/pesticides",
+        "predicted": "Recyclables/paper"
+      }
+    ]
+  }
 }

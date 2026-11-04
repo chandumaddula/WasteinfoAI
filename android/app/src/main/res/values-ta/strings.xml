@@ -50,7 +50,7 @@
     <string name="drawer_section_main">முக்கிய வழிசெலுத்தல்</string>
     <string name="drawer_section_roles">தளங்கள் &amp; பாத்திரங்கள்</string>
     <string name="drawer_section_system">அமைப்பு &amp; நெட்வொர்க்</string>
-    <string name="home_title">wasteinfoAI</string>
+    <string name="home_title">WasteinfoAI</string>
     <string name="home_welcome_back">மீண்டும் வருக</string>
     <string name="home_quick_actions">விரைவுச் செயல்கள்</string>
     <string name="home_recent_scans">சமீபத்திய கழிவு ஸ்கேன்கள்</string>

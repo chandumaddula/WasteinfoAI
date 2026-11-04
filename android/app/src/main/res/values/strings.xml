@@ -50,7 +50,7 @@
     <string name="drawer_section_main">MAIN NAVIGATION</string>
     <string name="drawer_section_roles">PORTALS &amp; ROLES</string>
     <string name="drawer_section_system">SYSTEM &amp; NETWORK</string>
-    <string name="home_title">wasteinfoAI</string>
+    <string name="home_title">WasteinfoAI</string>
     <string name="home_welcome_back">Welcome back</string>
     <string name="home_quick_actions">Quick Actions</string>
     <string name="home_recent_scans">Recent Waste Scans</string>

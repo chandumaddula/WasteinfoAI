@@ -535,7 +535,7 @@
         "Use coffee grounds and dried crushed eggshells as garden fertilizer for acid-loving plants."
       ],
       "cleaning_tips": "No cleaning needed. Strictly remove all plastic stickers, rubber bands, and twist ties.",
-      "environmental_impact": "When dumped in landfills, organic waste creates anaerobic methane emissions—a greenhouse gas 28x stronger than CO2.",
+      "environmental_impact": "When dumped in landfills, organic waste creates anaerobic methane emissions\u2014a greenhouse gas 28x stronger than CO2.",
       "condition_notes": {
         "wet": "Wet organic waste belongs strictly in the Green Bin for municipal composting or biomethanation.",
         "greasy": "Small cooking oils can be composted; large amounts of liquid grease should be collected in a jar for specialized processing.",
@@ -912,6 +912,110 @@
         "crushed": "Flatten clean items to optimize storage space.",
         "wet": "Dry wet items before adding to dry recyclable bins."
       }
+    },
+    {
+      "id": "RULE-STREAM-BIODEGRADABLE",
+      "category": "biodegradable",
+      "disposal_method": "Wet Waste (Green Bin) / Home Composter / Biogas Plant",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "Segregate food scraps, fruit/vegetable peels, leftover food, tea leaves, and flowers. Remove all plastic packaging, rubber bands, and stickers.",
+      "safety_warnings": "None for normal food waste. Keep away from pets and do not mix with dry waste.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "cleaning_tips": "No washing needed. Drain excess liquid before binning.",
+      "reuse_ideas": [
+        "Compost peels and scraps for plants",
+        "Use vegetable scraps for stock before discarding"
+      ],
+      "environmental_impact": "Food waste rotting in landfills releases methane, a strong greenhouse gas. Composting keeps it out of landfills and returns nutrients to soil.",
+      "source": "India Solid Waste Management Rules 2026 (wet waste stream)"
+    },
+    {
+      "id": "RULE-STREAM-RECYCLABLES",
+      "category": "Recyclables",
+      "disposal_method": "Dry Recyclable Waste (Blue Bin) / Kabadiwala / Material Recovery Facility",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "Empty, rinse and dry containers. Flatten boxes and cans. Keep paper dry. Do not mix with food waste.",
+      "safety_warnings": "Handle broken glass and sharp can edges carefully; wrap broken glass in paper.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue Bin)",
+        "Kabadiwala / Scrap Dealer",
+        "Material Recovery Facility"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Open Burning",
+        "Open Littering"
+      ],
+      "cleaning_tips": "Rinse out liquids and food residue. Greasy or food-soaked items contaminate recyclables.",
+      "reuse_ideas": [
+        "Reuse jars and bottles for storage",
+        "Reuse cardboard boxes for storage or shipping"
+      ],
+      "environmental_impact": "Recycling paper, metal, glass and plastic saves raw materials and energy and cuts landfill volume.",
+      "source": "India Solid Waste Management Rules 2026 (dry waste stream)"
+    },
+    {
+      "id": "RULE-STREAM-EWASTE",
+      "category": "E-waste",
+      "disposal_method": "Authorized E-Waste Collection Point / Recycler",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "Keep the device intact. Remove loose batteries and cartridges if it is safe, wipe personal data, and hand it to an authorised collector or a producer take-back point.",
+      "safety_warnings": "Do not open, crush or burn electronics. Screens, capacitors and batteries can injure and release toxic substances.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Producer Take-Back / EPR Collection Point"
+      ],
+      "prohibited_pathways": [
+        "Household Dustbin",
+        "Open Burning",
+        "Informal Scrap Breaking"
+      ],
+      "cleaning_tips": "Wipe the outside with a dry cloth. Never wash electronics.",
+      "reuse_ideas": [
+        "Repair, donate or resell working devices",
+        "Use old keyboards or mice as spares"
+      ],
+      "environmental_impact": "Electronics contain lead, mercury and other toxic substances, and precious metals worth recovering. Proper recycling keeps both safe and in use.",
+      "source": "India E-Waste (Management) Rules; Solid Waste Management Rules 2026"
+    },
+    {
+      "id": "RULE-STREAM-HAZARDOUS",
+      "category": "hazardous",
+      "disposal_method": "Household Hazardous / Special Care Waste Collection Point",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "Keep in the original container, tightly closed and labelled. Do not mix chemicals. Tape battery terminals. Put sharp medical waste in a puncture-proof container.",
+      "safety_warnings": "Do not burn, crush, puncture or pour into drains. Keep away from children, pets and heat.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Special Care / Hazardous Waste Collection",
+        "Authorized Hazardous Waste Facility",
+        "Pharmacy / Hospital Take-Back (medicines)"
+      ],
+      "prohibited_pathways": [
+        "Regular Household Bins",
+        "Drains and Toilets",
+        "Open Burning"
+      ],
+      "cleaning_tips": "Do not rinse chemical containers. Leave residue sealed for the collection point.",
+      "reuse_ideas": [],
+      "environmental_impact": "Chemicals, paint, batteries and medical waste can poison soil and water and harm sanitation workers when thrown in ordinary bins.",
+      "source": "India Solid Waste Management Rules 2026 (special care waste)"
     }
   ]
 }

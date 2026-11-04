@@ -50,7 +50,7 @@
     <string name="drawer_section_main">मुख्य नेविगेशन</string>
     <string name="drawer_section_roles">पोर्टल और भूमिकाएँ</string>
     <string name="drawer_section_system">सिस्टम और नेटवर्क</string>
-    <string name="home_title">wasteinfoAI</string>
+    <string name="home_title">WasteinfoAI</string>
     <string name="home_welcome_back">पुनः स्वागत है</string>
     <string name="home_quick_actions">त्वरित कार्रवाइयां</string>
     <string name="home_recent_scans">हालिया कचरा स्कैन</string>

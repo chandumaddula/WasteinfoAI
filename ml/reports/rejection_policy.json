@@ -1,19 +1,26 @@
 {
-  "version": "2.0.0-calibrated",
-  "temperature": 0.5841259956359863,
+  "version": "3.0.0-calibrated",
+  "temperature": 0.45894855260849,
   "confidence_threshold": 0.95,
   "min_margin": 0.0,
   "max_norm_entropy": 0.5,
+  "streams": [
+    "biodegradable",
+    "E-waste",
+    "hazardous",
+    "Recyclables",
+    "not_waste"
+  ],
   "validation_metrics": {
-    "coverage": 0.8904,
-    "false_rejection_rate": 0.1096,
-    "accuracy_on_accepted": 0.9922,
-    "ood_false_accept_rate": 0.0845
+    "coverage": 0.9595,
+    "false_rejection_rate": 0.0405,
+    "accuracy_on_accepted": 1.0,
+    "ood_false_accept_rate": 0.1625
   },
   "test_metrics": {
-    "coverage": 0.8983,
-    "false_rejection_rate": 0.1017,
-    "accuracy_on_accepted": 0.9923,
+    "coverage": 0.9552,
+    "false_rejection_rate": 0.0448,
+    "accuracy_on_accepted": 0.9978,
     "ood_false_accept_rate": 0.0
   },
   "ood_sets": {
@@ -21,6 +28,6 @@
     "flat_color": 150,
     "smooth_texture": 150,
     "blurred_waste": 150,
-    "real_ood": 1198
+    "real_ood": 728
   }
 }

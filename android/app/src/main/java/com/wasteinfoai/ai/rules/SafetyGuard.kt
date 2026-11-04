@@ -23,11 +23,11 @@ enum class HazardSeverity {
  */
 object SafetyGuard {
 
-    private val CRITICAL_HAZARDS = setOf("Battery", "PCB", "chemicals", "biohazard", "asbestos")
+    private val CRITICAL_HAZARDS = setOf("Battery", "PCB", "chemicals", "biohazard", "asbestos", "hazardous")
     private val HIGH_HAZARDS = setOf("Microwave", "Mobile", "Television", "Printer")
     private val MODERATE_HAZARDS = setOf("glass", "metal")
     // Previously fell through to "standard domestic waste ... flatten cardboard" advice.
-    private val E_WASTE_GENERAL = setOf("Keyboard", "Mouse", "Player", "Washing Machine")
+    private val E_WASTE_GENERAL = setOf("Keyboard", "Mouse", "Player", "Washing Machine", "E-waste")
 
     fun evaluateSafety(category: String, isUncertain: Boolean): SafetyAssessment {
         if (isUncertain) {

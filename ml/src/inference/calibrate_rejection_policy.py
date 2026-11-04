@@ -19,26 +19,30 @@ import torchvision.transforms.functional as TF
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from src.common import (IMAGE_EXTS, accept_mask, build_transforms, calibrated_probs,  # noqa: E402
+from src.common import (IMAGE_EXTS, accept_mask, build_transforms, check_checkpoint_matches,  # noqa: E402
                         collect_logits, get_device, load_checkpoint, load_class_names, load_config,
-                        logits_for_tensor, make_loaders, project_root)
+                        logits_for_tensor, make_data, project_root, stream_probs)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("calibrate_rejection")
 
 
-def fit_temperature(logits, targets) -> float:
+def fit_temperature(leaf_logits, stream_targets, tax) -> float:
+    """Temperature that minimises the loss of the MAIN-category probabilities (the ones the app thresholds)."""
     log_t = torch.zeros(1, requires_grad=True)
     opt = torch.optim.LBFGS([log_t], lr=0.1, max_iter=100)
+    m = torch.as_tensor(tax.matrix(), dtype=leaf_logits.dtype)
+    rows = torch.arange(len(stream_targets))
 
     def closure():
         opt.zero_grad()
-        loss = F.cross_entropy(logits / log_t.exp(), targets)
+        p = torch.softmax(leaf_logits / log_t.exp(), dim=1) @ m
+        loss = -torch.log(p[rows, stream_targets].clamp_min(1e-9)).mean()
         loss.backward()
         return loss
 
     opt.step(closure)
-    return float(log_t.exp())
+    return float(log_t.exp().detach())
 
 
 def build_ood_logits(model, val_loader, cfg, root, device, tta, n=150):
@@ -105,20 +109,22 @@ def main():
     root = project_root()
     cfg = load_config(root / args.config)
     device = get_device(cfg["training"]["device"])
-    classes = load_class_names(cfg, root)
-    model, _ = load_checkpoint(root / args.checkpoint, device)
-    loaders = make_loaders(cfg, root, classes)
+    loaders, tax = make_data(cfg, root, load_class_names(cfg, root))
+    model, ckpt = load_checkpoint(root / args.checkpoint, device)
+    check_checkpoint_matches(ckpt, tax)
     tta, ev = cfg["evaluation"]["tta"], cfg["evaluation"]
-    reject_idx = classes.index("not_waste") if "not_waste" in classes else None
+    leaf_to_stream = torch.as_tensor(tax.leaf_to_stream)
+    reject_idx = tax.streams.index("not_waste") if "not_waste" in tax.streams else None
 
-    val_logits, val_y = collect_logits(model, loaders["val"], device, tta)
-    temperature = fit_temperature(val_logits, val_y)
+    # Everything below works on MAIN-category probabilities (sum of the sub-folder probabilities).
+    val_logits, val_leaf_y = collect_logits(model, loaders["val"], device, tta)
+    val_y = leaf_to_stream[val_leaf_y]
+    temperature = fit_temperature(val_logits, val_y, tax)
     logger.info("Fitted temperature: %.3f", temperature)
-    val_probs = calibrated_probs(val_logits, temperature)
+    val_probs = stream_probs(val_logits, tax, temperature)
 
     ood = build_ood_logits(model, loaders["val"], cfg, root, device, tta)
-    ood_probs = calibrated_probs(torch.cat(list(ood.values())), temperature)
-    # real photos are the most informative; weight them equal to all synthetic types together
+    ood_probs = stream_probs(torch.cat(list(ood.values())), tax, temperature)
     logger.info("OOD sets: %s", {k: len(v) for k, v in ood.items()})
 
     best, best_key, feasible_any = None, None, False
@@ -136,16 +142,16 @@ def main():
         logger.warning("No policy met the targets; using best trade-off. Consider more data / real OOD images.")
 
     pol, val_metrics = best
-    test_logits, test_y = collect_logits(model, loaders["test"], device, tta)
-    test_metrics = evaluate_policy(calibrated_probs(test_logits, temperature), test_y, None, pol, reject_idx)
+    test_logits, test_leaf_y = collect_logits(model, loaders["test"], device, tta)
+    test_metrics = evaluate_policy(stream_probs(test_logits, tax, temperature), leaf_to_stream[test_leaf_y], None, pol, reject_idx)
     logger.info("Policy %s", pol)
     logger.info("VAL  %s", val_metrics)
-    logger.info("TEST %s (OOD FAR not measured on test)", test_metrics)
+    logger.info("TEST %s (test false-accept rate = held-out not_waste photos only)", test_metrics)
 
     out = root / ev["policy_file"]
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({
-        "version": "2.0.0-calibrated", "temperature": temperature, **pol,
+        "version": "3.0.0-calibrated", "temperature": temperature, **pol, "streams": tax.streams,
         "validation_metrics": val_metrics, "test_metrics": test_metrics,
         "ood_sets": {k: len(v) for k, v in ood.items()},
     }, indent=2), encoding="utf-8")

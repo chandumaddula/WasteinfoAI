@@ -141,7 +141,7 @@ class EvidenceReconciliationEngine {
         val source = if (isCroppedRoi) IdentificationSource.OBJECT_CROP_CLASSIFIER else IdentificationSource.VISION_CLASSIFIER
         return ReconciledEvidenceResult(
             coarseCategory = visualResult.label,
-            specificItem = null,
+            specificItem = visualResult.specificSubItem,
             materialCode = null,
             identificationSource = source,
             confidence = visualResult.confidence,

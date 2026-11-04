@@ -3,7 +3,6 @@
 train, evaluate, calibrate, export and predict all import from here, so the
 split, preprocessing, class order and acceptance rule can never drift apart.
 """
-import hashlib
 import json
 import logging
 import math
@@ -18,11 +17,12 @@ import torch
 import torch.nn as nn
 import yaml
 from PIL import Image
-from sklearn.model_selection import train_test_split
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 from torchvision import transforms as T
 
-IMAGE_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
+from src.dataset_index import (IMAGE_EXTS, Taxonomy, create_or_load_split,  # noqa: E402,F401
+                               taxonomy_from_manifest)
+
 logger = logging.getLogger("common")
 
 
@@ -78,114 +78,7 @@ def build_transforms(cfg: dict):
     return train_tf, eval_tf
 
 
-# --------------------------------------------------------------------------- #
-# Split (created once, then reused by every script)
-# --------------------------------------------------------------------------- #
-def _md5(path: Path) -> str:
-    h = hashlib.md5()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
-def create_or_load_split(cfg: dict, root: Path, class_names: List[str]) -> dict:
-    ds = cfg["dataset"]
-    manifest_path = root / ds["splits_dir"] / "split_manifest.json"
-    if manifest_path.exists():
-        with open(manifest_path, "r", encoding="utf-8") as f:
-            manifest = json.load(f)
-        if manifest["classes"] != class_names:
-            raise RuntimeError(f"{manifest_path} was built for different classes; delete it to rebuild.")
-        return manifest
-
-    image_dir = root / ds["image_dir"]
-    if not image_dir.exists():
-        raise FileNotFoundError(f"Dataset folder not found: {image_dir}")
-    roots = [image_dir] + [root / d for d in ds.get("extra_image_dirs", []) if (root / d).exists()]
-    extra_roots = set(roots[1:])
-    extra_set = set()
-    folders = {}
-    for r in roots:
-        for p in r.iterdir():
-            if p.is_dir():
-                folders.setdefault(p.name.lower(), []).append(p)
-
-    def resolve_class_folders(name: str) -> List[Path]:
-        key = name.lower().replace("-", "").replace("_", "")
-        matches = []
-        for f_name, f_paths in folders.items():
-            f_key = f_name.lower().replace("-", "").replace("_", "")
-            if f_key == key or f_key == key + "s" or key == f_key + "s":
-                matches.extend(f_paths)
-        return matches
-
-    paths, labels, seen, dupes, bad = [], [], set(), 0, 0
-    class_counts = {}
-    for idx, name in enumerate(class_names):
-        class_folders = resolve_class_folders(name)
-        if not class_folders:
-            raise FileNotFoundError(f"No folder for class '{name}' in {roots}. Found: {sorted(folders)}")
-        count = 0
-        for p in sorted(f for fo in class_folders for f in fo.rglob("*")):
-            if p.suffix.lower() not in IMAGE_EXTS:
-                continue
-            try:
-                with Image.open(p) as im:
-                    im.verify()
-            except Exception:
-                bad += 1
-                continue
-            digest = _md5(p)
-            if digest in seen:      # exact duplicates would leak between train and test
-                dupes += 1
-                continue
-            seen.add(digest)
-            rel = p.relative_to(root).as_posix()
-            paths.append(rel)
-            labels.append(idx)
-            count += 1
-            if any(par in extra_roots for par in p.parents):
-                extra_set.add(rel)
-        class_counts[name] = count
-
-    for name, cnt in class_counts.items():
-        logger.info("Class '%s': %d valid images", name, cnt)
-
-    zero_classes = [name for name, cnt in class_counts.items() if cnt == 0]
-    if zero_classes:
-        raise ValueError(
-            f"The following class(es) have 0 images: {zero_classes}.\n"
-            f"Please place training images inside their respective folders (e.g. data/waste/<category>/) before generating the split."
-        )
-    logger.info("Found %d images (%d exact duplicates and %d unreadable files skipped)", len(paths), dupes, bad)
-
-    seed = ds["random_seed"]
-    hold = ds["val_split"] + ds["test_split"]
-    tr_p, tmp_p, tr_l, tmp_l = train_test_split(paths, labels, test_size=hold, stratify=labels, random_state=seed)
-    va_p, te_p, va_l, te_l = train_test_split(
-        tmp_p, tmp_l, test_size=ds["test_split"] / hold, stratify=tmp_l, random_state=seed)
-
-    # Real-world photos are few compared with the base dataset: repeat them in TRAIN only
-    # (each repeat gets different random augmentation). Val/test stay un-duplicated and honest.
-    rep = int(ds.get("extra_repeat", 3))
-    if extra_set and rep > 1:
-        extra_train = [(p, l) for p, l in zip(tr_p, tr_l) if p in extra_set]
-        tr_p = tr_p + [p for p, _ in extra_train] * (rep - 1)
-        tr_l = tr_l + [l for _, l in extra_train] * (rep - 1)
-        logger.info("Real-world images: %d in train (x%d), %d total", len(extra_train), rep, len(extra_set))
-
-    manifest = {
-        "classes": class_names,
-        "train": {"paths": tr_p, "labels": tr_l},
-        "val": {"paths": va_p, "labels": va_l},
-        "test": {"paths": te_p, "labels": te_l},
-    }
-    manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(manifest_path, "w", encoding="utf-8") as f:
-        json.dump(manifest, f)
-    logger.info("Split: train=%d val=%d test=%d -> %s", len(tr_p), len(va_p), len(te_p), manifest_path)
-    return manifest
+# Split / taxonomy logic lives in src/dataset_index.py (leaf classes -> main categories)
 
 
 class WasteDataset(Dataset):
@@ -201,20 +94,46 @@ class WasteDataset(Dataset):
         return self.transform(im), self.labels[i]
 
 
-def make_loaders(cfg: dict, root: Path, class_names: List[str]) -> Dict[str, DataLoader]:
-    manifest = create_or_load_split(cfg, root, class_names)
+def make_data(cfg: dict, root: Path, stream_names: List[str]):
+    """Returns (loaders, taxonomy). Labels in the loaders are LEAF indices (sub-folder classes)."""
+    manifest = create_or_load_split(cfg, root, stream_names)
+    tax = taxonomy_from_manifest(manifest)
     train_tf, eval_tf = build_transforms(cfg)
     bs = cfg["training"]["batch_size"]
     nw = 0 if sys.platform == "win32" else cfg["training"].get("num_workers", 2)
     pin = torch.cuda.is_available()
     loaders = {}
+
+    # Class balancing for TRAIN only: sample leaf c with weight count_c ** -power (val/test stay untouched).
+    power = float(cfg["training"].get("balance_power", 0.0))
+    train_labels = manifest["train"]["labels"]
+    sampler = None
+    if power > 0 and train_labels:
+        counts = np.bincount(train_labels, minlength=tax.num_leaves).astype(np.float64)
+        per_class = np.where(counts > 0, counts ** -power, 0.0)
+        sampler = WeightedRandomSampler(
+            torch.as_tensor(per_class[np.asarray(train_labels)], dtype=torch.double),
+            num_samples=len(train_labels), replacement=True,
+            generator=torch.Generator().manual_seed(cfg["dataset"]["random_seed"]))
+        share = (counts * per_class) / (counts * per_class).sum()
+        by_stream = np.zeros(tax.num_streams)
+        for leaf, sh in enumerate(share):
+            by_stream[tax.leaf_to_stream[leaf]] += sh
+        logger.info("Train sampling share per main category (balance_power=%.2f): %s", power,
+                    {tax.streams[i]: round(float(by_stream[i]), 3) for i in range(tax.num_streams)})
+
     for split in ("train", "val", "test"):
         d = manifest[split]
         ds = WasteDataset(root, d["paths"], d["labels"], train_tf if split == "train" else eval_tf)
+        use_sampler = split == "train" and sampler is not None
         loaders[split] = DataLoader(
-            ds, batch_size=bs, shuffle=(split == "train"), drop_last=(split == "train"),
-            num_workers=nw, pin_memory=pin, persistent_workers=nw > 0)
-    return loaders
+            ds, batch_size=bs, shuffle=(split == "train" and not use_sampler), sampler=sampler if use_sampler else None,
+            drop_last=(split == "train"), num_workers=nw, pin_memory=pin, persistent_workers=nw > 0)
+    return loaders, tax
+
+
+def make_loaders(cfg: dict, root: Path, class_names: List[str]) -> Dict[str, DataLoader]:
+    return make_data(cfg, root, class_names)[0]
 
 
 # --------------------------------------------------------------------------- #
@@ -222,6 +141,21 @@ def make_loaders(cfg: dict, root: Path, class_names: List[str]) -> Dict[str, Dat
 # --------------------------------------------------------------------------- #
 def build_model(arch: str, num_classes: int, pretrained: bool, dropout: float) -> nn.Module:
     return timm.create_model(arch, pretrained=pretrained, num_classes=num_classes, drop_rate=dropout)
+
+
+def taxonomy_from_checkpoint(ckpt: dict) -> Taxonomy:
+    if "streams" not in ckpt or "leaf_to_stream" not in ckpt:
+        raise RuntimeError("This checkpoint was trained before the main-folder / sub-folder layout. Retrain: "
+                           "python src/training/train_classifier.py")
+    return Taxonomy(list(ckpt["streams"]), list(ckpt["classes"]), list(ckpt["leaf_to_stream"]))
+
+
+def check_checkpoint_matches(ckpt: dict, tax: Taxonomy) -> None:
+    """Fail loudly instead of 'mapping' an old model onto new classes (its numbers would be meaningless)."""
+    if taxonomy_from_checkpoint(ckpt) != tax:
+        raise RuntimeError(
+            f"Checkpoint classes ({len(ckpt['classes'])}) do not match the current data layout ({tax.num_leaves}). "
+            "Delete data/splits/split_manifest.json and retrain with train_classifier.py.")
 
 
 def load_checkpoint(path: Path, device: torch.device):
@@ -255,6 +189,13 @@ def collect_logits(model, loader, device, tta: bool = False):
 # --------------------------------------------------------------------------- #
 def calibrated_probs(logits: torch.Tensor, temperature: float) -> torch.Tensor:
     return torch.softmax(logits / temperature, dim=1)
+
+
+def stream_probs(leaf_logits: torch.Tensor, tax: Taxonomy, temperature: float = 1.0) -> torch.Tensor:
+    """Probability of each MAIN category = sum of the probabilities of its sub-folder classes."""
+    p = torch.softmax(leaf_logits / temperature, dim=1)
+    m = torch.as_tensor(tax.matrix(), dtype=p.dtype, device=p.device)
+    return p @ m
 
 
 def confidence_stats(probs: torch.Tensor):

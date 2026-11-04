@@ -192,11 +192,34 @@ fun AppNavGraph(
                     locationHelper = container.locationHelper
                 )
             }
+            val userCat = container.sessionManager.getCategory().lowercase()
+            val targetDashboard = when {
+                userCat.contains("worker") || userCat.contains("e-waste") || userCat.contains("sanitation") -> Screen.Tasks.route
+                userCat.contains("industr") || userCat.contains("plastic") || userCat.contains("institution") -> Screen.IndustryDashboard.route
+                userCat.contains("education") || userCat.contains("reviewer") || userCat.contains("other") -> Screen.ReviewerDashboard.route
+                userCat.contains("admin") -> Screen.AdminDashboard.route
+                else -> Screen.Home.route
+            }
             ScanResultScreen(
                 imagePath = imagePath,
                 viewModel = vm,
                 userCategory = container.sessionManager.getCategory(),
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = {
+                    if (!navController.popBackStack()) {
+                        navController.navigate(targetDashboard) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                },
+                onDone = {
+                    if (!navController.popBackStack(targetDashboard, false)) {
+                        if (!navController.popBackStack()) {
+                            navController.navigate(targetDashboard) {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    }
+                },
                 onNavigateToCreateReport = { category, path ->
                     navController.navigate(Screen.CreateReport.createRoute(category, path))
                 },

@@ -1,4 +1,4 @@
-"""Train the waste classifier (timm backbone chosen in the config)."""
+"""Train the waste classifier on the SUB-FOLDER classes; report and select by the MAIN category the app shows."""
 import argparse
 import logging
 import sys
@@ -13,7 +13,7 @@ from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from src.common import (build_model, collect_logits, get_device, load_class_names,  # noqa: E402
-                        load_config, make_loaders, project_root, seed_everything)
+                        load_config, make_data, project_root, seed_everything, stream_probs)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("train_classifier")
@@ -59,12 +59,12 @@ def main():
     seed_everything(cfg["dataset"]["random_seed"])
     device = get_device(cfg["training"]["device"])
     use_amp = device.type == "cuda"
-    classes = load_class_names(cfg, root)
-    loaders = make_loaders(cfg, root, classes)
+    loaders, tax = make_data(cfg, root, load_class_names(cfg, root))
+    leaf_to_stream = torch.as_tensor(tax.leaf_to_stream)
 
     t, m = cfg["training"], cfg["model"]
     epochs = args.epochs or t["epochs"]
-    model = build_model(m["architecture"], len(classes), m["pretrained"], m["dropout"]).to(device)
+    model = build_model(m["architecture"], tax.num_leaves, m["pretrained"], m["dropout"]).to(device)
 
     head_ids = {id(p) for p in model.get_classifier().parameters()}
     head = [p for p in model.parameters() if id(p) in head_ids]
@@ -73,8 +73,7 @@ def main():
         {"params": backbone, "lr": t["learning_rate"] * t["backbone_lr_mult"]},
         {"params": head, "lr": t["learning_rate"]},
     ], weight_decay=t["weight_decay"])
-    # ONE optimizer + ONE scheduler for the whole run (the old code re-created the optimizer
-    # at unfreeze time, which silently detached it from the cosine scheduler).
+    # ONE optimizer + ONE scheduler for the whole run
     scheduler = SequentialLR(
         optimizer,
         [LinearLR(optimizer, start_factor=0.1, total_iters=1),
@@ -86,8 +85,9 @@ def main():
     ckpt_dir = root / t["checkpoint_dir"]
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     freeze_epochs, patience = t["freeze_backbone_epochs"], t["early_stopping_patience"]
-    best_f1, bad = 0.0, 0
-    logger.info("Device=%s arch=%s classes=%d epochs=%d", device, m["architecture"], len(classes), epochs)
+    best_score, bad = (-1.0, -1.0), 0
+    logger.info("Device=%s arch=%s | %d trained classes (sub-folders) -> %d main categories %s | epochs=%d",
+                device, m["architecture"], tax.num_leaves, tax.num_streams, tax.streams, epochs)
 
     for epoch in range(1, epochs + 1):
         frozen = epoch <= freeze_epochs
@@ -100,27 +100,34 @@ def main():
         scheduler.step()
 
         logits, targets = collect_logits(model, loaders["val"], device)
-        preds = logits.argmax(1)
+        leaf_pred = logits.argmax(1)
+        s_pred = stream_probs(logits, tax).argmax(1)
+        s_true = leaf_to_stream[targets]
         val_loss = F.cross_entropy(logits, targets).item()
-        val_acc = (preds == targets).float().mean().item()
-        val_f1 = f1_score(targets, preds, average="macro", zero_division=0)
-        logger.info("Epoch %02d/%02d | train loss %.4f acc %.4f | val loss %.4f acc %.4f macroF1 %.4f",
-                    epoch, epochs, tr_loss, tr_acc, val_loss, val_acc, val_f1)
+        leaf_acc = (leaf_pred == targets).float().mean().item()
+        stream_acc = (s_pred == s_true).float().mean().item()
+        leaf_f1 = f1_score(targets.numpy(), leaf_pred.numpy(), average="macro", zero_division=0)
+        stream_f1 = f1_score(s_true.numpy(), s_pred.numpy(), average="macro", zero_division=0)
+        logger.info("Epoch %02d/%02d | train loss %.4f acc %.4f | val loss %.4f | main-category acc %.4f macroF1 %.4f"
+                    " | sub-folder acc %.4f macroF1 %.4f",
+                    epoch, epochs, tr_loss, tr_acc, val_loss, stream_acc, stream_f1, leaf_acc, leaf_f1)
 
-        if val_f1 > best_f1:
-            best_f1, bad = val_f1, 0
+        score = (round(stream_f1, 4), leaf_f1)  # what the user sees first, sub-folder F1 breaks ties
+        if score > best_score:
+            best_score, bad = score, 0
             torch.save({
-                "model_state_dict": model.state_dict(), "arch": m["architecture"], "classes": classes,
+                "model_state_dict": model.state_dict(), "arch": m["architecture"],
+                "classes": tax.leaves, "streams": tax.streams, "leaf_to_stream": tax.leaf_to_stream,
                 "image_size": cfg["dataset"]["image_size"], "norm": cfg["dataset"]["normalization"],
-                "epoch": epoch, "val_f1": val_f1, "val_acc": val_acc,
+                "epoch": epoch, "val_f1": stream_f1, "val_acc": stream_acc, "val_leaf_f1": leaf_f1,
             }, ckpt_dir / "best_model.pth")
-            logger.info("Saved best checkpoint (val macro-F1 %.4f)", best_f1)
+            logger.info("Saved best checkpoint (main-category macro-F1 %.4f, sub-folder macro-F1 %.4f)", stream_f1, leaf_f1)
         elif not frozen:
             bad += 1
             if bad >= patience:
                 logger.info("Early stopping.")
                 break
-    logger.info("Done. Best val macro-F1: %.4f", best_f1)
+    logger.info("Done. Best main-category macro-F1: %.4f", best_score[0])
 
 
 if __name__ == "__main__":

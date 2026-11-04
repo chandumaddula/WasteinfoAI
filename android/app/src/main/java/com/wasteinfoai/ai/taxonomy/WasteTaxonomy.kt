@@ -156,10 +156,32 @@ object WasteTaxonomy {
         if (direct != null) return direct
 
         val match = CANDIDATES_BY_CATEGORY.entries.firstOrNull { it.key.equals(category, ignoreCase = true) }
-        return match?.value ?: emptyList()
+        return match?.value ?: streamCandidates(category)
     }
 
+    /**
+     * The 4-stream model predicts biodegradable / Recyclables / E-waste / hazardous. These return the specific
+     * item choices of that stream, so the user can still confirm the exact type (PET bottle, keyboard, battery...).
+     */
+    private fun streamCandidates(category: String): List<SpecificWasteCandidate> =
+        when (category.trim().lowercase()) {
+            "recyclables" -> listOf("plastic", "metal", "cardboard", "glass", "paper")
+                .flatMap { CANDIDATES_BY_CATEGORY[it].orEmpty() }
+            "biodegradable" -> CANDIDATES_BY_CATEGORY["organic"].orEmpty()
+            "e-waste" -> listOf("Mobile", "Keyboard", "Mouse", "Printer", "Television", "Microwave", "Washing Machine", "PCB", "Player")
+                .flatMap { CANDIDATES_BY_CATEGORY[it].orEmpty() }
+            "hazardous" -> CANDIDATES_BY_CATEGORY["Battery"].orEmpty() +
+                CANDIDATES_BY_CATEGORY["metal"].orEmpty().filter { it.id == "item-aerosol-can" } + HAZARDOUS_EXTRA
+            else -> emptyList()
+        }
+
+    private val HAZARDOUS_EXTRA = listOf(
+        SpecificWasteCandidate("item-paint-chemical", "Paint / Solvent / Chemical Container", "hazardous", "HAZ_CHEMICAL", "RED", "Paint, thinner, pesticide, cleaning chemicals. Keep closed, never pour away."),
+        SpecificWasteCandidate("item-medical-waste", "Medicines / Syringes / Medical Waste", "hazardous", "HAZ_MEDICAL", "RED", "Expired medicines, needles, dressings. Use a puncture-proof container."),
+        SpecificWasteCandidate("item-lamp", "Bulb / Tube Light / CFL", "hazardous", "HAZ_LAMP", "RED", "Fragile and may contain mercury. Do not break.")
+    )
+
     fun findCandidateById(id: String): SpecificWasteCandidate? {
-        return CANDIDATES_BY_CATEGORY.values.flatten().firstOrNull { it.id == id }
+        return (CANDIDATES_BY_CATEGORY.values.flatten() + HAZARDOUS_EXTRA).firstOrNull { it.id == id }
     }
 }

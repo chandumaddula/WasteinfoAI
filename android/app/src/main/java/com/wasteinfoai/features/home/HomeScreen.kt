@@ -103,10 +103,16 @@ fun HomeScreen(
                                 imageVector = Icons.Default.Recycling,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(28.dp)
+                                modifier = Modifier.size(24.dp)
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("wasteinfoAI", fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = stringResource(R.string.app_name),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                softWrap = false
+                            )
                         }
                     },
                 actions = {
@@ -117,24 +123,28 @@ fun HomeScreen(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
-                    // Role Badge (Static indicator)
+                    // Role Badge (Static indicator - compact to preserve title space)
+                    val currentCategory = UserCategory.fromId(state.userCategory)
+                    val shortBadgeLabel = when (currentCategory) {
+                        UserCategory.HOUSEHOLD_RECYCLING -> "HOUSEHOLD"
+                        UserCategory.E_WASTE_MANAGEMENT -> "E-WASTE"
+                        UserCategory.COMMUNITY_RECYCLING -> "COMMUNITY"
+                        UserCategory.PLASTIC_WASTE_REDUCTION -> "PLASTIC"
+                        UserCategory.SUSTAINABILITY_EDUCATION -> "EDUCATION"
+                    }
                     Surface(
-                        shape = RoundedCornerShape(16.dp),
+                        shape = RoundedCornerShape(12.dp),
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier.padding(end = 4.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-                        ) {
-                            val categoryTitleRes = UserCategory.fromId(state.userCategory).titleRes
-                            Text(
-                                text = stringResource(categoryTitleRes).uppercase(),
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
+                        Text(
+                            text = shortBadgeLabel,
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            maxLines = 1,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        )
                     }
                     IconButton(onClick = onNavigateToLogin) {
                         Icon(Icons.Default.AccountCircle, contentDescription = "Profile")

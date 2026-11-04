@@ -13,7 +13,8 @@ data class ClassificationResult(
     val uncertaintyReason: String? = null,
     val topKResults: List<ClassScore> = emptyList(),
     val acceptanceState: AcceptanceState = if (isUncertain) AcceptanceState.LOW_CONFIDENCE else AcceptanceState.ACCEPTED,
-    val policyResult: PolicyEvaluationResult? = null
+    val policyResult: PolicyEvaluationResult? = null,
+    val specificSubItem: String? = null
 ) {
     val isAccepted: Boolean get() = acceptanceState == AcceptanceState.ACCEPTED && !isUncertain
 

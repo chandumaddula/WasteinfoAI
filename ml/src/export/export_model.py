@@ -10,22 +10,24 @@ import torch
 import torch.nn as nn
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from src.common import load_checkpoint, load_config, project_root  # noqa: E402
+from src.common import load_checkpoint, load_config, project_root, taxonomy_from_checkpoint  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("export_model")
 
 
 class CalibratedModel(nn.Module):
-    """Outputs calibrated probabilities so the app applies thresholds directly."""
+    """Outputs calibrated probabilities of the MAIN categories (sum of the sub-folder class probabilities), so the
+    app, class_names.json and the thresholds all stay in terms of the main categories."""
 
-    def __init__(self, model, temperature: float):
+    def __init__(self, model, temperature: float, aggregation):
         super().__init__()
         self.model = model
         self.register_buffer("t", torch.tensor(float(temperature)))
+        self.register_buffer("agg", torch.as_tensor(aggregation, dtype=torch.float32))
 
     def forward(self, x):
-        return torch.softmax(self.model(x) / self.t, dim=1)
+        return torch.softmax(self.model(x) / self.t, dim=1) @ self.agg
 
 
 def export_executorch(module, example, out_path: Path) -> bool:
@@ -72,7 +74,8 @@ def main():
     policy = json.loads(policy_path.read_text()) if policy_path.exists() else {}
     if not policy:
         logger.warning("No rejection policy found; run calibrate_rejection_policy.py first. Using T=1.")
-    module = CalibratedModel(model, policy.get("temperature", 1.0)).eval()
+    tax = taxonomy_from_checkpoint(ckpt)
+    module = CalibratedModel(model, policy.get("temperature", 1.0), tax.matrix()).eval()
     example = torch.randn(*cfg["model"]["input_shape"])
 
     if not export_executorch(module, example, out_path):
@@ -83,7 +86,8 @@ def main():
 
     meta = {
         "version": cfg["project"]["version"],
-        "architecture": ckpt["arch"], "classes": ckpt["classes"], "input_shape": cfg["model"]["input_shape"],
+        "architecture": ckpt["arch"], "classes": tax.streams, "input_shape": cfg["model"]["input_shape"],
+        "trained_classes": tax.leaves, "leaf_to_stream": tax.leaf_to_stream,
         "preprocess": {"resize": [ckpt["image_size"], ckpt["image_size"]], "center_crop": False,
                        "normalization": ckpt["norm"]},
         "output": "calibrated softmax probabilities",
