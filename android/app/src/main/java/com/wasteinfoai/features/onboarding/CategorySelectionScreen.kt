@@ -204,6 +204,14 @@ private fun CategoryCard(
         MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f)
     }
 
+    val icon = when (category) {
+        UserCategory.HOUSEHOLD_RECYCLING -> Icons.Default.Home
+        UserCategory.E_WASTE_MANAGEMENT -> Icons.Default.Devices
+        UserCategory.COMMUNITY_RECYCLING -> Icons.Default.Groups
+        UserCategory.PLASTIC_WASTE_REDUCTION -> Icons.Default.Storefront
+        UserCategory.SUSTAINABILITY_EDUCATION -> Icons.Default.School
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -212,22 +220,32 @@ private fun CategoryCard(
         colors = CardDefaults.cardColors(containerColor = cardColor),
         border = BorderStroke(2.dp, borderColor)
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .padding(horizontal = 20.dp, vertical = 18.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Surface(
+                shape = CircleShape,
+                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier.size(42.dp)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = if (isSelected) Color.White else MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = stringResource(category.titleRes),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
                 color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = stringResource(category.subtitleRes),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

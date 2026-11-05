@@ -1,6 +1,7 @@
 package com.wasteinfoai.features.onboarding
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,9 +36,18 @@ import com.wasteinfoai.features.common.LanguageSelectionDialog
 
 @Composable
 fun SplashScreen(
+    isLoggedIn: Boolean = false,
+    onNavigateToDashboard: () -> Unit = {},
     onNavigateToCategorySelection: () -> Unit,
     onQuickScan: () -> Unit
 ) {
+    LaunchedEffect(isLoggedIn) {
+        if (isLoggedIn) {
+            kotlinx.coroutines.delay(800)
+            onNavigateToDashboard()
+        }
+    }
+
     var showLanguageDialog by remember { mutableStateOf(false) }
 
     if (showLanguageDialog) {
@@ -112,83 +123,38 @@ fun SplashScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // Glowing outer orb
+                // Glowing outer orb with App Starting Logo
                 Box(
                     modifier = Modifier
-                        .size(150.dp)
+                        .size(230.dp)
                         .scale(pulseScale),
                     contentAlignment = Alignment.Center
                 ) {
                     // Ambient glow circle
                     Box(
                         modifier = Modifier
-                            .size(140.dp)
+                            .size(210.dp)
                             .clip(CircleShape)
                             .background(
                                 Brush.radialGradient(
                                     colors = listOf(
-                                        MintAccent.copy(alpha = glowAlpha),
-                                        EmeraldPrimary.copy(alpha = glowAlpha * 0.5f),
+                                        MintAccent.copy(alpha = glowAlpha * 0.4f),
+                                        EmeraldPrimary.copy(alpha = glowAlpha * 0.2f),
                                         Color.Transparent
                                     )
                                 )
                             )
                     )
 
-                    // Inner badge
-                    Surface(
-                        modifier = Modifier.size(100.dp),
-                        shape = CircleShape,
-                        color = Color.White,
-                        shadowElevation = 12.dp
-                    ) {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(
-                                imageVector = Icons.Default.Recycling,
-                                contentDescription = "WasteinfoAI Logo",
-                                tint = EmeraldPrimary,
-                                modifier = Modifier.size(58.dp)
-                            )
-                            Icon(
-                                imageVector = Icons.Default.Eco,
-                                contentDescription = null,
-                                tint = EmeraldLight,
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .offset(x = 14.dp, y = (-14).dp)
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(28.dp))
-
-                // Brand Name: WasteinfoAI
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "Wasteinfo",
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontSize = 36.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            letterSpacing = (-0.5).sp
-                        ),
-                        color = Color.White
-                    )
-                    Text(
-                        text = "AI",
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontSize = 36.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            letterSpacing = 0.5.sp
-                        ),
-                        color = MintAccent
+                    // App Starting Logo
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_app_splash_logo),
+                        contentDescription = "WasteinfoAI Starting Logo",
+                        modifier = Modifier.size(210.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Tagline
                 Text(
@@ -214,72 +180,94 @@ fun SplashScreen(
                 }
             }
 
-            // Bottom Actions: Get Started & Quick Scan
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Button(
-                    onClick = { showLanguageDialog = true },
+            if (isLoggedIn) {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MintAccent,
-                        contentColor = EmeraldDark
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
+                        .padding(bottom = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(28.dp),
+                        color = MintAccent,
+                        strokeWidth = 3.dp
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = "Get Started",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                OutlinedButton(
-                    onClick = onQuickScan,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color.White
-                    ),
-                    border = ButtonDefaults.outlinedButtonBorder.copy(
-                        brush = Brush.horizontalGradient(
-                            listOf(Color.White.copy(alpha = 0.4f), Color.White.copy(alpha = 0.2f))
-                        )
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CameraAlt,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Quick AI Scanner (Guest)",
+                        text = "Opening your dashboard...",
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold
+                        color = Color.White.copy(alpha = 0.85f),
+                        fontWeight = FontWeight.Medium
                     )
                 }
+            } else {
+                // Bottom Actions: Get Started & Quick Scan
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Button(
+                        onClick = { showLanguageDialog = true },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MintAccent,
+                            contentColor = EmeraldDark
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
+                    ) {
+                        Text(
+                            text = "Get Started",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
 
-                Text(
-                    text = "ReXNet-150 Edge Model • Zero Cloud Dependency",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.White.copy(alpha = 0.55f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
+                    OutlinedButton(
+                        onClick = onQuickScan,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color.White
+                        ),
+                        border = ButtonDefaults.outlinedButtonBorder.copy(
+                            brush = Brush.horizontalGradient(
+                                listOf(Color.White.copy(alpha = 0.4f), Color.White.copy(alpha = 0.2f))
+                            )
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CameraAlt,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Quick AI Scanner (Guest)",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    Text(
+                        text = "ReXNet-150 Edge Model • Zero Cloud Dependency",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.White.copy(alpha = 0.55f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             }
         }
     }

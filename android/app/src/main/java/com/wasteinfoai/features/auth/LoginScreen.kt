@@ -39,7 +39,6 @@ fun LoginScreen(
     var confirmPasswordVisible by remember { mutableStateOf(false) }
     var isRegisterMode by remember { mutableStateOf(false) }
     var localError by remember { mutableStateOf<String?>(null) }
-    var showServerDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
 
     val isFullNameValid = fullNameInput.trim().length >= 2
@@ -51,13 +50,6 @@ fun LoginScreen(
         LanguageSelectionDialog(
             sessionManager = viewModel.sessionManager,
             onDismissRequest = { showLanguageDialog = false }
-        )
-    }
-
-    if (showServerDialog) {
-        com.wasteinfoai.features.common.ServerConfigDialog(
-            sessionManager = viewModel.sessionManager,
-            onDismissRequest = { showServerDialog = false }
         )
     }
 
@@ -74,9 +66,6 @@ fun LoginScreen(
                     IconButton(onClick = { showLanguageDialog = true }) {
                         Icon(Icons.Default.Translate, contentDescription = "Change Language")
                     }
-                    IconButton(onClick = { showServerDialog = true }) {
-                        Icon(Icons.Default.Public, contentDescription = "Server Settings")
-                    }
                 }
             )
         }
@@ -89,28 +78,6 @@ fun LoginScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Server URL quick display
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { showServerDialog = true },
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(Icons.Default.Dns, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("Server: ${uiState.serverUrl}", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.SemiBold, maxLines = 1)
-                        Text("Online / Internet / Local compatible", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                    Text("Change", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-                }
-            }
-
             if (uiState.isLoggedIn) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),

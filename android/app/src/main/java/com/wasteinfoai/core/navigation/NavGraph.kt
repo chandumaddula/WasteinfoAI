@@ -46,7 +46,15 @@ fun AppNavGraph(
     ) {
         // 1. App Startup: Logo, Get Started & Quick Scan
         composable(Screen.Splash.route) {
+            val isLoggedIn = container.sessionManager.isLoggedIn
             SplashScreen(
+                isLoggedIn = isLoggedIn,
+                onNavigateToDashboard = {
+                    val target = getDashboardRouteForSession(container.sessionManager)
+                    navController.navigate(target) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                },
                 onNavigateToCategorySelection = {
                     navController.navigate(Screen.CategorySelection.route) {
                         launchSingleTop = true
@@ -189,7 +197,8 @@ fun AppNavGraph(
                     scanRepository = container.scanRepository,
                     ttsManager = container.textToSpeechManager,
                     feedbackRepository = container.feedbackRepository,
-                    locationHelper = container.locationHelper
+                    locationHelper = container.locationHelper,
+                    languageManager = container.languageManager
                 )
             }
             val userCat = container.sessionManager.getCategory().lowercase()
@@ -212,11 +221,11 @@ fun AppNavGraph(
                     }
                 },
                 onDone = {
-                    if (!navController.popBackStack(targetDashboard, false)) {
-                        if (!navController.popBackStack()) {
-                            navController.navigate(targetDashboard) {
-                                popUpTo(0) { inclusive = true }
-                            }
+                    val popped = navController.popBackStack(targetDashboard, false)
+                    if (!popped) {
+                        navController.navigate(targetDashboard) {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
                         }
                     }
                 },
@@ -387,6 +396,18 @@ fun AppNavGraph(
                 }
             )
         }
+    }
+}
+
+private fun getDashboardRouteForSession(sessionManager: com.wasteinfoai.data.remote.SessionManager): String {
+    val lower = sessionManager.getCategory().lowercase()
+    val role = sessionManager.getRole().uppercase()
+    return when {
+        role == "ADMIN" || lower.contains("admin") -> Screen.AdminDashboard.route
+        role == "SANITATION_WORKER" || role == "WORKER" || lower.contains("worker") || lower.contains("e-waste") || lower.contains("sanitation") -> Screen.Tasks.route
+        role == "INSTITUTION" || lower.contains("industr") || lower.contains("plastic") || lower.contains("institution") -> Screen.IndustryDashboard.route
+        role == "REVIEWER" || lower.contains("education") || lower.contains("reviewer") || lower.contains("other") -> Screen.ReviewerDashboard.route
+        else -> Screen.Home.route
     }
 }
 

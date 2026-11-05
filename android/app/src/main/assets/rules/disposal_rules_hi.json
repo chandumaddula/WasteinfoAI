@@ -896,6 +896,111 @@
         "crushed": "Flatten clean items to optimize storage space.",
         "wet": "पाइप से सारा पानी निकाल दें।"
       }
+    },
+    {
+      "id": "RULE-STREAM-BIODEGRADABLE",
+      "category": "biodegradable",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "गीला जैविक कचरा (हरा डिब्बा) / घरेलू खाद / बायोगैस संयंत्र",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "सब्जी व फलों के छिलके, बचा हुआ खाना, चाय पत्ती अलग करें। प्लास्टिक पैकेजिंग और रबर बैंड हटा दें।",
+      "safety_warnings": "सामान्य खाद्य कचरे के लिए कोई खतरा नहीं। सूखे कचरे के साथ न मिलाएं।",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "cleaning_tips": "धोने की आवश्यकता नहीं। डालने से पहले अतिरिक्त तरल निकाल दें।",
+      "reuse_ideas": [
+        "पौधों के लिए छिलकों और खाद्य अवशेषों से खाद बनाएं"
+      ],
+      "environmental_impact": "खाद्य कचरे की खाद बनाने से मिट्टी उपजाऊ होती है और मीथेन उत्सर्जन घटता है।",
+      "source": "ठोस अपशिष्ट प्रबंधन नियम 2016 (गीला कचरा)"
+    },
+    {
+      "id": "RULE-STREAM-RECYCLABLES",
+      "category": "Recyclables",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "सूखा पुनर्चक्रण योग्य कचरा (नीला डिब्बा) / कबाड़ीवाला / पुनर्चक्रण केंद्र",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "डिब्बों और बोतलों को खाली कर साफ व सूखा रखें। बक्सों को चपटा करें। गीले कचरे से अलग रखें।",
+      "safety_warnings": "टूटे कांच और नुकीले किनारों को सावधानी से संभालें; टूटे कांच को कागज में लपेटें।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue Bin)",
+        "Kabadiwala / Scrap Dealer",
+        "Material Recovery Facility"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Open Burning",
+        "Open Littering"
+      ],
+      "cleaning_tips": "तरल पदार्थ और खाद्य अवशेष साफ करें। तैलीय वस्तुएं पुनर्चक्रण को दूषित करती हैं।",
+      "reuse_ideas": [
+        "जार और बक्सों को भंडारण के लिए दोबारा इस्तेमाल करें"
+      ],
+      "environmental_impact": "कागज, धातु, कांच और प्लास्टिक का पुनर्चक्रण ऊर्जा और कच्चे माल की बचत करता है।",
+      "source": "ठोस अपशिष्ट प्रबंधन नियम 2016 (सूखा कचरा)"
+    },
+    {
+      "id": "RULE-STREAM-EWASTE",
+      "category": "E-waste",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "अधिकृत ई-कचरा संग्रह केंद्र / पुनर्चक्रणकर्ता (नारंगी डिब्बा)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "उपकरण को साबुत रखें। बैटरी अलग करें, व्यक्तिगत डेटा मिटाएं और अधिकृत केंद्र को सौंपें।",
+      "safety_warnings": "इलेक्ट्रॉनिक्स को तोड़ें या जलाएं नहीं। इनमें मौजूद रसायन नुकसान पहुंचा सकते हैं।",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Producer Take-Back / EPR Collection Point"
+      ],
+      "prohibited_pathways": [
+        "Household Dustbin",
+        "Open Burning",
+        "Informal Scrap Breaking"
+      ],
+      "cleaning_tips": "बाहरी हिस्से को सूखे कपड़े से पोंछें। इलेक्ट्रॉनिक्स को कभी न धोएं।",
+      "reuse_ideas": [
+        "काम करने वाले उपकरणों की मरम्मत करें, दान दें या दोबारा बेचें"
+      ],
+      "environmental_impact": "इलेक्ट्रॉनिक्स में सीसा, पारा और कीमती धातुएं होती हैं। सही पुनर्चक्रण पर्यावरण की रक्षा करता है।",
+      "source": "ई-कचरा प्रबंधन नियम 2022"
+    },
+    {
+      "id": "RULE-STREAM-HAZARDOUS",
+      "category": "hazardous",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "घरेलू खतरनाक कचरा संग्रह केंद्र (लाल डिब्बा)",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "मूल कंटेनर में कसकर बंद रखें। रसायनों को न मिलाएं। बैटरी सिरों पर टेप लगाएं।",
+      "safety_warnings": "जलाएं नहीं, नालियों में न बहाएं। बच्चों और आग से दूर रखें।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Special Care / Hazardous Waste Collection",
+        "Authorized Hazardous Waste Facility",
+        "Pharmacy / Hospital Take-Back (medicines)"
+      ],
+      "prohibited_pathways": [
+        "Regular Household Bins",
+        "Drains and Toilets",
+        "Open Burning"
+      ],
+      "cleaning_tips": "रासायनिक कंटेनरों को न धोएं। संग्रह केंद्र के लिए सीलबंद रखें।",
+      "reuse_ideas": [],
+      "environmental_impact": "रसायन, पेंट, बैटरी और चिकित्सा अपशिष्ट मिट्टी और पानी को दूषित करते हैं।",
+      "source": "ठोस अपशिष्ट प्रबंधन नियम 2016 (खतरनाक कचरा)"
     }
   ]
 }

@@ -222,6 +222,18 @@ class DisposalRuleEngine(
         return rulesByCategory[category] ?: rulesByCategory[category.lowercase()]
     }
 
+    private fun normalizeStreamCategory(category: String): String {
+        val clean = category.trim().lowercase()
+        return when {
+            clean == "e-waste" || clean == "ewaste" || clean.contains("electronic") -> "E-waste"
+            clean == "biodegradable" || clean == "organic" || clean == "wet" || clean == "food" -> "biodegradable"
+            clean == "recyclables" || clean == "recyclable" || clean == "dry" -> "Recyclables"
+            clean == "hazardous" || clean == "hazard" -> "hazardous"
+            clean == "trash" || clean == "non-recyclable" -> "trash"
+            else -> category.trim()
+        }
+    }
+
     /**
      * Hierarchical lookup adhering to precedence:
      * 1. Item-specific rule (same coarse category first; jurisdiction-specific preferred)
@@ -244,7 +256,10 @@ class DisposalRuleEngine(
 
         val targetJur = jurisdiction?.uppercase()?.trim()?.takeIf { it.isNotEmpty() }
         val rules = allRules
-        val sameCategory = rules.filter { it.category.equals(category, ignoreCase = true) }
+        val normCat = normalizeStreamCategory(category)
+        val sameCategory = rules.filter {
+            it.category.equals(category, ignoreCase = true) || it.category.equals(normCat, ignoreCase = true)
+        }
 
         // 1. Specific item
         if (!specificItem.isNullOrBlank()) {
@@ -271,20 +286,75 @@ class DisposalRuleEngine(
             sameCategory.firstOrNull { it.jurisdiction.equals(targetJur, ignoreCase = true) && it.specificItem == null }
                 ?.let { return it }
         }
-        getRuleForCategory(category)?.let { return it }
+        (getRuleForCategory(category) ?: getRuleForCategory(normCat))?.let { return it }
 
-        // 4. Conservative unknown fallback
+        // 4. Determine appropriate waste stream and bin colour dynamically (never default to black for identifiable waste)
+        val fallbackBin = when {
+            normCat.equals("E-waste", ignoreCase = true) || category.contains("e-waste", ignoreCase = true) || category.contains("ewaste", ignoreCase = true) || category.contains("electronic", ignoreCase = true) -> "ORANGE"
+            normCat.equals("biodegradable", ignoreCase = true) || category.contains("bio", ignoreCase = true) || category.contains("organic", ignoreCase = true) || category.contains("wet", ignoreCase = true) -> "GREEN"
+            normCat.equals("hazardous", ignoreCase = true) || category.contains("hazard", ignoreCase = true) || category.contains("battery", ignoreCase = true) -> "RED"
+            normCat.equals("Recyclables", ignoreCase = true) || category.contains("recyc", ignoreCase = true) || category.contains("plastic", ignoreCase = true) || category.contains("paper", ignoreCase = true) || category.contains("metal", ignoreCase = true) || category.contains("glass", ignoreCase = true) || category.contains("cardboard", ignoreCase = true) -> "BLUE"
+            else -> "BLACK"
+        }
+
+        val lang = currentLanguage
+        val isRecyc = fallbackBin == "BLUE" || fallbackBin == "GREEN" || fallbackBin == "ORANGE"
+        val isHaz = fallbackBin == "RED"
+
+        val (fallbackMethod, fallbackPrep) = when (lang) {
+            "te" -> Pair(
+                if (fallbackBin == "ORANGE") "అధికారిక ఇ-వ్యర్థాల సేకరణ కేంద్రం / రీసైక్లర్ (నారింజ డబ్బా)"
+                else if (fallbackBin == "GREEN") "సేంద్రీయ తడి వ్యర్థాలు (ఆకుపచ్చ డబ్బా)"
+                else if (fallbackBin == "BLUE") "పొడి రీసైకిల్ వ్యర్థాలు (నీలం డబ్బా)"
+                else if (fallbackBin == "RED") "గృహ ప్రమాదకర వ్యర్థాల సేకరణ (ఎరుపు డబ్బా)"
+                else "పునర్వినియోగించలేని పొడి వ్యర్థాల డబ్బా (నలుపు డబ్బా)",
+                "వస్తువును పొడిగా మరియు శుభ్రంగా ఉంచండి. తడి వ్యర్థాలతో కలపవద్దు."
+            )
+            "hi" -> Pair(
+                if (fallbackBin == "ORANGE") "अधिकृत ई-कचरा संग्रह केंद्र (नारंगी डिब्बा)"
+                else if (fallbackBin == "GREEN") "गीला जैविक कचरा (हरा डिब्बा)"
+                else if (fallbackBin == "BLUE") "सूखा पुनर्चक्रण योग्य कचरा (नीला डिब्बा)"
+                else if (fallbackBin == "RED") "घरेलू खतरनाक कचरा (लाल डिब्बा)"
+                else "पुनर्चक्रण अयोग्य कचरा (काला डिब्बा)",
+                "वस्तु को साफ और सूखा रखें। गीले कचरे के साथ न मिलाएं।"
+            )
+            "ta" -> Pair(
+                if (fallbackBin == "ORANGE") "அங்கீகரிக்கப்பட்ட மின்-கழிவு மையம் (ஆரஞ்சு தொட்டி)"
+                else if (fallbackBin == "GREEN") "ஈரக் கரிமக் கழிவு (பச்சை தொட்டி)"
+                else if (fallbackBin == "BLUE") "உலர் மறுசுழற்சி கழிவு (நீலம் தொட்டி)"
+                else if (fallbackBin == "RED") "அபாயகரமான கழிவு (சிவப்பு தொட்டி)"
+                else "மறுசுழற்சி செய்ய முடியாத கழிவு (கருப்பு தொட்டி)",
+                "பொருளை உலர்வாகவும் சுத்தமாகவும் வைக்கவும். ஈரமான கழிவுகளுடன் கலக்க வேண்டாம்."
+            )
+            "mr" -> Pair(
+                if (fallbackBin == "ORANGE") "अधिकृत ई-कचरा संकलन केंद्र (नारिंगी कुंडी)"
+                else if (fallbackBin == "GREEN") "ओला सेंद्रिय कचरा (हिरवा कुंडी)"
+                else if (fallbackBin == "BLUE") "सुका पुनर्वापरयोग्य कचरा (निळा कुंडी)"
+                else if (fallbackBin == "RED") "धोकादायक कचरा (लाल कुंडी)"
+                else "पुनर्वापर न करता येणारा कचरा (काळा कुंडी)",
+                "वस्तू कोरडी आणि स्वच्छ ठेवा. ओल्या कचऱ्यात मिसळू नका."
+            )
+            else -> Pair(
+                if (fallbackBin == "ORANGE") "Authorized E-Waste Collection Point / Recycler (Orange Bin)"
+                else if (fallbackBin == "GREEN") "Wet Waste Collection (Green Bin)"
+                else if (fallbackBin == "BLUE") "Dry Recyclable Waste (Blue Bin)"
+                else if (fallbackBin == "RED") "Special Care / Hazardous Waste Collection (Red Bin)"
+                else "Segregate into Domestic Non-Biodegradable Dry Waste (Black Bin)",
+                "Keep item clean, dry, and contained. Do not mix with organic wet waste."
+            )
+        }
+
         return DisposalRule(
             id = "RULE-FALLBACK-UNKNOWN",
             category = category,
             jurisdiction = targetJur ?: "INDIA_SWM_2016",
-            disposalMethod = "Segregate into Domestic Non-Biodegradable Dry Waste or consult local civic ward",
-            isRecyclable = false,
-            isHazardous = false,
-            preparationInstructions = "Keep item clean, dry, and contained. Do not mix with organic wet waste.",
-            safetyWarnings = "Unidentified waste item. Do not incinerate, crush, or discard in open drains.",
-            targetBinColor = "BLACK",
-            source = "SWM 2016 Conservative Precautionary Principle"
+            disposalMethod = fallbackMethod,
+            isRecyclable = isRecyc,
+            isHazardous = isHaz,
+            preparationInstructions = fallbackPrep,
+            safetyWarnings = if (isHaz) "Handle with care. Do not burn or pour into drains." else "Keep clean and dry. Segregate appropriately.",
+            targetBinColor = fallbackBin,
+            source = "SWM 2016 Precautionary Categorization"
         )
     }
 

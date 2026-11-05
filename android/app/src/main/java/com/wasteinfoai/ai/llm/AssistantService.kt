@@ -59,17 +59,17 @@ class AssistantService(
             q.contains(Regex("\\b(paper|cardboard|carton|box|newspaper|book|magazine)\\b")) ||
                     q.contains("కాగితం") || q.contains("కార్డ్‌బోర్డ్") || q.contains("పుస్తకం") ||
                     q.contains("कागज") || q.contains("गत्ता") || q.contains("अखबार") || q.contains("காகிதம்") ->
-                MentionedItem("recyclable", "Cardboard Box")
+                MentionedItem("cardboard", "Cardboard Box")
 
             // Glass
             q.contains(Regex("\\b(glass|jar|mirror)\\b")) ||
                     q.contains("గాజు") || q.contains("कांच") || q.contains("கண்ணாடி") ->
-                MentionedItem("recyclable", "Glass Beverage Bottle")
+                MentionedItem("glass", "Glass Beverage Bottle")
 
             // Plastic
             q.contains(Regex("\\b(plastic|polythene|polybag|wrapper|pet bottle)\\b")) ||
                     q.contains("ప్లాస్టిక్") || q.contains("प्लास्टिक") || q.contains("पॉलिथीन") || q.contains("பிளாஸ்டிக்") ->
-                MentionedItem("recyclable", "PET Beverage Bottle")
+                MentionedItem("plastic", "PET Beverage Bottle")
 
             // Chemical & Hazardous
             q.contains(Regex("\\b(chemical|paint|pesticide|poison|medicine|syringe|bulb|tube light)\\b")) ||

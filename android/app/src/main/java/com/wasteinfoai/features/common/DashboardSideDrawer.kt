@@ -1,5 +1,6 @@
 package com.wasteinfoai.features.common
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,23 +44,14 @@ fun DashboardSideDrawer(
     content: @Composable () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var showServerDialog by remember { mutableStateOf(false) }
     var showLanguageDialog by remember { mutableStateOf(false) }
 
     val userRole by sessionManager.roleState.collectAsState()
     val userCategory by sessionManager.categoryState.collectAsState()
     val userEmail by sessionManager.emailState.collectAsState()
-    val serverUrl by sessionManager.serverUrlState.collectAsState()
     val currentLangCode by sessionManager.languageState.collectAsState()
     val currentLangOption = remember(currentLangCode) {
         LanguageManager.findSupportedLanguage(currentLangCode)
-    }
-
-    if (showServerDialog) {
-        ServerConfigDialog(
-            sessionManager = sessionManager,
-            onDismissRequest = { showServerDialog = false }
-        )
     }
 
     if (showLanguageDialog) {
@@ -303,7 +297,7 @@ fun DashboardSideDrawer(
                     }
 
                     DrawerItem(
-                        icon = Icons.Default.Psychology,
+                        drawableRes = R.drawable.ic_bottle_ai,
                         label = "Bottle AI Assistant",
                         isSelected = currentRoute.startsWith("assistant"),
                         onClick = {
@@ -325,7 +319,7 @@ fun DashboardSideDrawer(
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp))
 
                     // System & Settings
-                    DrawerSectionHeader("SYSTEM & NETWORK")
+                    DrawerSectionHeader("PREFERENCES & ACCOUNT")
 
                     DrawerItem(
                         icon = Icons.Default.AccountCircle,
@@ -334,17 +328,6 @@ fun DashboardSideDrawer(
                         onClick = {
                             coroutineScope.launch { drawerState.close() }
                             onNavigate(Screen.Login.route)
-                        }
-                    )
-
-                    DrawerItem(
-                        icon = Icons.Default.Public,
-                        label = "Server & Internet Settings",
-                        subtitle = if (serverUrl.contains("10.0.2.2")) "Emulator (10.0.2.2)" else serverUrl,
-                        isSelected = false,
-                        onClick = {
-                            coroutineScope.launch { drawerState.close() }
-                            showServerDialog = true
                         }
                     )
 
@@ -391,7 +374,8 @@ private fun DrawerSectionHeader(title: String) {
 
 @Composable
 private fun DrawerItem(
-    icon: ImageVector,
+    icon: ImageVector? = null,
+    drawableRes: Int? = null,
     label: String,
     subtitle: String? = null,
     isSelected: Boolean,
@@ -413,12 +397,28 @@ private fun DrawerItem(
                 .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = iconTint,
-                modifier = Modifier.size(22.dp)
-            )
+            if (drawableRes != null) {
+                Surface(
+                    shape = CircleShape,
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Image(
+                        painter = painterResource(drawableRes),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                    )
+                }
+            } else if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = iconTint,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(

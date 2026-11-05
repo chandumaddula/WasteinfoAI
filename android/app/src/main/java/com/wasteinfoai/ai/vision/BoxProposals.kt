@@ -30,6 +30,17 @@ object BoxProposals {
 
     fun area(b: RectF): Float = maxOf(0f, b.right - b.left) * maxOf(0f, b.bottom - b.top)
 
+    /** Intersection divided by the SMALLER box: 1.0 when one box lies completely inside the other. */
+    fun ioMin(a: RectF, b: RectF): Float {
+        val l = maxOf(a.left, b.left)
+        val t = maxOf(a.top, b.top)
+        val r = minOf(a.right, b.right)
+        val bt = minOf(a.bottom, b.bottom)
+        val inter = maxOf(0f, r - l) * maxOf(0f, bt - t)
+        val smaller = minOf(area(a), area(b))
+        return if (smaller <= 0f) 0f else inter / smaller
+    }
+
     fun iou(a: RectF, b: RectF): Float {
         val l = maxOf(a.left, b.left)
         val t = maxOf(a.top, b.top)

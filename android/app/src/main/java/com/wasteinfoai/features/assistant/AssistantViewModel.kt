@@ -230,6 +230,21 @@ class AssistantViewModel(
         }
     }
 
+    /**
+     * Switch language and update suggested chips and assistant context.
+     */
+    fun setLanguage(languageCode: String) {
+        languageManager?.setLanguage(languageCode)
+        val ctx = _uiState.value.context.copy(languageCode = languageCode)
+        val chips = generateSuggestedChips(ctx)
+        _uiState.update {
+            it.copy(
+                context = ctx,
+                suggestedChips = chips
+            )
+        }
+    }
+
     fun startListening() {
         val helper = speechInputHelper ?: return
         _uiState.update { it.copy(isListening = true, speechError = null) }

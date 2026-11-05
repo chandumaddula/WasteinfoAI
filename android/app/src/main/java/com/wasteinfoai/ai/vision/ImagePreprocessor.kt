@@ -23,8 +23,8 @@ enum class PreprocessingStrategy {
 }
 
 /**
- * Preprocessor matching ReXNet-150 / timm configuration:
- * - Input dimensions: 224 x 224
+ * Preprocessor matching MobileNetV3 / timm configuration:
+ * - Input dimensions: 256 x 256
  * - Channel layout: NCHW, RGB
  * - ImageNet normalization: Mean = [0.485, 0.456, 0.406], Std = [0.229, 0.224, 0.225]
  *
@@ -35,8 +35,8 @@ enum class PreprocessingStrategy {
  */
 object ImagePreprocessor {
 
-    const val INPUT_WIDTH = 224
-    const val INPUT_HEIGHT = 224
+    const val INPUT_WIDTH = 256
+    const val INPUT_HEIGHT = 256
     const val NUM_CHANNELS = 3
     const val TENSOR_SIZE = INPUT_WIDTH * INPUT_HEIGHT * NUM_CHANNELS
 

@@ -136,15 +136,15 @@
     <!-- Category Selection -->
     <string name="category_selection_title">Choose Your Category</string>
     <string name="category_selection_subtitle">Select your operational profile below. Tap an option to configure your personalized dashboard and tools.</string>
-    <string name="category_household_title">Household recycling</string>
+    <string name="category_household_title">Home / Citizen</string>
     <string name="category_household_desc">Residents, apartments, domestic waste segregation &amp; curbside sorting</string>
     <string name="category_ewaste_title">E-waste management</string>
     <string name="category_ewaste_desc">Electronics, circuitry, batteries, hazardous scrap &amp; certified e-waste drop-offs</string>
-    <string name="category_community_title">Community recycling</string>
+    <string name="category_community_title">Colony / Society</string>
     <string name="category_community_desc">Neighborhood hubs, local recycling drives &amp; community collection initiatives</string>
-    <string name="category_plastic_title">Plastic waste reduction</string>
+    <string name="category_plastic_title">Shop &amp; Office</string>
     <string name="category_plastic_desc">Single-use plastics, packaging minimization &amp; commercial recycling compliance</string>
-    <string name="category_sustainability_title">Sustainability education</string>
+    <string name="category_sustainability_title">School &amp; Students</string>
     <string name="category_sustainability_desc">Schools, universities, workshops &amp; community eco-advocacy programs</string>
     <string name="btn_continue_as">Continue as %1$s</string>
     <string name="btn_choose_category_continue">Choose a Category to Continue</string>

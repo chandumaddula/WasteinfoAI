@@ -3,6 +3,7 @@ package com.wasteinfoai.features.scan
 import android.graphics.Bitmap
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,7 +23,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +60,7 @@ fun ScanResultScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val canReport = com.wasteinfoai.features.onboarding.UserCategory.isWasteLocationCategory(userCategory)
+    val currentLang = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]?.language ?: "en"
 
     LaunchedEffect(imagePath) {
         viewModel.processImage(imagePath)
@@ -71,7 +79,7 @@ fun ScanResultScreen(
                     val current = uiState
                     if (current is ScanResultUiState.Success) {
                         IconButton(onClick = {
-                            if (current.items.size > 1) viewModel.speakAllItems() else viewModel.speakGuidance()
+                            if (current.items.size > 1) viewModel.speakAllItems(currentLang) else viewModel.speakGuidance(currentLang)
                         }) {
                             Icon(Icons.Default.VolumeUp, contentDescription = stringResource(R.string.action_read_aloud))
                         }
@@ -149,7 +157,7 @@ fun ScanResultScreen(
                             onNavigateToAssistant(label)
                         },
                         onDoneClicked = onDone ?: onNavigateBack,
-                        onSpeakClicked = { viewModel.speakGuidance() },
+                        onSpeakClicked = { viewModel.speakGuidance(currentLang) },
                         onSelectCategory = { cat, subItem ->
                             viewModel.confirmCategory(cat, subItem)
                         },
@@ -214,32 +222,67 @@ private fun SuccessContent(
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.FillBounds
                         )
-                        if (state.items.size > 1) {
-                            state.items.forEachIndexed { idx, item ->
-                                val b = item.source?.boundingBox ?: return@forEachIndexed
-                                val isSelected = idx == state.selectedObjectIndex
-                                val ready = !item.identification.needsUserConfirmation
-                                val tint = when {
-                                    isSelected -> MaterialTheme.colorScheme.primary
-                                    ready -> Color(0xFF2E7D32)
-                                    else -> Color(0xFFF9A825)
-                                }
-                                Box(
-                                    modifier = Modifier
-                                        .offset(x = boxW * b.left, y = boxH * b.top)
-                                        .size(width = boxW * (b.right - b.left), height = boxH * (b.bottom - b.top))
-                                        .border(if (isSelected) 3.dp else 2.dp, tint, RoundedCornerShape(6.dp))
-                                        .clickable { onSelectObject(idx) }
+                        // Bounding boxes on detected objects styled with candidates scores
+                        val displayBoxes = if (state.items.isNotEmpty()) {
+                            state.items.mapIndexedNotNull { idx, it ->
+                                val box = it.source?.boundingBox ?: state.detectedObjects.getOrNull(idx)?.boundingBox
+                                if (box != null) Triple(idx, it, box) else null
+                            }
+                        } else {
+                            state.detectedObjects.mapIndexed { idx, obj ->
+                                Triple(idx, null, obj.boundingBox)
+                            }
+                        }
+
+                        displayBoxes.forEach { (idx, item, b) ->
+                            val isSelected = idx == state.selectedObjectIndex
+                            val topCandidate = item?.classification?.topKResults?.firstOrNull()
+                                ?: state.classification.topKResults.firstOrNull()
+                            val score = topCandidate?.score ?: item?.classification?.confidence ?: state.classification.confidence
+                            val rawLabel = topCandidate?.label?.ifEmpty { null }
+                                ?: item?.classification?.label?.ifEmpty { null }
+                                ?: state.classification.label
+                            val displayLabel = if (rawLabel.isNotEmpty()) {
+                                CategoryLocalization.getCategoryDisplayName(rawLabel, Locale.getDefault().language)
+                            } else "Item"
+
+                            // Tint based on candidates scores
+                            val tint = when {
+                                isSelected -> MaterialTheme.colorScheme.primary
+                                score >= 0.90f -> Color(0xFF2E7D32) // High confidence candidate (Green)
+                                score >= 0.70f -> Color(0xFFF9A825) // Moderate confidence candidate (Amber)
+                                else -> Color(0xFFD32F2F)           // Low confidence candidate (Red)
+                            }
+
+                            val boxLeft = (boxW * b.left).coerceIn(0.dp, boxW)
+                            val boxTop = (boxH * b.top).coerceIn(0.dp, boxH)
+                            val boxWidth = (boxW * (b.right - b.left)).coerceIn(12.dp, boxW - boxLeft)
+                            val boxHeight = (boxH * (b.bottom - b.top)).coerceIn(12.dp, boxH - boxTop)
+
+                            Box(
+                                modifier = Modifier
+                                    .offset(x = boxLeft, y = boxTop)
+                                    .size(width = boxWidth, height = boxHeight)
+                                    .background(tint.copy(alpha = if (isSelected) 0.16f else 0.08f), RoundedCornerShape(6.dp))
+                                    .border(if (isSelected) 3.dp else 2.dp, tint, RoundedCornerShape(6.dp))
+                                    .clickable { onSelectObject(idx) }
+                            ) {
+                                Surface(
+                                    color = tint,
+                                    shape = RoundedCornerShape(bottomEnd = 6.dp)
                                 ) {
-                                    Surface(color = tint, shape = RoundedCornerShape(bottomEnd = 6.dp)) {
-                                        Text(
-                                            text = "${idx + 1}",
-                                            color = Color.White,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            fontWeight = FontWeight.Bold,
-                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                        )
+                                    val badgeText = if (displayBoxes.size > 1) {
+                                        "${idx + 1}. $displayLabel ${(score * 100).toInt()}%"
+                                    } else {
+                                        "$displayLabel ${(score * 100).toInt()}%"
                                     }
+                                    Text(
+                                        text = badgeText,
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
                                 }
                             }
                         }
@@ -373,12 +416,27 @@ private fun SuccessContent(
             }
         }
 
-        // 2. Primary Identified Category / Rejection Guidance Card
+        // 2. Primary Identified Category / Guidance Card
         val isRejected = !state.classification.isAccepted && !state.isUserConfirmed
         val policy = state.classification.policyResult
+
+        val hasDetectedBox = state.detectedObjectsCount > 0 || state.detectedObjects.isNotEmpty() || state.items.any { it.source?.boundingBox != null }
+        val candidateLabel = state.classification.topKResults.firstOrNull()?.label?.takeIf { !it.equals("not_waste", ignoreCase = true) }
+            ?: state.classification.label.takeIf { it != "No Clear Waste Detected" }
+
         val rawDisplayTitle = state.userConfirmedLabel
-            ?: if (isRejected) stringResource(R.string.scan_no_clear_waste) else state.classification.label
-        val displayTitle = if (isRejected) rawDisplayTitle else CategoryLocalization.localizedCategory(rawDisplayTitle)
+            ?: if (hasDetectedBox && candidateLabel != null) {
+                candidateLabel
+            } else if (isRejected) {
+                stringResource(R.string.scan_no_clear_waste)
+            } else {
+                state.classification.label
+            }
+        val displayTitle = if (rawDisplayTitle == stringResource(R.string.scan_no_clear_waste)) {
+            rawDisplayTitle
+        } else {
+            CategoryLocalization.localizedCategory(rawDisplayTitle)
+        }
         val detectedSubItem = state.hierarchicalIdentification?.specificItem?.takeIf {
             !it.equals(rawDisplayTitle, ignoreCase = true) && !it.equals(state.classification.label, ignoreCase = true)
         }
@@ -387,6 +445,7 @@ private fun SuccessContent(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
                 containerColor = when {
+                    hasDetectedBox && candidateLabel != null && !state.safety.isHazardous -> MaterialTheme.colorScheme.primaryContainer
                     isRejected -> MaterialTheme.colorScheme.surfaceVariant
                     state.safety.isHazardous -> MaterialTheme.colorScheme.errorContainer
                     else -> MaterialTheme.colorScheme.primaryContainer
@@ -405,8 +464,9 @@ private fun SuccessContent(
                             .clip(CircleShape)
                             .background(
                                 when {
-                                    isRejected -> MaterialTheme.colorScheme.outline
                                     state.safety.isHazardous -> MaterialTheme.colorScheme.error
+                                    hasDetectedBox && candidateLabel != null -> MaterialTheme.colorScheme.primary
+                                    isRejected -> MaterialTheme.colorScheme.outline
                                     else -> MaterialTheme.colorScheme.primary
                                 }
                             ),
@@ -414,8 +474,9 @@ private fun SuccessContent(
                     ) {
                         Icon(
                             imageVector = when {
-                                isRejected -> Icons.Default.HelpOutline
                                 state.safety.isHazardous -> Icons.Default.Warning
+                                hasDetectedBox && candidateLabel != null -> Icons.Default.Check
+                                isRejected -> Icons.Default.HelpOutline
                                 else -> Icons.Default.Check
                             },
                             contentDescription = null,
@@ -440,10 +501,11 @@ private fun SuccessContent(
                             )
                         }
                         val sourceText = when {
-                            isRejected -> stringResource(R.string.scan_status_prefix, state.classification.acceptanceState.name.replace('_', ' '))
                             state.hierarchicalIdentification?.identificationSource == IdentificationSource.BARCODE_LOOKUP -> stringResource(R.string.scan_source_barcode)
                             state.hierarchicalIdentification?.identificationSource == IdentificationSource.USER_CONFIRMED -> stringResource(R.string.scan_source_user_confirmed)
                             state.hierarchicalIdentification?.identificationSource == IdentificationSource.OBJECT_CROP_CLASSIFIER -> stringResource(R.string.scan_source_roi_classifier)
+                            hasDetectedBox && candidateLabel != null && isRejected -> "Status: DETECTED (${String.format(Locale.US, "%.1f%%", state.classification.confidence * 100)})"
+                            isRejected -> stringResource(R.string.scan_status_prefix, state.classification.acceptanceState.name.replace('_', ' '))
                             else -> stringResource(R.string.scan_source_on_device)
                         }
                         Text(
@@ -452,10 +514,12 @@ private fun SuccessContent(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
-                            text = if (isRejected) {
-                                policy?.diagnosticDetails ?: stringResource(R.string.scan_rejected_default)
-                            } else if (state.safety.isHazardous) {
+                            text = if (state.safety.isHazardous) {
                                 stringResource(R.string.scan_hazardous_warning)
+                            } else if (hasDetectedBox && candidateLabel != null && isRejected) {
+                                "Identified as $displayTitle with ${(state.classification.confidence * 100).toInt()}% confidence. Please confirm below."
+                            } else if (isRejected) {
+                                policy?.diagnosticDetails ?: stringResource(R.string.scan_rejected_default)
                             } else {
                                 stringResource(R.string.scan_non_hazardous)
                             },
@@ -475,9 +539,14 @@ private fun SuccessContent(
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
+                        val messageText = if (hasDetectedBox && candidateLabel != null) {
+                            "Object detected in frame as $displayTitle (${String.format(Locale.US, "%.1f%%", state.classification.confidence * 100)}). Please confirm the item type below."
+                        } else {
+                            policy?.userFacingMessage
+                                ?: "No clear waste item detected. Please position the item inside the frame and try again."
+                        }
                         Text(
-                            text = policy?.userFacingMessage
-                                ?: "No clear waste item detected. Please position the item inside the frame and try again.",
+                            text = messageText,
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.padding(12.dp)
@@ -496,11 +565,20 @@ private fun SuccessContent(
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(stringResource(R.string.scan_again))
                         }
-                        Button(
-                            onClick = { showCategorySelector = true },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(stringResource(R.string.scan_select_manually))
+                        if (hasDetectedBox && candidateLabel != null) {
+                            Button(
+                                onClick = { onSelectCategory(candidateLabel, null) },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Confirm $displayTitle")
+                            }
+                        } else {
+                            Button(
+                                onClick = { showCategorySelector = true },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(stringResource(R.string.scan_select_manually))
+                            }
                         }
                     }
                 }
@@ -771,45 +849,105 @@ private fun SuccessContent(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                    val binColor = state.rule.targetBinColor
+                    val binBg = when (binColor.uppercase(Locale.US)) {
+                        "BLUE" -> Color(0xFF1976D2)
+                        "GREEN" -> Color(0xFF2E7D32)
+                        "RED" -> Color(0xFFC62828)
+                        "ORANGE" -> Color(0xFFE65100)
+                        else -> Color(0xFF37474F)
+                    }
+                    val binFullName = when (binColor.uppercase(Locale.US)) {
+                        "BLUE" -> stringResource(R.string.bin_blue)
+                        "GREEN" -> stringResource(R.string.bin_green)
+                        "RED" -> stringResource(R.string.bin_red)
+                        "BLACK" -> stringResource(R.string.bin_black)
+                        "ORANGE" -> stringResource(R.string.bin_orange)
+                        "SPECIAL_DEPOT" -> stringResource(R.string.bin_special)
+                        else -> "${CategoryLocalization.localizedBinColor(binColor)} Bin"
+                    }
+
+                    // Featured Target Bin Card with Real Bin Graphic and Full Bin Name
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = binBg.copy(alpha = 0.10f),
+                        border = BorderStroke(1.dp, binBg.copy(alpha = 0.35f)),
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Column {
-                            Text(stringResource(R.string.scan_target_bin), style = MaterialTheme.typography.labelSmall)
-                            val binColor = state.rule.targetBinColor
-                            val binBg = when (binColor.uppercase()) {
-                                "BLUE" -> Color(0xFF1976D2)
-                                "GREEN" -> Color(0xFF388E3C)
-                                "RED" -> Color(0xFFD32F2F)
-                                "ORANGE" -> Color(0xFFF57C00)
-                                else -> Color(0xFF424242)
-                            }
-                            Surface(
-                                shape = RoundedCornerShape(6.dp),
-                                color = binBg,
-                                modifier = Modifier.padding(top = 2.dp)
-                            ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RealBinGraphic(
+                                binColor = binColor,
+                                modifier = Modifier.size(width = 48.dp, height = 58.dp)
+                            )
+                            Spacer(modifier = Modifier.width(14.dp))
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = CategoryLocalization.localizedBinColor(binColor),
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.labelMedium,
+                                    text = stringResource(R.string.scan_target_bin).uppercase(Locale.US),
+                                    style = MaterialTheme.typography.labelSmall,
                                     fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
+                                    color = binBg
                                 )
+                                Text(
+                                    text = binFullName,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Surface(
+                                        shape = RoundedCornerShape(4.dp),
+                                        color = binBg
+                                    ) {
+                                        Text(
+                                            text = CategoryLocalization.localizedBinColor(binColor),
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                        )
+                                    }
+                                    Text(
+                                        text = "• " + (if (state.rule.isRecyclable) stringResource(R.string.scan_recyclable) else stringResource(R.string.scan_non_recyclable)),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
                             }
                         }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Column {
-                            Text(stringResource(R.string.scan_recyclable), style = MaterialTheme.typography.labelSmall)
+                            Text(stringResource(R.string.scan_jurisdiction), style = MaterialTheme.typography.labelSmall)
                             Text(
-                                if (state.rule.isRecyclable) stringResource(R.string.scan_yes) else stringResource(R.string.scan_no),
-                                style = MaterialTheme.typography.bodyLarge,
+                                text = state.resolvedJurisdiction.displayName,
+                                style = MaterialTheme.typography.bodySmall,
                                 fontWeight = FontWeight.Bold
                             )
                         }
-                        Column {
-                            Text(stringResource(R.string.scan_jurisdiction), style = MaterialTheme.typography.labelSmall)
-                            Text(state.resolvedJurisdiction.displayName, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold)
+                        Column(horizontalAlignment = Alignment.End) {
+                            Text(stringResource(R.string.scan_recyclable), style = MaterialTheme.typography.labelSmall)
+                            Text(
+                                text = if (state.rule.isRecyclable) stringResource(R.string.scan_yes) else stringResource(R.string.scan_no),
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Bold,
+                                color = if (state.rule.isRecyclable) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                            )
                         }
                     }
 
@@ -967,11 +1105,24 @@ private fun SuccessContent(
             onClick = onDoneClicked,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(stringResource(R.string.scan_done), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = stringResource(R.string.scan_done),
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
+            )
         }
         Spacer(modifier = Modifier.height(28.dp))
     }
@@ -1118,6 +1269,192 @@ private fun ItemSummaryCard(
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+/**
+ * Realistic municipal segregation bin graphic with lid, handle, contoured body,
+ * wheels, ground shadow, and stream-specific emblem.
+ */
+@Composable
+fun RealBinGraphic(
+    binColor: String,
+    modifier: Modifier = Modifier
+) {
+    val (primaryColor, darkShade, lightShade) = when (binColor.uppercase(Locale.US)) {
+        "ORANGE" -> Triple(Color(0xFFFF8A00), Color(0xFFD35400), Color(0xFFFFB74D))
+        "BLUE" -> Triple(Color(0xFF1E88E5), Color(0xFF1565C0), Color(0xFF64B5F6))
+        "GREEN" -> Triple(Color(0xFF43A047), Color(0xFF2E7D32), Color(0xFF81C784))
+        "RED" -> Triple(Color(0xFFE53935), Color(0xFFC62828), Color(0xFFEF9A9A))
+        else -> Triple(Color(0xFF546E7A), Color(0xFF37474F), Color(0xFF90A4AE))
+    }
+
+    Canvas(modifier = modifier) {
+        val w = size.width
+        val h = size.height
+
+        // Ground shadow
+        drawOval(
+            color = Color.Black.copy(alpha = 0.22f),
+            topLeft = Offset(w * 0.10f, h * 0.90f),
+            size = Size(w * 0.80f, h * 0.08f)
+        )
+
+        // Wheels at bottom
+        val wheelRadius = w * 0.11f
+        val wheelY = h * 0.86f
+        // Left wheel
+        drawCircle(
+            color = Color(0xFF212121),
+            radius = wheelRadius,
+            center = Offset(w * 0.22f, wheelY)
+        )
+        drawCircle(
+            color = Color(0xFF757575),
+            radius = wheelRadius * 0.45f,
+            center = Offset(w * 0.22f, wheelY)
+        )
+        // Right wheel
+        drawCircle(
+            color = Color(0xFF212121),
+            radius = wheelRadius,
+            center = Offset(w * 0.78f, wheelY)
+        )
+        drawCircle(
+            color = Color(0xFF757575),
+            radius = wheelRadius * 0.45f,
+            center = Offset(w * 0.78f, wheelY)
+        )
+
+        // Bin tapered body path
+        val bodyPath = Path().apply {
+            moveTo(w * 0.18f, h * 0.22f) // top left
+            lineTo(w * 0.82f, h * 0.22f) // top right
+            lineTo(w * 0.74f, h * 0.86f) // bottom right
+            lineTo(w * 0.26f, h * 0.86f) // bottom left
+            close()
+        }
+
+        // Fill body with gradient
+        drawPath(
+            path = bodyPath,
+            brush = Brush.horizontalGradient(
+                colors = listOf(darkShade, primaryColor, lightShade, primaryColor, darkShade),
+                startX = w * 0.18f,
+                endX = w * 0.82f
+            )
+        )
+
+        // Body vertical reinforcement ribs
+        val ribBrush = Brush.verticalGradient(
+            colors = listOf(darkShade.copy(alpha = 0.7f), lightShade.copy(alpha = 0.3f))
+        )
+        drawLine(
+            brush = ribBrush,
+            start = Offset(w * 0.38f, h * 0.30f),
+            end = Offset(w * 0.40f, h * 0.78f),
+            strokeWidth = w * 0.035f,
+            cap = StrokeCap.Round
+        )
+        drawLine(
+            brush = ribBrush,
+            start = Offset(w * 0.62f, h * 0.30f),
+            end = Offset(w * 0.60f, h * 0.78f),
+            strokeWidth = w * 0.035f,
+            cap = StrokeCap.Round
+        )
+
+        // Bin Collar / Upper Rim
+        val rimPath = Path().apply {
+            moveTo(w * 0.14f, h * 0.19f)
+            lineTo(w * 0.86f, h * 0.19f)
+            lineTo(w * 0.84f, h * 0.25f)
+            lineTo(w * 0.16f, h * 0.25f)
+            close()
+        }
+        drawPath(
+            path = rimPath,
+            color = darkShade
+        )
+
+        // Bin Lid
+        val lidPath = Path().apply {
+            moveTo(w * 0.12f, h * 0.19f)
+            lineTo(w * 0.88f, h * 0.19f)
+            lineTo(w * 0.82f, h * 0.11f)
+            lineTo(w * 0.18f, h * 0.11f)
+            close()
+        }
+        drawPath(
+            path = lidPath,
+            brush = Brush.verticalGradient(
+                colors = listOf(lightShade, primaryColor),
+                startY = h * 0.11f,
+                endY = h * 0.19f
+            )
+        )
+
+        // Lid Top Handle
+        drawRoundRect(
+            color = darkShade,
+            topLeft = Offset(w * 0.38f, h * 0.06f),
+            size = Size(w * 0.24f, h * 0.06f),
+            cornerRadius = CornerRadius(w * 0.03f, w * 0.03f)
+        )
+
+        // Bin Front Emblem: e.g. Recycle / E-waste symbol / icon
+        val emblemCenter = Offset(w * 0.50f, h * 0.52f)
+        drawCircle(
+            color = Color.White.copy(alpha = 0.92f),
+            radius = w * 0.14f,
+            center = emblemCenter
+        )
+
+        // Symbol on emblem
+        when (binColor.uppercase(Locale.US)) {
+            "ORANGE" -> {
+                // E-waste plug / lightning indicator
+                val boltPath = Path().apply {
+                    moveTo(w * 0.52f, h * 0.43f)
+                    lineTo(w * 0.44f, h * 0.52f)
+                    lineTo(w * 0.50f, h * 0.52f)
+                    lineTo(w * 0.48f, h * 0.61f)
+                    lineTo(w * 0.56f, h * 0.51f)
+                    lineTo(w * 0.50f, h * 0.51f)
+                    close()
+                }
+                drawPath(path = boltPath, color = darkShade)
+            }
+            "GREEN" -> {
+                // Organic leaf indicator
+                drawOval(
+                    color = darkShade,
+                    topLeft = Offset(w * 0.44f, h * 0.46f),
+                    size = Size(w * 0.12f, h * 0.12f)
+                )
+            }
+            "RED" -> {
+                // Hazard warning exclamation mark
+                drawLine(
+                    color = darkShade,
+                    start = Offset(w * 0.50f, h * 0.45f),
+                    end = Offset(w * 0.50f, h * 0.54f),
+                    strokeWidth = w * 0.035f,
+                    cap = StrokeCap.Round
+                )
+                drawCircle(
+                    color = darkShade,
+                    radius = w * 0.02f,
+                    center = Offset(w * 0.50f, h * 0.58f)
+                )
+            }
+            else -> {
+                // 3-point cycle indicator dots
+                drawCircle(color = darkShade, radius = w * 0.025f, center = Offset(w * 0.50f, h * 0.46f))
+                drawCircle(color = darkShade, radius = w * 0.025f, center = Offset(w * 0.44f, h * 0.56f))
+                drawCircle(color = darkShade, radius = w * 0.025f, center = Offset(w * 0.56f, h * 0.56f))
             }
         }
     }

@@ -18,66 +18,66 @@ enum class UserCategory(
 ) {
     HOUSEHOLD_RECYCLING(
         id = "Household recycling",
-        title = "Household recycling",
-        subtitle = "Residents, apartments, domestic waste segregation & curbside sorting",
+        title = "Home / Citizen",
+        subtitle = "",
         defaultRole = "RESIDENT",
-        badgeLabel = "Household / Resident",
-        loginTitle = "Household Recycling Sign In",
-        loginSubtitle = "Log in to track your recycling score, disposal history & domestic waste segregation.",
-        idFieldLabel = "Email Address",
-        idFieldPlaceholder = "resident@example.com",
+        badgeLabel = "Home / Citizen",
+        loginTitle = "Home / Citizen Sign In",
+        loginSubtitle = "Sign in to track your recycling score and waste segregation.",
+        idFieldLabel = "Phone Number or Name",
+        idFieldPlaceholder = "e.g. 9876543210 or Rahul",
         titleRes = R.string.category_household_title,
         subtitleRes = R.string.category_household_desc
     ),
     E_WASTE_MANAGEMENT(
         id = "E-waste management",
         title = "E-waste management",
-        subtitle = "Electronics, circuitry, batteries, hazardous scrap & certified e-waste drop-offs",
+        subtitle = "",
         defaultRole = "SANITATION_WORKER",
-        badgeLabel = "E-Waste Specialist",
-        loginTitle = "E-Waste Management Portal",
-        loginSubtitle = "Authenticate with your Specialist ID to view e-waste collection routes and tasks.",
-        idFieldLabel = "Specialist ID or Official Email",
-        idFieldPlaceholder = "EW-7482 or staff@citywaste.gov",
+        badgeLabel = "E-waste management",
+        loginTitle = "E-waste management Portal",
+        loginSubtitle = "Sign in to view e-waste collection routes and tasks.",
+        idFieldLabel = "Phone Number or Name",
+        idFieldPlaceholder = "e.g. 9876543210 or Staff ID",
         titleRes = R.string.category_ewaste_title,
         subtitleRes = R.string.category_ewaste_desc
     ),
     COMMUNITY_RECYCLING(
         id = "Community recycling",
-        title = "Community recycling",
-        subtitle = "Neighborhood hubs, local recycling drives & community collection initiatives",
+        title = "Colony / Society",
+        subtitle = "",
         defaultRole = "RESIDENT",
-        badgeLabel = "Community Hub",
-        loginTitle = "Community Recycling Portal",
-        loginSubtitle = "Sign in to coordinate community recycling drop points and neighborhood cleanup drives.",
-        idFieldLabel = "Community Lead Email",
-        idFieldPlaceholder = "community@wasteinfo.ai",
+        badgeLabel = "Colony / Society",
+        loginTitle = "Colony / Society Portal",
+        loginSubtitle = "Sign in to coordinate community recycling drop points and cleanups.",
+        idFieldLabel = "Phone Number or Name",
+        idFieldPlaceholder = "e.g. 9876543210 or Society Lead",
         titleRes = R.string.category_community_title,
         subtitleRes = R.string.category_community_desc
     ),
     PLASTIC_WASTE_REDUCTION(
         id = "Plastic waste reduction",
-        title = "Plastic waste reduction",
-        subtitle = "Single-use plastics, packaging minimization & commercial recycling compliance",
+        title = "Shop & Office",
+        subtitle = "",
         defaultRole = "INSTITUTION",
-        badgeLabel = "Plastic Reduction",
-        loginTitle = "Plastic Waste Reduction Portal",
-        loginSubtitle = "Sign in to log plastic audit manifests, track reduction compliance & certificates.",
-        idFieldLabel = "Facility ID / Corporate Email",
-        idFieldPlaceholder = "PWR-104 or plant.manager@company.com",
+        badgeLabel = "Shop & Office",
+        loginTitle = "Shop & Office Portal",
+        loginSubtitle = "Sign in to log waste segregation and recycling certificates.",
+        idFieldLabel = "Phone Number or Name",
+        idFieldPlaceholder = "e.g. 9876543210 or Store Name",
         titleRes = R.string.category_plastic_title,
         subtitleRes = R.string.category_plastic_desc
     ),
     SUSTAINABILITY_EDUCATION(
         id = "Sustainability education",
-        title = "Sustainability education",
-        subtitle = "Schools, universities, public awareness campaigns & sustainability research",
+        title = "School & Students",
+        subtitle = "",
         defaultRole = "REVIEWER",
-        badgeLabel = "Education & Audit",
-        loginTitle = "Sustainability Education Portal",
-        loginSubtitle = "Access educational curriculums, sustainability guides & environmental audit metrics.",
-        idFieldLabel = "Staff / Educator Email",
-        idFieldPlaceholder = "educator@wasteinfo.ai",
+        badgeLabel = "School & Students",
+        loginTitle = "School & Students Portal",
+        loginSubtitle = "Access educational curriculums and environmental audit metrics.",
+        idFieldLabel = "Phone Number or Name",
+        idFieldPlaceholder = "e.g. 9876543210 or Student ID",
         titleRes = R.string.category_sustainability_title,
         subtitleRes = R.string.category_sustainability_desc
     );
@@ -96,18 +96,18 @@ enum class UserCategory(
                 it.title.equals(trimmed, ignoreCase = true) ||
                 it.name.equals(trimmed, ignoreCase = true)
             } ?: when (trimmed.lowercase()) {
-                "households", "household", "household recycling" -> HOUSEHOLD_RECYCLING
+                "households", "household", "household recycling", "home / citizen", "home", "citizen" -> HOUSEHOLD_RECYCLING
                 "municipal worker", "municipal_worker", "e-waste", "e-waste management", "ewaste" -> E_WASTE_MANAGEMENT
-                "community", "community recycling" -> COMMUNITY_RECYCLING
-                "industries", "industry", "plastic", "plastic waste reduction" -> PLASTIC_WASTE_REDUCTION
-                "sustainability education", "education", "other", "reviewer" -> SUSTAINABILITY_EDUCATION
+                "community", "community recycling", "colony / society", "colony", "society" -> COMMUNITY_RECYCLING
+                "industries", "industry", "plastic", "plastic waste reduction", "shop & office", "shop", "office" -> PLASTIC_WASTE_REDUCTION
+                "sustainability education", "education", "school & students", "school", "students", "other", "reviewer" -> SUSTAINABILITY_EDUCATION
                 else -> HOUSEHOLD_RECYCLING
             }
         }
 
         fun isWasteLocationCategory(categoryName: String?): Boolean {
             val norm = categoryName?.trim()?.lowercase() ?: return false
-            return norm.contains("community") || norm.contains("plastic")
+            return norm.contains("community") || norm.contains("plastic") || norm.contains("colony") || norm.contains("society") || norm.contains("shop") || norm.contains("office")
         }
     }
 

@@ -893,6 +893,111 @@
         "crushed": "Flatten clean items to optimize storage space.",
         "wet": "నీటిని డ్రైన్ చేయండి."
       }
+    },
+    {
+      "id": "RULE-STREAM-BIODEGRADABLE",
+      "category": "biodegradable",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "సేంద్రీయ తడి వ్యర్థాలు (ఆకుపచ్చ డబ్బా) / గృహ కంపోస్ట్ / బయోగ్యాస్ ప్లాంట్",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ఆహార వ్యర్థాలు, కూరగాయలు మరియు పండ్ల తొక్కలు, మిగిలిన ఆహారం, పూలు వేరు చేయండి. ప్లాస్టిక్ కవర్లు, రబ్బర్ బ్యాండ్లు మరియు స్టిక్కర్లను తొలగించండి.",
+      "safety_warnings": "సాధారణ సేంద్రీయ వ్యర్థాలకు ఎటువంటి ప్రమాదం లేదు. పొడి వ్యర్థాలతో కలపవద్దు.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "cleaning_tips": "కడగవలసిన అవసరం లేదు. వేయడానికి ముందు అదనపు ద్రవాన్ని తీసివేయండి.",
+      "reuse_ideas": [
+        "మొక్కల కోసం తొక్కలు మరియు ఆహార వ్యర్థాలను కంపోస్ట్ చేయండి"
+      ],
+      "environmental_impact": "సేంద్రీయ వ్యర్థాల కంపోస్టింగ్ వల్ల నేల సారవంతం అవుతుంది మరియు భూతాపం తగ్గుతుంది.",
+      "source": "భారత ఘన వ్యర్థాల నిర్వహణ నిబంధనలు 2016 (తడి వ్యర్థాలు)"
+    },
+    {
+      "id": "RULE-STREAM-RECYCLABLES",
+      "category": "Recyclables",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "పొడి రీసైకిల్ వ్యర్థాలు (నీలం డబ్బా) / కబాడీవాలా / రీసైక్లింగ్ కేంద్రం",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "డబ్బాలు, బాటిళ్లను ఖాళీ చేసి శుభ్రం చేసి ఆరబెట్టండి. బాక్సులను చదును చేయండి. కాగితాన్ని పొడిగా ఉంచండి. ఆహార వ్యర్థాలతో కలపవద్దు.",
+      "safety_warnings": "పగిలిన గాజు మరియు పదునైన టిన్ అంచులతో జాగ్రత్తగా ఉండండి; పగిలిన గాజును కాగితంలో చుట్టండి.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue Bin)",
+        "Kabadiwala / Scrap Dealer",
+        "Material Recovery Facility"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Open Burning",
+        "Open Littering"
+      ],
+      "cleaning_tips": "ద్రవాలు మరియు ఆహార అవశేషాలను శుభ్రం చేయండి. జిడ్డుగల వస్తువులు రీసైక్లింగ్‌ను కలుషితం చేస్తాయి.",
+      "reuse_ideas": [
+        "గాజు సీసాలు మరియు పెట్టెలను నిల్వ కోసం తిరిగి వాడండి"
+      ],
+      "environmental_impact": "కాగితం, లోహం, గాజు మరియు ప్లాస్టిక్ రీసైక్లింగ్ ద్వారా సహజ వనరులు మరియు శక్తి ఆదా అవుతాయి.",
+      "source": "భారత ఘన వ్యర్థాల నిర్వహణ నిబంధనలు 2016 (పొడి వ్యర్థాలు)"
+    },
+    {
+      "id": "RULE-STREAM-EWASTE",
+      "category": "E-waste",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "అధికారిక ఇ-వ్యర్థాల సేకరణ కేంద్రం / రీసైక్లర్ (నారింజ డబ్బా)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "పరికరాన్ని పగలగొట్టకుండా ఉంచండి. సాధ్యమైతే బ్యాటరీలను వేరు చేయండి, వ్యక్తిగత డేటాను తొలగించి అధికారిక ఇ-వ్యర్థాల కేంద్రానికి ఇవ్వండి.",
+      "safety_warnings": "ఎలక్ట్రానిక్స్ వస్తువులను పగలగొట్టవద్దు, కాల్చవద్దు. స్క్రీన్‌లు మరియు బ్యాటరీలలోని రసాయనాలు హాని కలిగిస్తాయి.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Producer Take-Back / EPR Collection Point"
+      ],
+      "prohibited_pathways": [
+        "Household Dustbin",
+        "Open Burning",
+        "Informal Scrap Breaking"
+      ],
+      "cleaning_tips": "బయటి భాగాన్ని పొడి గుడ్డతో తుడవండి. ఎలక్ట్రానిక్స్‌ను ఎప్పుడూ కడగవద్దు.",
+      "reuse_ideas": [
+        "పనిచేసే పరికరాలను మరమ్మతు చేయండి, దానం చేయండి లేదా రీసేల్ చేయండి"
+      ],
+      "environmental_impact": "ఎలక్ట్రానిక్స్‌లో సీసం, పాదరసం వంటి విషపూరిత పదార్థాలు మరియు విలువైన లోహాలు ఉంటాయి. సరైన రీసైక్లింగ్ పర్యావరణాన్ని కాపాడుతుంది.",
+      "source": "ఇ-వ్యర్థాల నిర్వహణ నిబంధనలు 2022"
+    },
+    {
+      "id": "RULE-STREAM-HAZARDOUS",
+      "category": "hazardous",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "గృహ ప్రమాదకర వ్యర్థాల కేంద్రం / ప్రత్యేక సేకరణ పాయింట్ (ఎరుపు డబ్బా)",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "మూత గట్టిగా వేసి అసలు కంటైనర్‌లోనే ఉంచండి. రసాయనాలను కలపవద్దు. బ్యాటరీ టెర్మినల్స్‌పై టేప్ వేయండి. పదునైన వైద్య వ్యర్థాలను ప్రత్యేక డబ్బాలో ఉంచండి.",
+      "safety_warnings": "కాల్చవద్దు, పగులగొట్టవద్దు లేదా కాలువల్లో పోయవద్దు. పిల్లలు, జంతువులు మరియు వేడి నుండి దూరంగా ఉంచండి.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Special Care / Hazardous Waste Collection",
+        "Authorized Hazardous Waste Facility",
+        "Pharmacy / Hospital Take-Back (medicines)"
+      ],
+      "prohibited_pathways": [
+        "Regular Household Bins",
+        "Drains and Toilets",
+        "Open Burning"
+      ],
+      "cleaning_tips": "రసాయన కంటైనర్లను కడగవద్దు. సేకరణ కేంద్రం కోసం సీల్ చేసి ఉంచండి.",
+      "reuse_ideas": [],
+      "environmental_impact": "రసాయనాలు, రంగులు, బ్యాటరీలు మరియు వైద్య వ్యర్థాలు నేల మరియు నీటిని విషపూరితం చేస్తాయి.",
+      "source": "భారత ఘన వ్యర్థాల నిర్వహణ నిబంధనలు 2016 (ప్రమాదకర వ్యర్థాలు)"
     }
   ]
 }

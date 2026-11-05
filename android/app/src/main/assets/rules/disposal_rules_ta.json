@@ -893,6 +893,111 @@
         "crushed": "Flatten clean items to optimize storage space.",
         "wet": "நீரை முழுமையாக அகற்றவும்."
       }
+    },
+    {
+      "id": "RULE-STREAM-BIODEGRADABLE",
+      "category": "biodegradable",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ஈரக் கரிமக் கழிவு (பச்சை தொட்டி) / உரமாக்கல் / உயிர்வாயு ஆலை",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "உணவுக் கழிவுகள், காய்கறித் தோல்கள், பூக்களைப் பிரிக்கவும். பிளாஸ்டிக் கவர்கள், ரப்பர் பேண்டுகளை அகற்றவும்.",
+      "safety_warnings": "சாதாரண உணவுக் கழிவுகளுக்கு ஆபத்து இல்லை. உலர் கழிவுகளுடன் கலக்க வேண்டாம்.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "cleaning_tips": "கழுவ தேவையில்லை. போடுவதற்கு முன் அதிகப்படியான திரவத்தை வடிக்கவும்.",
+      "reuse_ideas": [
+        "செடிகளுக்கு உரமாகப் பயன்படுத்தவும்"
+      ],
+      "environmental_impact": "உரமாக்கல் மூலம் நிலத்தடி வளம் கூடும் மற்றும் சுற்றுச்சூழல் பாதுகாக்கப்படும்.",
+      "source": "திடக்கழிவு மேலாண்மை விதிகள் 2016 (ஈரக்கழிவு)"
+    },
+    {
+      "id": "RULE-STREAM-RECYCLABLES",
+      "category": "Recyclables",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "உலர் மறுசுழற்சி கழிவு (நீலம் தொட்டி) / பழைய இரும்புக்கடை / மறுசுழற்சி மையம்",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "கண்ணாடி பாட்டில்கள், டப்பாக்களைக் கழுவி உலர வைக்கவும். காகிதத்தை உலர்ந்த நிலையில் வைக்கவும்.",
+      "safety_warnings": "உடைந்த கண்ணாடி மற்றும் கூர்மையான தகர விளிம்புகளைக் கவனமாகக் கையாளவும்.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue Bin)",
+        "Kabadiwala / Scrap Dealer",
+        "Material Recovery Facility"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Open Burning",
+        "Open Littering"
+      ],
+      "cleaning_tips": "எண்ணெய் மற்றும் உணவுப் படிவுகளை நீக்கவும்.",
+      "reuse_ideas": [
+        "பாட்டில்களை மறு உபயோகம் செய்யவும்"
+      ],
+      "environmental_impact": "மறுசுழற்சி மூலம் கச்சாப் பொருட்கள் மற்றும் மின்னாற்றல் சேமிக்கப்படுகிறது.",
+      "source": "திடக்கழிவு மேலாண்மை விதிகள் 2016 (உலர்கழிவு)"
+    },
+    {
+      "id": "RULE-STREAM-EWASTE",
+      "category": "E-waste",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "அங்கீகரிக்கப்பட்ட மின்-கழிவு மையம் / மறுசுழற்சி செய்பவர் (ஆரஞ்சு தொட்டி)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "மின் சாதனத்தை உடைக்காமல் வைக்கவும். பேட்டரியை அகற்றி, அங்கீகரிக்கப்பட்ட மையத்தில் ஒப்படைக்கவும்.",
+      "safety_warnings": "மின்சாதனங்களை உடைக்கவோ எரிக்கவோ கூடாது. திரைகளில் உள்ள நச்சுப் பொருட்கள் தீங்கு விளைவிக்கும்.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Producer Take-Back / EPR Collection Point"
+      ],
+      "prohibited_pathways": [
+        "Household Dustbin",
+        "Open Burning",
+        "Informal Scrap Breaking"
+      ],
+      "cleaning_tips": "உலர் துணியால் துடைக்கவும். தண்ணீரில் கழுவ வேண்டாம்.",
+      "reuse_ideas": [
+        "பழுதுபார்த்து பயன்படுத்தவும் அல்லது தானம் செய்யவும்"
+      ],
+      "environmental_impact": "மின் கழிவுகளை முறையாக மறுசுழற்சி செய்வதன் மூலம் நிலத்தடி நீர் நஞ்சாவதைத் தடுக்கலாம்.",
+      "source": "மின்-கழிவு மேலாண்மை விதிகள் 2022"
+    },
+    {
+      "id": "RULE-STREAM-HAZARDOUS",
+      "category": "hazardous",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "அபாயகரமான கழிவு சேகரிப்பு மையம் (சிவப்பு தொட்டி)",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "அசல் கொள்கலனில் மூடி வைக்கவும். பேட்டரி முனைகளில் டேப் ஒட்டவும். ரசாயனங்களை ஒன்றாக கலக்க வேண்டாம்.",
+      "safety_warnings": "சாக்கடையில் ஊற்றவோ எரிக்கவோ கூடாது. குழந்தைகள் மற்றும் வெப்பத்திலிருந்து தள்ளி வைக்கவும்.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Special Care / Hazardous Waste Collection",
+        "Authorized Hazardous Waste Facility",
+        "Pharmacy / Hospital Take-Back (medicines)"
+      ],
+      "prohibited_pathways": [
+        "Regular Household Bins",
+        "Drains and Toilets",
+        "Open Burning"
+      ],
+      "cleaning_tips": "ரசாயன பாட்டில்களை கழுவ வேண்டாம்.",
+      "reuse_ideas": [],
+      "environmental_impact": "ரசாயனங்கள் மற்றும் பேட்டரிகள் மண்ணையும் நீரையும் நச்சுத்தன்மையாக்குகின்றன.",
+      "source": "திடக்கழிவு மேலாண்மை விதிகள் 2016 (அபாயகரக் கழிவு)"
     }
   ]
 }

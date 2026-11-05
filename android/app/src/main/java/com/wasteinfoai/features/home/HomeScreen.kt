@@ -1,5 +1,6 @@
 package com.wasteinfoai.features.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -265,7 +268,7 @@ fun HomeScreen(
                 ) {
                     QuickActionCard(
                         title = stringResource(R.string.assistant_title),
-                        icon = Icons.Default.Psychology,
+                        drawableRes = R.drawable.ic_bottle_ai,
                         modifier = Modifier.weight(1f),
                         onClick = onNavigateToAssistant
                     )
@@ -362,7 +365,8 @@ fun HomeScreen(
 @Composable
 fun QuickActionCard(
     title: String,
-    icon: ImageVector,
+    icon: ImageVector? = null,
+    drawableRes: Int? = null,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -382,12 +386,23 @@ fun QuickActionCard(
                     .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(22.dp)
-                )
+                if (drawableRes != null) {
+                    Image(
+                        painter = painterResource(drawableRes),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                    )
+                } else if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(

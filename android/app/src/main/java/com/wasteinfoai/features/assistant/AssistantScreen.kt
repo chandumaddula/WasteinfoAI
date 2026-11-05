@@ -8,7 +8,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -25,8 +28,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -81,16 +87,16 @@ fun AssistantScreen(
                         Surface(
                             shape = CircleShape,
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier.size(36.dp)
+                            modifier = Modifier.size(38.dp)
                         ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    Icons.Default.Eco,
-                                    contentDescription = "Bottle Avatar",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
+                            Image(
+                                painter = painterResource(R.drawable.ic_bottle_ai),
+                                contentDescription = "Bottle AI Avatar",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clip(CircleShape)
+                            )
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         Column {
@@ -109,6 +115,52 @@ fun AssistantScreen(
                     }
                 },
                 actions = {
+                    var showLanguageMenu by remember { mutableStateOf(false) }
+                    Box {
+                        IconButton(onClick = { showLanguageMenu = true }) {
+                            Icon(Icons.Default.Translate, contentDescription = "Switch Language")
+                        }
+                        DropdownMenu(
+                            expanded = showLanguageMenu,
+                            onDismissRequest = { showLanguageMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("English") },
+                                onClick = {
+                                    viewModel.setLanguage("en")
+                                    showLanguageMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("हिन्दी (Hindi)") },
+                                onClick = {
+                                    viewModel.setLanguage("hi")
+                                    showLanguageMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("తెలుగు (Telugu)") },
+                                onClick = {
+                                    viewModel.setLanguage("te")
+                                    showLanguageMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("தமிழ் (Tamil)") },
+                                onClick = {
+                                    viewModel.setLanguage("ta")
+                                    showLanguageMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("मराठी (Marathi)") },
+                                onClick = {
+                                    viewModel.setLanguage("mr")
+                                    showLanguageMenu = false
+                                }
+                            )
+                        }
+                    }
                     IconButton(onClick = { viewModel.clearChat() }) {
                         Icon(Icons.Default.DeleteSweep, contentDescription = stringResource(R.string.assistant_clear_chat))
                     }
@@ -129,6 +181,55 @@ fun AssistantScreen(
                 onCancelClicked = { viewModel.cancelModelDownload() }
             )
 
+            // Active Item Context Card (User-Friendly Scan Context)
+            val displayItem = uiState.currentItemName ?: uiState.currentCategory
+            if (displayItem.isNotBlank() && displayItem != "plastic") {
+                Surface(
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Surface(
+                            shape = CircleShape,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.size(32.dp)
+                        ) {
+                            Box(contentAlignment = Alignment.Center) {
+                                Icon(
+                                    imageVector = Icons.Default.Recycling,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "Active Item: ${displayItem.replaceFirstChar { it.uppercase() }}",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "Tap quick questions below or type anything",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+
             // Message List
             LazyColumn(
                 state = listState,
@@ -144,6 +245,53 @@ fun AssistantScreen(
                         message = message,
                         onSpeak = { viewModel.speak(message.text) }
                     )
+                }
+
+                // If only welcome greeting is present, display friendly quick question cards
+                if (uiState.messages.size <= 1 && uiState.suggestedChips.isNotEmpty() && !uiState.isGenerating) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 6.dp)
+                        ) {
+                            Text(
+                                text = "Suggested Questions",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
+                            )
+                            uiState.suggestedChips.take(4).forEach { question ->
+                                OutlinedCard(
+                                    onClick = { viewModel.askQuestion(question) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            Icons.Default.HelpOutline,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(10.dp))
+                                        Text(
+                                            text = question,
+                                            style = MaterialTheme.typography.bodySmall,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 if (uiState.isGenerating) {
@@ -420,15 +568,22 @@ fun BottleChatBubble(
         if (!isUser) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 2.dp, start = 4.dp)
+                modifier = Modifier.padding(bottom = 3.dp, start = 2.dp)
             ) {
-                Icon(
-                    Icons.Default.Eco,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(14.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
+                Surface(
+                    shape = CircleShape,
+                    modifier = Modifier.size(18.dp)
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_bottle_ai),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                    )
+                }
+                Spacer(modifier = Modifier.width(6.dp))
                 Text(
                     text = stringResource(R.string.assistant_title),
                     style = MaterialTheme.typography.labelSmall,
@@ -481,22 +636,36 @@ fun BottleChatBubble(
                 }
 
                 if (!isUser && message.text.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(6.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(
-                            onClick = onSpeak,
-                            modifier = Modifier.size(24.dp)
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.85f),
+                            border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                            modifier = Modifier.clickable { onSpeak() }
                         ) {
-                            Icon(
-                                Icons.AutoMirrored.Filled.VolumeUp,
-                                contentDescription = "Read aloud",
-                                tint = textColor.copy(alpha = 0.7f),
-                                modifier = Modifier.size(16.dp)
-                            )
+                            Row(
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.VolumeUp,
+                                    contentDescription = "Read aloud",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Text(
+                                    text = "Read aloud",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }

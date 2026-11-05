@@ -21,12 +21,17 @@ import com.wasteinfoai.ai.taxonomy.WasteTaxonomy
 import com.wasteinfoai.ai.vision.AcceptanceState
 import com.wasteinfoai.ai.vision.BoxProposals
 import com.wasteinfoai.ai.vision.ClassificationResult
+import com.wasteinfoai.ai.vision.ClassifiedCrop
+import com.wasteinfoai.ai.vision.ItemSelection
 import com.wasteinfoai.ai.vision.ImagePreprocessor
 import com.wasteinfoai.ai.vision.ImageQualityAssessment
 import com.wasteinfoai.ai.vision.ImageQualityAssessor
 import com.wasteinfoai.ai.vision.PreprocessingStrategy
 import com.wasteinfoai.ai.vision.WasteClassifier
+import com.wasteinfoai.audio.SpeechTextFormatter
 import com.wasteinfoai.audio.TextToSpeechManager
+import com.wasteinfoai.core.language.CategoryLocalization
+import com.wasteinfoai.core.language.LanguageManager
 import com.wasteinfoai.camera.DetectedWasteItem
 import com.wasteinfoai.camera.ImageDecoding
 import com.wasteinfoai.camera.WasteObjectDetector
@@ -111,7 +116,8 @@ class ScanResultViewModel(
     private val packagingOcrService: PackagingOcrService = PackagingOcrService(),
     private val evidenceReconciliationEngine: EvidenceReconciliationEngine = EvidenceReconciliationEngine(),
     private val feedbackRepository: FeedbackRepository? = null,
-    private val locationHelper: LocationHelper? = null
+    private val locationHelper: LocationHelper? = null,
+    private val languageManager: LanguageManager? = null
 ) : ViewModel() {
 
     private companion object {
@@ -175,17 +181,22 @@ class ScanResultViewModel(
                     return@withContext
                 }
 
-                // 6. Trusted items first; drop crops the policy says are probably not waste (hands, desks, pen holders)
-                val ranked = analyses.sortedWith(
-                    compareByDescending<ItemAnalysis> { it.classification.isAccepted }
-                        .thenByDescending { it.classification.confidence }
+                // 6. Which items to show: accepted ones + plausible-but-unsure ones (e.g. a mouse on a pile of papers),
+                //    same-category duplicates merged, probable non-waste (hands, furniture) dropped. See ItemSelection.
+                val selection = ItemSelection.select(
+                    analyses.map {
+                        ClassifiedCrop(
+                            accepted = it.classification.isAccepted,
+                            state = it.classification.acceptanceState,
+                            confidence = it.classification.confidence,
+                            category = it.categoryKey(),
+                            box = it.rectOrNull()
+                        )
+                    },
+                    maxItems = MAX_ITEMS
                 )
-                // Only ACCEPTED items are listed as waste. Rejected regions (hands, jeans, a bracelet) used to be
-                // listed as "Unsure - maybe paper 91%", inventing waste that is not in the photo. When nothing is
-                // accepted, ONE "not sure" result is shown (best crop) with manual selection.
-                val accepted = ranked.filter { it.classification.isAccepted }
-                val shown = accepted.ifEmpty { ranked.take(1) }
-                val ignoredCount = analyses.size - shown.size
+                val shown = selection.shown.map { analyses[it] }
+                val ignoredCount = selection.hiddenAsNonWaste
 
                 // 7. Persist one history row per shown item
                 val saved = shown.map { it.copy(scanId = saveItem(file, it)) }
@@ -294,6 +305,13 @@ class ScanResultViewModel(
                 conflictExplanation = reconciliation.conflictReason
             )
         )
+    }
+
+    private fun ItemAnalysis.categoryKey(): String =
+        classification.topKResults.firstOrNull()?.label ?: classification.label
+
+    private fun ItemAnalysis.rectOrNull(): RectF? = source?.let {
+        RectF(it.boundingBox.left, it.boundingBox.top, it.boundingBox.right, it.boundingBox.bottom)
     }
 
     private suspend fun saveItem(file: File, item: ItemAnalysis): Long = runCatching {
@@ -480,46 +498,218 @@ class ScanResultViewModel(
         }
     }
 
-    fun speakGuidance() {
+    fun speakGuidance(targetLanguage: String? = null) {
         val state = _uiState.value as? ScanResultUiState.Success ?: return
-        val currentLabel = state.userConfirmedLabel
+        val lang = targetLanguage?.trim()?.lowercase()?.take(2)
+            ?: languageManager?.currentLanguage?.value
+            ?: Locale.getDefault().language.trim().lowercase().take(2)
+
+        val currentItem = state.items.getOrNull(state.selectedObjectIndex)
+        val rawItem = currentItem?.userConfirmedLabel
+            ?: currentItem?.identification?.specificItem
+            ?: currentItem?.identification?.coarseCategory
+            ?: state.userConfirmedLabel
             ?: state.hierarchicalIdentification?.specificItem
             ?: state.classification.label
 
-        val textToSpeak = buildString {
-            append("Identified as $currentLabel. ")
-            if (state.safety.isHazardous) {
-                append("Warning: Hazardous waste. ${state.safety.primaryWarning}. ")
-            }
-            if (state.rule != null) {
-                append("Disposal method: ${state.rule.disposalMethod}. ")
-                append("Place in ${state.rule.targetBinColor} bin. ")
-                append(state.rule.preparationInstructions)
-            }
-        }
-        ttsManager.speak(textToSpeak)
-    }
+        val localizedItemName = CategoryLocalization.getCategoryDisplayName(rawItem, lang)
+        val targetBinColor = currentItem?.rule?.targetBinColor ?: state.rule?.targetBinColor ?: ""
+        val localizedBin = CategoryLocalization.getBinColorDisplayName(targetBinColor, lang)
 
-    /** Reads every item found in the photo, not only the selected one. */
-    fun speakAllItems() {
-        val state = _uiState.value as? ScanResultUiState.Success ?: return
-        val text = buildString {
-            append("Found ${state.items.size} items. ")
-            state.items.forEachIndexed { i, item ->
-                if (item.identification.needsUserConfirmation) {
-                    append("Item ${i + 1}: not sure what this is. Please confirm it on screen. ")
-                } else {
-                    val label = item.userConfirmedLabel
-                        ?: item.identification.specificItem
-                        ?: item.identification.coarseCategory
-                    append("Item ${i + 1}: $label. ")
-                    if (item.safety.isHazardous) append("Warning: hazardous. ${item.safety.primaryWarning}. ")
-                    append("Place in ${item.rule.targetBinColor} bin. ")
-                    append(item.rule.disposalMethod).append(". ")
+        val localizedRule = disposalRuleEngine.getHierarchicalRule(
+            category = state.classification.label,
+            specificItem = currentItem?.identification?.specificItem ?: state.hierarchicalIdentification?.specificItem ?: state.userConfirmedLabel,
+            materialCode = currentItem?.identification?.materialCode ?: state.hierarchicalIdentification?.materialCode,
+            languageCode = lang
+        )
+
+        val isHazardous = state.safety.isHazardous || currentItem?.safety?.isHazardous == true || localizedRule.isHazardous
+        val safetyWarning = localizedRule.safetyWarnings.ifBlank {
+            currentItem?.safety?.primaryWarning ?: state.safety.primaryWarning
+        }
+
+        val speechText = when (lang) {
+            "te" -> buildString {
+                append("గుర్తించిన వస్తువు: $localizedItemName. ")
+                if (isHazardous) {
+                    append("హెచ్చరిక: ప్రమాదకర వ్యర్థాలు. $safetyWarning. ")
+                }
+                if (localizedBin.isNotBlank()) {
+                    append("దీనిని $localizedBin లో వేయండి. ")
+                }
+                if (localizedRule.disposalMethod.isNotBlank()) {
+                    append("పారవేసే విధానం: ${localizedRule.disposalMethod}. ")
+                }
+                if (localizedRule.preparationInstructions.isNotBlank()) {
+                    append(localizedRule.preparationInstructions)
+                }
+            }
+            "hi" -> buildString {
+                append("पहचाना गया: $localizedItemName। ")
+                if (isHazardous) {
+                    append("चेतावनी: खतरनाक कचरा। $safetyWarning। ")
+                }
+                if (localizedBin.isNotBlank()) {
+                    append("इसे $localizedBin में डालें। ")
+                }
+                if (localizedRule.disposalMethod.isNotBlank()) {
+                    append("निपटान विधि: ${localizedRule.disposalMethod}। ")
+                }
+                if (localizedRule.preparationInstructions.isNotBlank()) {
+                    append(localizedRule.preparationInstructions)
+                }
+            }
+            "ta" -> buildString {
+                append("கண்டறியப்பட்டது: $localizedItemName. ")
+                if (isHazardous) {
+                    append("எச்சரிக்கை: அபாயகரமான கழிவு. $safetyWarning. ")
+                }
+                if (localizedBin.isNotBlank()) {
+                    append("இதை $localizedBin யில் போடவும். ")
+                }
+                if (localizedRule.disposalMethod.isNotBlank()) {
+                    append("அகற்றும் முறை: ${localizedRule.disposalMethod}. ")
+                }
+                if (localizedRule.preparationInstructions.isNotBlank()) {
+                    append(localizedRule.preparationInstructions)
+                }
+            }
+            "mr" -> buildString {
+                append("ओळखले: $localizedItemName. ")
+                if (isHazardous) {
+                    append("धोका: धोकादायक कचरा. $safetyWarning. ")
+                }
+                if (localizedBin.isNotBlank()) {
+                    append("हे $localizedBin मध्ये टाका. ")
+                }
+                if (localizedRule.disposalMethod.isNotBlank()) {
+                    append("विल्हेवाट पद्धत: ${localizedRule.disposalMethod}. ")
+                }
+                if (localizedRule.preparationInstructions.isNotBlank()) {
+                    append(localizedRule.preparationInstructions)
+                }
+            }
+            else -> buildString {
+                append("Identified as $localizedItemName. ")
+                if (isHazardous) {
+                    append("Warning: Hazardous waste. $safetyWarning. ")
+                }
+                if (localizedBin.isNotBlank()) {
+                    append("Place in $localizedBin. ")
+                }
+                if (localizedRule.disposalMethod.isNotBlank()) {
+                    append("Disposal method: ${localizedRule.disposalMethod}. ")
+                }
+                if (localizedRule.preparationInstructions.isNotBlank()) {
+                    append(localizedRule.preparationInstructions)
                 }
             }
         }
-        ttsManager.speak(text)
+
+        val formatted = SpeechTextFormatter.formatForSpeech(speechText, lang)
+        if (formatted.isNotBlank()) {
+            ttsManager.speak(formatted, languageCode = lang)
+        }
+    }
+
+    /** Reads every item found in the photo in the active display language. */
+    fun speakAllItems(targetLanguage: String? = null) {
+        val state = _uiState.value as? ScanResultUiState.Success ?: return
+        val lang = targetLanguage?.trim()?.lowercase()?.take(2)
+            ?: languageManager?.currentLanguage?.value
+            ?: Locale.getDefault().language.trim().lowercase().take(2)
+
+        val text = when (lang) {
+            "te" -> buildString {
+                append("మొత్తం ${state.items.size} వస్తువులు గుర్తించబడ్డాయి. ")
+                state.items.forEachIndexed { i, item ->
+                    val rawLabel = item.userConfirmedLabel
+                        ?: item.identification.specificItem
+                        ?: item.identification.coarseCategory
+                    val itemLabel = CategoryLocalization.getCategoryDisplayName(rawLabel, lang)
+                    val binName = CategoryLocalization.getBinColorDisplayName(item.rule.targetBinColor, lang)
+                    val rule = disposalRuleEngine.getHierarchicalRule(
+                        category = item.classification.label,
+                        specificItem = item.identification.specificItem,
+                        languageCode = lang
+                    )
+                    append("వస్తువు ${i + 1}: $itemLabel. ")
+                    if (binName.isNotBlank()) append("$binName లో వేయండి. ")
+                    if (rule.disposalMethod.isNotBlank()) append("${rule.disposalMethod}. ")
+                }
+            }
+            "hi" -> buildString {
+                append("कुल ${state.items.size} वस्तुएं मिलीं। ")
+                state.items.forEachIndexed { i, item ->
+                    val rawLabel = item.userConfirmedLabel
+                        ?: item.identification.specificItem
+                        ?: item.identification.coarseCategory
+                    val itemLabel = CategoryLocalization.getCategoryDisplayName(rawLabel, lang)
+                    val binName = CategoryLocalization.getBinColorDisplayName(item.rule.targetBinColor, lang)
+                    val rule = disposalRuleEngine.getHierarchicalRule(
+                        category = item.classification.label,
+                        specificItem = item.identification.specificItem,
+                        languageCode = lang
+                    )
+                    append("वस्तु ${i + 1}: $itemLabel। ")
+                    if (binName.isNotBlank()) append("$binName में डालें। ")
+                    if (rule.disposalMethod.isNotBlank()) append("${rule.disposalMethod}। ")
+                }
+            }
+            "ta" -> buildString {
+                append("மொத்தம் ${state.items.size} பொருட்கள் கண்டறியப்பட்டன. ")
+                state.items.forEachIndexed { i, item ->
+                    val rawLabel = item.userConfirmedLabel
+                        ?: item.identification.specificItem
+                        ?: item.identification.coarseCategory
+                    val itemLabel = CategoryLocalization.getCategoryDisplayName(rawLabel, lang)
+                    val binName = CategoryLocalization.getBinColorDisplayName(item.rule.targetBinColor, lang)
+                    val rule = disposalRuleEngine.getHierarchicalRule(
+                        category = item.classification.label,
+                        specificItem = item.identification.specificItem,
+                        languageCode = lang
+                    )
+                    append("பொருள் ${i + 1}: $itemLabel. ")
+                    if (binName.isNotBlank()) append("$binName யில் போடவும். ")
+                    if (rule.disposalMethod.isNotBlank()) append("${rule.disposalMethod}. ")
+                }
+            }
+            "mr" -> buildString {
+                append("एकूण ${state.items.size} वस्तू सापडल्या. ")
+                state.items.forEachIndexed { i, item ->
+                    val rawLabel = item.userConfirmedLabel
+                        ?: item.identification.specificItem
+                        ?: item.identification.coarseCategory
+                    val itemLabel = CategoryLocalization.getCategoryDisplayName(rawLabel, lang)
+                    val binName = CategoryLocalization.getBinColorDisplayName(item.rule.targetBinColor, lang)
+                    val rule = disposalRuleEngine.getHierarchicalRule(
+                        category = item.classification.label,
+                        specificItem = item.identification.specificItem,
+                        languageCode = lang
+                    )
+                    append("वस्तू ${i + 1}: $itemLabel. ")
+                    if (binName.isNotBlank()) append("$binName मध्ये टाका. ")
+                    if (rule.disposalMethod.isNotBlank()) append("${rule.disposalMethod}. ")
+                }
+            }
+            else -> buildString {
+                append("Found ${state.items.size} items. ")
+                state.items.forEachIndexed { i, item ->
+                    val rawLabel = item.userConfirmedLabel
+                        ?: item.identification.specificItem
+                        ?: item.identification.coarseCategory
+                    val itemLabel = CategoryLocalization.getCategoryDisplayName(rawLabel, lang)
+                    val binName = CategoryLocalization.getBinColorDisplayName(item.rule.targetBinColor, lang)
+                    append("Item ${i + 1}: $itemLabel. ")
+                    if (binName.isNotBlank()) append("Place in $binName. ")
+                    if (item.rule.disposalMethod.isNotBlank()) append("${item.rule.disposalMethod}. ")
+                }
+            }
+        }
+        val formatted = SpeechTextFormatter.formatForSpeech(text, lang)
+        if (formatted.isNotBlank()) {
+            ttsManager.speak(formatted, languageCode = lang)
+        }
     }
 
     fun stopSpeaking() {

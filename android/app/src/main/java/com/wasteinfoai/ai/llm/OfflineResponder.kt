@@ -3,6 +3,7 @@ package com.wasteinfoai.ai.llm
 import com.wasteinfoai.ai.rules.DisposalRule
 import com.wasteinfoai.ai.rules.SafetyGuard
 import com.wasteinfoai.core.language.CategoryLocalization
+import java.util.Locale
 
 /**
  * Deterministic offline response generator for Bottle.
@@ -31,20 +32,23 @@ class OfflineResponder {
         val rawItem = context.specificItem ?: context.category
         val lang = context.languageCode?.trim()?.lowercase()?.take(2) ?: "en"
         val itemName = CategoryLocalization.getCategoryDisplayName(rawItem, lang)
-        val safety = SafetyGuard.evaluateSafety(context.category, isUncertain = false)
-        val isHazardous = safety.isHazardous || rule?.isHazardous == true
-        val warning = rule?.safetyWarnings?.takeIf { it.isNotBlank() } ?: safety.primaryWarning
-        val targetBin = CategoryLocalization.getBinColorDisplayName(rule?.targetBinColor ?: "", lang)
+
+        // Conversational greetings, identity & segregation overview inquiries
+        if (isGreeting(query)) return buildGreetingResponse(lang, itemName)
+        if (isGratitude(query)) return buildGratitudeResponse(lang)
+        if (isIdentity(query)) return buildIdentityResponse(lang)
+        if (isHelp(query)) return buildHelpResponse(lang)
+        if (isFarewell(query)) return buildFarewellResponse(lang)
+        if (isSegregationOverviewQuery(query)) return buildSegregationOverviewResponse(lang)
 
         if (rule == null) {
-            return when (lang) {
-                "te" -> "'${context.category}' వర్గం కోసం ప్రస్తుతం ధృవీకరించబడిన మునిసిపల్ నియమం నమోదు కాలేదు. దయచేసి పారవేసే ముందు మీ స్థానిక వ్యర్థాల అధికారిని సంప్రదించండి."
-                "hi" -> "'${context.category}' श्रेणी के लिए वर्तमान में कोई सत्यापित नगरपालिका नियम पंजीकृत नहीं है। कृपया निपटान से पहले अपने स्थानीय अपशिष्ट प्राधिकरण से परामर्श लें।"
-                "ta" -> "'${context.category}' பிரிவுக்கு தற்போது சரிபார்க்கப்பட்ட நகராட்சி விதி எதுவும் பதிவு செய்யப்படவில்லை. அகற்றுவதற்கு முன் உங்கள் உள்ளூர் கழிவு அதிகாரியை அணுகவும்."
-                "mr" -> "'${context.category}' वर्गासाठी सध्या कोणताही पडताळणी केलेला महापालिका नियम नोंदणीकृत नाही. कृपया विल्हेवाट लावण्यापूर्वी स्थानिक अधिकाऱ्यांशी संपर्क साधा."
-                else -> "No verified municipal rule is currently registered for category '${context.category}'. Please consult your local waste authority before disposal."
-            }
+            return buildFriendlyFallbackResponse(lang, query)
         }
+
+        val safety = SafetyGuard.evaluateSafety(context.category, isUncertain = false)
+        val isHazardous = safety.isHazardous || rule.isHazardous
+        val warning = rule.safetyWarnings.takeIf { it.isNotBlank() } ?: safety.primaryWarning
+        val targetBin = CategoryLocalization.getBinColorDisplayName(rule.targetBinColor, lang)
 
         // 1. Condition Follow-Up Check ("what if it's broken / greasy / crushed / wet?")
         // Detection runs on what the USER typed. The item name must never be injected first: "Food Storage Glass Jar"
@@ -417,81 +421,87 @@ class OfflineResponder {
             }
 
             AssistantIntent.BIN_LOCATION -> {
+                val emoji = getBinEmoji(rule.targetBinColor)
                 when (lang) {
                     "te" -> buildString {
-                        append("📍 $itemName పారవేత & డబ్బా వర్గీకరణ:\n\n")
-                        append("• కేటాయించిన డబ్బా: $targetBin\n")
+                        append("$itemName ని ఖచ్చితంగా ఈ డబ్బాలో వేయాలి:\n\n")
+                        append("$emoji కేటాయించిన డబ్బా: $targetBin\n")
                         append("• పారవేత విధానం: ${rule.disposalMethod}\n")
-                        append("• రీసైకిల్ చేయగలదా: ${if (rule.isRecyclable) "అవును" else "కాదు"}\n")
+                        append("• రీసైకిల్ చేయగలదా: ${if (rule.isRecyclable) "అవును, రీసైకిల్ అవుతుంది" else "కాదు"}\n\n")
                         if (rule.acceptedPathways.isNotEmpty()) {
-                            append("• స్వీకరించబడే ప్రదేశాలు: ${rule.acceptedPathways.joinToString(", ")}\n")
+                            append("స్వీకరించబడే ప్రదేశాలు:\n${rule.acceptedPathways.joinToString("\n") { "• $it" }}\n\n")
                         }
                         if (rule.prohibitedPathways.isNotEmpty()) {
-                            append("• నిషిద్ధం: ${rule.prohibitedPathways.joinToString("; ")}\n")
+                            append("చేయకూడనివి: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
                         }
                         if (conditionAdvice != null) {
-                            append("\nస్థితి సమాచారం ($detectedCondition): $conditionAdvice\n")
+                            append("స్థితి సమాచారం ($detectedCondition): $conditionAdvice\n\n")
                         }
+                        append("మీ పరిసరాలను పరిశుభ్రంగా ఉంచడంలో భాగస్వామ్యం అయినందుకు ధన్యవాదాలు! 😊")
                     }.trim()
                     "hi" -> buildString {
-                        append("📍 $itemName निपटान और डिब्बा पृथक्करण:\n\n")
-                        append("• लक्षित डिब्बा: $targetBin\n")
+                        append("$itemName को सही तरीके से इस डिब्बे में डालें:\n\n")
+                        append("$emoji लक्षित डिब्बा: $targetBin\n")
                         append("• निपटान मार्ग: ${rule.disposalMethod}\n")
-                        append("• पुनर्चक्रण योग्य: ${if (rule.isRecyclable) "हाँ" else "नहीं"}\n")
+                        append("• पुनर्चक्रण योग्य: ${if (rule.isRecyclable) "हाँ, पुनर्चक्रण योग्य है" else "नहीं"}\n\n")
                         if (rule.acceptedPathways.isNotEmpty()) {
-                            append("• स्वीकृत केंद्र: ${rule.acceptedPathways.joinToString(", ")}\n")
+                            append("स्वीकृत केंद्र:\n${rule.acceptedPathways.joinToString("\n") { "• $it" }}\n\n")
                         }
                         if (rule.prohibitedPathways.isNotEmpty()) {
-                            append("• निषिद्ध: ${rule.prohibitedPathways.joinToString("; ")}\n")
+                            append("क्या न करें: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
                         }
                         if (conditionAdvice != null) {
-                            append("\nस्थिति नोट ($detectedCondition): $conditionAdvice\n")
+                            append("स्थिति नोट ($detectedCondition): $conditionAdvice\n\n")
                         }
+                        append("स्वच्छता में सहयोग देने के लिए धन्यवाद! 😊")
                     }.trim()
                     "ta" -> buildString {
-                        append("📍 $itemName அகற்றல் மற்றும் தொட்டி தரம் பிரித்தல்:\n\n")
-                        append("• இலக்கு தொட்டி: $targetBin\n")
+                        append("$itemName ஐ இந்த தொட்டியில் சரியாக போடவும்:\n\n")
+                        append("$emoji இலக்கு தொட்டி: $targetBin\n")
                         append("• அகற்றும் வழிமுறை: ${rule.disposalMethod}\n")
-                        append("• மறுசுழற்சி செய்யக்கூடியதா: ${if (rule.isRecyclable) "ஆம்" else "இல்லை"}\n")
+                        append("• மறுசுழற்சி செய்யக்கூடியதா: ${if (rule.isRecyclable) "ஆம்" else "இல்லை"}\n\n")
                         if (rule.acceptedPathways.isNotEmpty()) {
-                            append("• ஏற்றுக்கொள்ளப்படும் இடங்கள்: ${rule.acceptedPathways.joinToString(", ")}\n")
+                            append("ஏற்றுக்கொள்ளப்படும் இடங்கள்:\n${rule.acceptedPathways.joinToString("\n") { "• $it" }}\n\n")
                         }
                         if (rule.prohibitedPathways.isNotEmpty()) {
-                            append("• தடைசெய்யப்பட்டவை: ${rule.prohibitedPathways.joinToString("; ")}\n")
+                            append("செய்யக்கூடாதவை: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
                         }
                         if (conditionAdvice != null) {
-                            append("\nநிலை குறிப்பு ($detectedCondition): $conditionAdvice\n")
+                            append("நிலை குறிப்பு ($detectedCondition): $conditionAdvice\n\n")
                         }
+                        append("சுற்றுப்புற தூய்மைக்கு ஒத்துழைத்ததற்கு நன்றி! 😊")
                     }.trim()
                     "mr" -> buildString {
-                        append("📍 $itemName विल्हेवाट आणि कचराकुंडी वर्गीकरण:\n\n")
-                        append("• लक्षित कुंडी: $targetBin\n")
+                        append("$itemName ची योग्य विल्हेवाट या कुंडीत करावी:\n\n")
+                        append("$emoji लक्षित कुंडी: $targetBin\n")
                         append("• विल्हेवाट मार्ग: ${rule.disposalMethod}\n")
-                        append("• पुनर्वापर करण्यायोग्य: ${if (rule.isRecyclable) "होय" else "नाही"}\n")
+                        append("• पुनर्वापर करण्यायोग्य: ${if (rule.isRecyclable) "होय" else "नाही"}\n\n")
                         if (rule.acceptedPathways.isNotEmpty()) {
-                            append("• स्वीकार्य ठिकाणे: ${rule.acceptedPathways.joinToString(", ")}\n")
+                            append("स्वीकार्य ठिकाणे:\n${rule.acceptedPathways.joinToString("\n") { "• $it" }}\n\n")
                         }
                         if (rule.prohibitedPathways.isNotEmpty()) {
-                            append("• निषिद्ध: ${rule.prohibitedPathways.joinToString("; ")}\n")
+                            append("काय करू नये: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
                         }
                         if (conditionAdvice != null) {
-                            append("\nस्थिती नोंद ($detectedCondition): $conditionAdvice\n")
+                            append("स्थिती नोंद ($detectedCondition): $conditionAdvice\n\n")
                         }
+                        append("परिसर स्वच्छ ठेवण्यात सहकार्य केल्याबद्दल धन्यवाद! 😊")
                     }.trim()
                     else -> buildString {
-                        append("📍 Disposal & Bin Segregation for $itemName:\n\n")
-                        append("• Target Bin: $targetBin\n")
+                        append("Here is where $itemName belongs:\n\n")
+                        append("$emoji Target Bin: $targetBin\n")
                         append("• Disposal Pathway: ${rule.disposalMethod}\n")
-                        append("• Recyclable: ${if (rule.isRecyclable) "Yes" else "No"}\n")
+                        append("• Recyclable: ${if (rule.isRecyclable) "Yes, highly recyclable" else "No"}\n\n")
                         if (rule.acceptedPathways.isNotEmpty()) {
-                            append("• Accepted At: ${rule.acceptedPathways.joinToString(", ")}\n")
+                            append("Accepted At:\n${rule.acceptedPathways.joinToString("\n") { "• $it" }}\n\n")
                         }
                         if (rule.prohibitedPathways.isNotEmpty()) {
-                            append("• Prohibited: ${rule.prohibitedPathways.joinToString("; ")}\n")
+                            append("Please avoid: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
                         }
                         if (conditionAdvice != null) {
-                            append("\nCondition Note ($detectedCondition): $conditionAdvice\n")
+                            append("Condition Note ($detectedCondition): $conditionAdvice\n\n")
                         }
+                        append("Thank you for segregating your waste responsibly! 😊")
                     }.trim()
                 }
             }
@@ -525,16 +535,6 @@ class OfflineResponder {
                             append("Standard Pathway: ${rule.disposalMethod} (${rule.targetBinColor} BIN).")
                         }.trim()
                     }
-                } else if (isGreeting(query)) {
-                    buildGreetingResponse(lang, itemName)
-                } else if (isGratitude(query)) {
-                    buildGratitudeResponse(lang)
-                } else if (isIdentity(query)) {
-                    buildIdentityResponse(lang)
-                } else if (isHelp(query)) {
-                    buildHelpResponse(lang)
-                } else if (isFarewell(query)) {
-                    buildFarewellResponse(lang)
                 } else {
                     buildGeneralExplanation(itemName, rule, isHazardous, warning, lang, isDetailRequested(query))
                 }
@@ -651,6 +651,243 @@ class OfflineResponder {
                 q.contains("विघटन") || q.contains("कुजण्यासाठी")
     }
 
+    private fun getBinEmoji(binColor: String): String = when (binColor.uppercase(Locale.US)) {
+        "GREEN" -> "🟢"
+        "BLUE" -> "🔵"
+        "ORANGE" -> "🟠"
+        "RED" -> "🔴"
+        else -> "⚫"
+    }
+
+    private fun isSegregationOverviewQuery(query: String): Boolean {
+        val q = query.trim().lowercase()
+        val enPhrases = listOf(
+            "segregat", "separate", "all bin", "bin color", "bin colour", "which bin", "how to segregate",
+            "waste management", "waste types", "types of waste", "color code", "colour code", "rules", "4 bin", "5 bin"
+        )
+        val indic = listOf(
+            "వేరుచేయడం", "ఎలా వేరు చేయాలి", "డబ్బాల రంగులు", "అన్ని డబ్బాలు", "వ్యర్థాల రకాలు", "డబ్బాల",
+            "कचरा अलग", "पृथक्करण", "डिब्बों के रंग", "कचरे के प्रकार", "नियम", "अलग कैसे",
+            "தரம் பிரித்தல்", "தொட்டிகளின் நிறங்கள்", "கழிவு வகைகள்",
+            "कचरा वर्गीकरण", "कचरा कसा वेगळा", "कुंड्यांचे रंग", "कचऱ्याचे प्रकार"
+        )
+        return enPhrases.any { q.contains(it) } || indic.any { q.contains(it) }
+    }
+
+    private fun buildFriendlyFallbackResponse(lang: String, query: String): String = when (lang) {
+        "te" -> """
+            నమస్కారం! మీరు అడిగిన వస్తువు గురించి వివరాలు చూస్తున్నాను.
+
+            మన దేశంలో సాధారణ వ్యర్థాల వర్గీకరణ పద్ధతి ఇలా ఉంటుంది:
+            🟢 ఆకుపచ్చ డబ్బా (Green): వంటింటి తడి వ్యర్థాలు, పండ్లు, కూరగాయల తొక్కలు.
+            🔵 నీలం డబ్బా (Blue): శుభ్రమైన ప్లాస్టిక్, కాగితం, అట్టపెట్టెలు, గాజు సీసాలు, టిన్లు.
+            🟠 నారింజ డబ్బా (Orange): పాత మొబైల్స్, ఛార్జర్లు, వైర్లు, ఎలక్ట్రానిక్స్.
+            🔴 ఎరుపు డబ్బా (Red): బ్యాటరీలు, మందులు, శానిటరీ ప్యాడ్‌లు, విష రసాయనాలు.
+            ⚫ నలుపు డబ్బా (Black): పునర్వినియోగించలేని నేల దుమ్ము, థర్మాకోల్.
+
+            మీరు పారవేయాలనుకుంటున్న నిర్దిష్ట వస్తువు పేరు చెప్పండి లేదా కెమెరాతో స్కాన్ చేయండి, నేను ఖచ్చితంగా మార్గదర్శకత్వం ఇస్తాను! 😊
+        """.trimIndent()
+        "hi" -> """
+            नमस्ते! मैं आपकी वस्तु की सही जानकारी देख रहा हूँ।
+
+            कचरा अलग करने के मुख्य नियम इस प्रकार हैं:
+            🟢 हरा डिब्बा (Green): गीला कचरा, सब्जी-फलों के छिलके, बचा खाना।
+            🔵 नीला डिब्बा (Blue): सूखा कचरा जैसे प्लास्टिक, कागज, गत्ते, धातु के डिब्बे, कांच।
+            🟠 नारंगी डिब्बा (Orange): पुराने मोबाइल, चार्जर, तार, इलेक्ट्रॉनिक सामान।
+            🔴 लाल डिब्बा (Red): पुरानी बैटरियां, दवाइयां, सैनिटरी कचरा, पेंट, रसायन।
+            ⚫ काला डिब्बा (Black): झाड़ू की धूल, थर्माकोल, न गलने वाला अक्रिय कचरा।
+
+            कृपया उस वस्तु का नाम बताएं या फोटो स्कैन करें, मैं सटीक तरीका बताऊंगा! 😊
+        """.trimIndent()
+        "ta" -> """
+            வணக்கம்! நீங்கள் குறிப்பிட்ட பொருளைப் பற்றிய வழிகாட்டல்:
+
+            பொதுவான கழிவு தரம் பிரித்தல் முறைகள்:
+            🟢 பச்சை தொட்டி (Green): ஈரக் கரிமக் கழிவு, காய்கறித் தோல்கள், உணவு.
+            🔵 நீல தொட்டி (Blue): உலர் பிளாஸ்டிக், காகிதம், அட்டை, கண்ணாடி, தகர டப்பா.
+            🟠 ஆரஞ்சு தொட்டி (Orange): பழைய எலக்ட்ரானிக்ஸ், போன், சார்ஜர், ஒயர்.
+            🔴 சிவப்பு தொட்டி (Red): பேட்டரிகள், மருந்துகள், சானிட்டரி கழிவுகள், ரசாயனம்.
+            ⚫ கருப்பு தொட்டி (Black): கூட்டப்பட்ட தூசு, தெர்மாகோல்.
+
+            நீங்கள் அகற்ற விரும்பும் பொருளைப் பற்றி கூறுங்கள் அல்லது ஸ்கேன் செய்யுங்கள், நான் உதவுகிறேன்! 😊
+        """.trimIndent()
+        "mr" -> """
+            नमस्कार! तुम्ही विचारलेल्या वस्तूची माहिती खालीलप्रमाणे:
+
+            कचरा वर्गीकरणाचे मुख्य नियम:
+            🟢 हिरवी कुंडी (Green): ओला कचरा, फळे-भाज्यांची साले, उरलेले अन्न.
+            🔵 निळी कुंडी (Blue): सुका पुनर्वापर कचरा (प्लास्टिक, कागद, पुठ्ठा, काच, धातू).
+            🟠 नारिंगी कुंडी (Orange): जुने इलेक्ट्रॉनिक्स, मोबाईल, चार्जर, वायर.
+            🔴 लाल कुंडी (Red): बॅटऱ्या, औषधे, सॅनिटरी कचरा, रसायने.
+            ⚫ काळी कुंडी (Black): केर/धूळ, थर्माकोल, न कुजणारा कचरा.
+
+            कृपया वस्तूचे नाव सांगा किंवा फोटो स्कॅन करा, मी योग्य मार्गदर्शन देईन! 😊
+        """.trimIndent()
+        else -> """
+            Hello! Here is a simple guide on how waste should be segregated:
+
+            🟢 Green Bin: Wet organic kitchen scraps, fruit/vegetable peels, leftover food.
+            🔵 Blue Bin: Clean dry recyclables like plastic bottles, paper, cardboard, cans, glass jars.
+            🟠 Orange Bin: E-waste like old phones, wires, chargers, headphones, gadgets.
+            🔴 Red Bin: Hazardous & sanitary waste like batteries, medicines, paint, diapers, sanitary pads.
+            ⚫ Black Bin: Inert non-recyclable refuse like floor sweepings and styrofoam.
+
+            Tell me the exact name of your item or scan it, and I'll give you step-by-step guidance! 😊
+        """.trimIndent()
+    }
+
+    private fun buildSegregationOverviewResponse(lang: String): String = when (lang) {
+        "te" -> """
+            మన ఇల్లు మరియు సమాజంలో చెత్తను సరిగ్గా వేరు చేసే 5 ప్రధాన రంగు డబ్బాల మార్గదర్శకత్వం:
+
+            🟢 1. ఆకుపచ్చ డబ్బా (Green Bin) — తడి / సేంద్రీయ వ్యర్థాలు
+            • వేయవలసినవి: కూరగాయలు మరియు పండ్ల తొక్కలు, మిగిలిన ఆహారం, టీ పొడి, పూలు, ఆకులు.
+            • వేయకూడనివి: ప్లాస్టిక్ కవర్లు, పాల ప్యాకెట్లు, రబ్బర్ బ్యాండ్లు అస్సలు వేయవద్దు.
+            • ఎందుకు?: ఈ తడి చెత్త కుళ్ళిపోయి రైతులకు మేలైన సేంద్రీయ ఎరువుగా లేదా బయోగ్యాస్‌గా మారుతుంది!
+
+            🔵 2. నీలం డబ్బా (Blue Bin) — పొడి పునర్వినియోగ వ్యర్థాలు
+            • వేయవలసినవి: ప్లాస్టిక్ సీసాలు, వార్తాపత్రికలు, పుస్తకాలు, డెలివరీ అట్టపెట్టెలు, గాజు సీసాలు, కూల్‌డ్రింక్ టిన్లు.
+            • సులభమైన చిట్కా: ఆహారం ఉన్న డబ్బాలను కొద్దిగా నీటితో కడిగి ఆరబెట్టి వేయండి.
+            • ఎందుకు?: ఇవి రీసైక్లింగ్ ఫ్యాక్టరీలకు వెళ్లి కొత్త వస్తువులుగా తయారవుతాయి. చెట్లను, పర్యావరణాన్ని కాపాడతాయి!
+
+            🟠 3. నారింజ డబ్బా (Orange Bin) — ఇ-వ్యర్థాలు / ఎలక్ట్రానిక్స్
+            • వేయవలసినవి: పాత మొబైల్స్, ఛార్జర్లు, వైర్లు, హెడ్‌ఫోన్లు, కంప్యూటర్ మౌస్, కీబోర్డులు, రిమోట్లు.
+            • సులభమైన చిట్కా: పరికరాలను పగలగొట్టవద్దు, కాల్చవద్దు. 
+            • ఎందుకు?: వీటిలో రాగి, వెండి వంటి విలువైన లోహాలతో పాటు సీసం, పాదరసం వంటి విష రసాయనాలు ఉంటాయి. సరైన రీసైక్లింగ్ వల్ల భూగర్భ జలాలు కలుషితం కావు.
+
+            🔴 4. ఎరుపు డబ్బా (Red Bin) — ప్రమాదకర & శానిటరీ వ్యర్థాలు
+            • వేయవలసినవి: వాడిన బ్యాటరీలు, ట్యూబ్‌లైట్లు/బల్బులు, రంగుల డబ్బాలు, మందులు, సిరంజిలు, శానిటరీ ప్యాడ్‌లు & డైపర్లు.
+            • సులభమైన చిట్కా: శానిటరీ వ్యర్థాలను న్యూస్‌పేపర్‌లో చుట్టి వేయండి; బ్యాటరీల చివరలకు టేప్ వేయండి.
+            • ఎందుకు?: పారిశుద్ధ్య కార్మికుల ఆరోగ్యాన్ని కాపాడుతుంది మరియు అంటువ్యాధులు, అగ్ని ప్రమాదాలను నివారిస్తుంది.
+
+            ⚫ 5. నలుపు డబ్బా (Black Bin) — పునర్వినియోగించలేని నిష్క్రియ వ్యర్థాలు
+            • వేయవలసినవి: ఊడ్చిన దుమ్ము, పగిలిన సిరామిక్ కప్పులు, థర్మాకోల్, బాగా మురికిగా ఉన్న వ్యర్థాలు.
+            • ఎందుకు?: ఇది శాస్త్రీయ ల్యాండ్‌ఫిల్‌కు పంపబడుతుంది.
+
+            ఇంట్లోనే ఈ చిన్న విభజన చేయడం వల్ల మన ఊరు శుభ్రంగా, మన కుటుంబం ఆరోగ్యంగా ఉంటుంది! ఏదైనా వస్తువు గురించి సందేహం ఉంటే అడగండి! 😊
+        """.trimIndent()
+
+        "hi" -> """
+            कचरा अलग करने (पृथक्करण) की आसान और सही 5 डिब्बों की मार्गदर्शिका:
+
+            🟢 1. हरा डिब्बा (Green Bin) — गीला जैविक कचरा
+            • क्या डालें: फल और सब्जियों के छिलके, बचा हुआ खाना, चायपत्ती, अंडे के छिलके, बगीचे के पत्ते।
+            • क्या न डालें: प्लास्टिक थैली, दूध की थैली या रबर बैंड बिल्कुल न डालें।
+            • क्यों?: यह कचरा सड़कर उत्तम प्राकृतिक खाद या बायोगैस बनाता है!
+
+            🔵 2. नीला डिब्बा (Blue Bin) — सूखा पुनर्चक्रण योग्य कचरा
+            • क्या डालें: प्लास्टिक की बोतलें, गत्ते के डिब्बे, अखबार, किताबें, कांच की बोतलें, धातु के डिब्बे/टिन।
+            • आसान टिप: खाद्य डिब्बों को थोड़ा पानी से धोकर सुखा लें।
+            • क्यों?: यह रीसाइक्लिंग कारखानों में जाकर नए उत्पाद बनाता है और पेड़ों को बचाता है!
+
+            🟠 3. नारंगी डिब्बा (Orange Bin) — ई-कचरा / इलेक्ट्रॉनिक्स
+            • क्या डालें: पुराने मोबाइल, चार्जर, तार, ईयरफोन, रिमोट, माउस, कीबोर्ड, खराब गैजेट्स।
+            • आसान टिप: उपकरणों को तोड़ें या जलाएं नहीं।
+            • क्यों?: इनमें तांबा और कीमती धातुएं होती हैं, लेकिन सीसा व पारा जैसे जहर भी होते हैं। सही रीसाइक्लिंग से पानी और जमीन सुरक्षित रहती है।
+
+            🔴 4. लाल डिब्बा (Red Bin) — खतरनाक व स्वच्छता अपशिष्ट
+            • क्या डालें: पुरानी बैटरियां, ट्यूबलाइट/बल्ब, पेंट, कीटनाशक, दवाइयां, सैनिटरी पैड व डायपर।
+            • आसान टिप: सैनिटरी कचरे को अखबार में लपेट कर डालें; बैटरी के सिरों पर टेप चिपकाएं।
+            • क्यों?: सफाई कर्मचारियों को बीमारियों से बचाता है और आग के खतरे को रोकता है।
+
+            ⚫ 5. काला डिब्बा (Black Bin) — अक्रिय / न गलने वाला कचरा
+            • क्या डालें: झाड़ू की धूल, टूटी चीनी मिट्टी/सिरेमिक, थर्माकोल, अत्यधिक तैलीय कचरा।
+            • क्यों?: यह सीधे वैज्ञानिक लैंडफिल में सुरक्षित रूप से निस्तारित किया जाता है।
+
+            घर पर कचरा अलग करना बहुत आसान है और हमारे पर्यावरण को स्वच्छ रखता है! किसी भी वस्तु के बारे में बेझिझक पूछें! 😊
+        """.trimIndent()
+
+        "ta" -> """
+            வீட்டிலும் பணியிடத்திலும் கழிவுகளை எளிதாக தரம் பிரிக்கும் 5 வண்ணத் தொட்டிகளின் வழிகாட்டி:
+
+            🟢 1. பச்சை தொட்டி (Green Bin) — ஈரக் கரிமக் கழிவுகள்
+            • போட வேண்டியவை: பழங்கள், காய்கறித் தோல்கள், எஞ்சிய உணவு, தேயிலை கழிவுகள், இலைகள்.
+            • போடக்கூடாதவை: பிளாஸ்டிக் பைகள், பால் கவர்கள் அல்லது ரப்பர்களைப் போடாதீர்கள்.
+            • ஏன்?: இது மட்கி இயற்கை உரமாக அல்லது உயிர்வாயுவாக மாறுகிறது!
+
+            🔵 2. நீல தொட்டி (Blue Bin) — உலர் மறுசுழற்சிக் கழிவுகள்
+            • போட வேண்டியவை: பிளாஸ்டிக் பாட்டில்கள், அட்டைப் பெட்டிகள், செய்தித்தாள்கள், கண்ணாடி பாட்டில்கள், தகர டப்பாக்கள்.
+            • எளிய குறிப்பு: உணவு டப்பாக்களை சிறிது நீரால் கழுவி உலர்த்திப் போடவும்.
+            • ஏன்?: இவை மறுசுழற்சி செய்யப்பட்டு புதிய பொருட்களாக உருவாகின்றன, மரங்களைப் பாதுகாக்கின்றன!
+
+            🟠 3. ஆரஞ்சு தொட்டி (Orange Bin) — மின்-கழிவுகள்
+            • போட வேண்டியவை: பழைய போன்கள், சார்ஜர்கள், ஒயர்கள், ஹெட்போன்கள், ரிமோட், மவுஸ், கீபோர்டு.
+            • எளிய குறிப்பு: எலக்ட்ரானிக்ஸ் பொருட்களை உடைக்கவோ எரிக்கவோ கூடாது.
+            • ஏன்?: இவற்றில் தாமிரம் போன்ற உலோகங்களும், நிலத்தடி நீரை விஷமாக்கும் ஈயம், பாதரசமும் உள்ளன.
+
+            🔴 4. சிவப்பு தொட்டி (Red Bin) — அபாயகரமான & சுகாதாரக் கழிவுகள்
+            • போட வேண்டியவை: பழைய பேட்டரிகள், டியூப்லைட்/பல்புகள், பெயிண்ட், பூச்சிக்கொல்லி, மருந்துகள், சானிட்டரி நாப்கின்கள், டயப்பர்கள்.
+            • எளிய குறிப்பு: சானிட்டரி கழிவுகளை செய்தித்தாளில் சுற்றிப் போடவும்; பேட்டரிகளில் டேப் ஒட்டவும்.
+            • ஏன்?: தூய்மைப் பணியாளர்களின் ஆரோக்கியத்தைப் பாதுகாக்கிறது மற்றும் தீ விபத்துகளைத் தடுக்கிறது.
+
+            ⚫ 5. கருப்பு தொட்டி (Black Bin) — மறுசுழற்சி செய்ய முடியாத கழிவுகள்
+            • போட வேண்டியவை: கூட்டிய தூசி, உடைந்த பீங்கான் பொருட்கள், தெர்மாகோல்.
+            • ஏன்?: பாதுகாப்பான நிலப்பரப்பு கிடங்கிற்கு கொண்டு செல்லப்படுகிறது.
+
+            கழிவுகளை முறையாகப் பிரித்து வைப்போம், நமது சுற்றுப்புறத்தைத் தூய்மையாகப் பராமரிப்போம்! ஏதேனும் சந்தேகம் இருந்தால் என்னிடம் கேளுங்கள்! 😊
+        """.trimIndent()
+
+        "mr" -> """
+            कचरा वर्गीकरणाची सोपी आणि शास्त्रीय 5 कुंड्यांची माहिती:
+
+            🟢 1. हिरवी कुंडी (Green Bin) — ओला सेंद्रिय कचरा
+            • काय टाकावे: फळे व भाज्यांची साले, उरलेले अन्न, चहापत्ती, झाडांची पाने, अंड्याची टरफले.
+            • काय टाकू नये: प्लास्टिक पिशव्या, दुधाचे पाकीट किंवा रबर अजिबात टाकू नका.
+            • का?: हा कचरा कुजून दर्जेदार सेंद्रिय खत किंवा बायोगॅस तयार होतो!
+
+            🔵 2. निळी कुंडी (Blue Bin) — सुका पुनर्वापरयोग्य कचरा
+            • काय टाकावे: प्लास्टिक बाटल्या, कागद, पुठ्ठ्याचे बॉक्स, काचेच्या बाटल्या, धातूचे डबे/कॅन.
+            • सोपी टीप: डबे थोडे पाण्याने विसळून कोरडे करून टाका.
+            • का?: हा कचरा कारखान्यात जाऊन नवीन वस्तू बनवण्यासाठी वापरला जातो, झाडे वाचतात!
+
+            🟠 3. नारिंगी कुंडी (Orange Bin) — ई-कचरा / इलेक्ट्रॉनिक्स
+            • काय टाकावे: जुने मोबाईल, चार्जर, वायर, हेडफोन, रिमोट, कीबोर्ड, संगणकाचे सुटे भाग.
+            • सोपी टीप: उपकरणे तोडू किंवा जाळू नका.
+            • का?: यामध्ये तांबे असते, तसेच विषारी रसायनेही असतात. योग्य रीसायकलिंगने पाणी व जमीन सुरक्षित राहते.
+
+            🔴 4. लाल कुंडी (Red Bin) — धोकादायक व स्वच्छता कचरा
+            • काय टाकावे: वापरलेल्या बॅटऱ्या, ट्यूबलाईट/बल्ब, रंग, कीटकनाशके, औषधे, सॅनिटरी पॅड व डायपर.
+            • सोपी टीप: सॅनिटरी कचरा वर्तमानपत्रात गुंडाळून टाका; बॅटरीच्या टोकांवर चिकटपट्टी लावा.
+            • का?: सफाई कामगारांचे रक्षण होते आणि संसर्ग व आगीचा धोका टळतो.
+
+            ⚫ 5. काळी कुंडी (Black Bin) — पुनर्वापर न होणारा कचरा
+            • काय टाकावे: केर/धूळ, फुटलेली चिनीमाती/सिरॅमिक्स, थर्माकोल, अतिशय तेलकट कचरा.
+            • का?: हा कचरा सुरक्षितपणे वैज्ञानिक लँडफिलमध्ये साठवला जातो.
+
+            कचऱ्याचे योग्य वर्गीकरण करूया, आपले घर व परिसर स्वच्छ ठेवूया! कोणताही प्रश्न असल्यास नक्की विचारा! 😊
+        """.trimIndent()
+
+        else -> """
+            Here is your simple, human-friendly guide to the 5 municipal waste streams:
+
+            🟢 1. Green Bin — Wet / Organic Waste
+            • What goes here: Fruit & vegetable peels, leftover food, tea leaves, garden clippings, eggshells.
+            • What NOT to put: No plastic covers, no milk pouches, no rubber bands.
+            • Why: This waste naturally rots and is converted into rich organic compost or clean biogas!
+
+            🔵 2. Blue Bin — Dry Recyclables
+            • What goes here: Clean plastic bottles, paper, cardboard delivery cartons, glass jars, metal beverage cans.
+            • Simple tip: Give food containers a quick rinse and shake dry before binning.
+            • Why: These go to recycling factories to make new paper, boxes, and containers, saving trees and water!
+
+            🟠 3. Orange Bin — E-Waste (Electronics)
+            • What goes here: Old smartphones, cables, chargers, headphones, computer mice, keyboards, remotes.
+            • Simple tip: Keep them dry and whole. Never burn or crush old gadgets.
+            • Why: Electronics contain copper and gold, but also lead and mercury. Certified recycling keeps toxins out of drinking water.
+
+            🔴 4. Red Bin — Hazardous & Sanitary Waste
+            • What goes here: Used batteries, tube lights/bulbs, paint cans, pesticides, medicines, bandages, sanitary pads & diapers.
+            • Simple tip: Wrap sanitary waste neatly in newspaper; tape battery ends.
+            • Why: Protects sanitation workers and prevents fire and infection hazards.
+
+            ⚫ 5. Black Bin — Non-Recyclable Refuse
+            • What goes here: Swept floor dust, broken ceramics, thermo-col packing foam, heavily soiled paper.
+            • Why: Sent to scientific municipal landfills.
+
+            Segregation at home takes just a minute and makes our neighborhood clean, healthy, and green! Feel free to ask me about any item you are holding! 😊
+        """.trimIndent()
+    }
+
     private fun buildGeneralExplanation(
         itemName: String,
         rule: DisposalRule,
@@ -660,122 +897,133 @@ class OfflineResponder {
         isDetail: Boolean = false
     ): String {
         val binDisplayName = CategoryLocalization.getBinColorDisplayName(rule.targetBinColor, lang)
-        val targetBin = if (lang == "en") binDisplayName else "$binDisplayName (${rule.targetBinColor})"
+        val emoji = getBinEmoji(rule.targetBinColor)
+        val targetBin = "$emoji $binDisplayName"
+
         return when (lang) {
             "te" -> buildString {
+                append("నమస్కారం! మీరు అడిగిన వస్తువు: $itemName.\n\n")
                 if (isHazardous) {
-                    append("⚠️ భద్రతా సలహా (ప్రమాదకర వ్యర్థాలు):\n$warning\n\n")
-                } else {
-                    append("మంచి ఆలోచన! బాధ్యతాయుతంగా పారవేసేందుకు తనిఖీ చేసినందుకు ధన్యవాదాలు.\n\n")
+                    append("⚠️ ముఖ్యమైన భద్రతా హెచ్చరిక:\n$warning\n\n")
                 }
-                append("$itemName కోసం మార్గదర్శకత్వం:\n")
-                append("• సిఫార్సు చేసిన పారవేత విధానం: ${rule.disposalMethod}\n")
-                append("• కేటాయించిన డబ్బా: $targetBin\n")
-                append("• రీసైకిల్ చేయగలదా: ${if (rule.isRecyclable) "అవును" else "కాదు"}\n\n")
+                append("దీనిని ఏ డబ్బాలో వేయాలి?\n")
+                append("• $targetBin లో వేయాలి (${rule.disposalMethod}).\n\n")
+
+                if (!rule.environmentalImpact.isNullOrBlank()) {
+                    append("ఇది ఎందుకు ముఖ్యం?\n")
+                    append("• ${rule.environmentalImpact}\n\n")
+                }
+
                 if (rule.preparationInstructions.isNotBlank()) {
-                    append("సన్నాహక సూచనలు:\n• ${rule.preparationInstructions}\n")
+                    append("మీరు చేయవలసిన సులభమైన పనులు:\n")
+                    append("• ${rule.preparationInstructions}\n\n")
                 }
-                if (isDetail || rule.prohibitedPathways.isNotEmpty()) {
-                    if (rule.prohibitedPathways.isNotEmpty()) {
-                        append("\nచేయకూడనివి: ${rule.prohibitedPathways.joinToString("; ")}\n")
-                    }
+
+                if (rule.prohibitedPathways.isNotEmpty()) {
+                    append("చేయకూడనివి: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
                 }
-                if (isDetail && !rule.environmentalImpact.isNullOrBlank()) {
-                    append("\nపర్యావరణ సమాచారం: ${rule.environmentalImpact}\n")
-                }
-                append("\n(బాటిల్ AI ఆఫ్‌లైన్ అసిస్టెంట్ — ${rule.source} ఆధారంగా)")
+
+                append("దీని గురించి లేదా మరొక వస్తువు గురించి ఇంకేమైనా సందేహం ఉంటే నన్ను అడగండి! 😊")
             }.trim()
+
             "hi" -> buildString {
+                append("नमस्ते! आपकी वस्तु: $itemName।\n\n")
                 if (isHazardous) {
-                    append("⚠️ सुरक्षा सलाह (खतरनाक कचरा):\n$warning\n\n")
-                } else {
-                    append("अच्छा कदम! फेंकने से पहले जाँच करने के लिए धन्यवाद।\n\n")
+                    append("⚠️ महत्वपूर्ण सुरक्षा चेतावनी:\n$warning\n\n")
                 }
-                append("$itemName के लिए मार्गदर्शन:\n")
-                append("• अनुशंसित निपटान: ${rule.disposalMethod}\n")
-                append("• लक्षित डिब्बा: $targetBin\n")
-                append("• पुनर्चक्रण योग्य: ${if (rule.isRecyclable) "हाँ" else "नहीं"}\n\n")
+                append("इसे किस डिब्बे में डालें?\n")
+                append("• $targetBin में डालें (${rule.disposalMethod})।\n\n")
+
+                if (!rule.environmentalImpact.isNullOrBlank()) {
+                    append("यह क्यों जरूरी है?\n")
+                    append("• ${rule.environmentalImpact}\n\n")
+                }
+
                 if (rule.preparationInstructions.isNotBlank()) {
-                    append("तैयारी के निर्देश:\n• ${rule.preparationInstructions}\n")
+                    append("आपके लिए आसान कदम:\n")
+                    append("• ${rule.preparationInstructions}\n\n")
                 }
-                if (isDetail || rule.prohibitedPathways.isNotEmpty()) {
-                    if (rule.prohibitedPathways.isNotEmpty()) {
-                        append("\nनिषिद्ध कार्य: ${rule.prohibitedPathways.joinToString("; ")}\n")
-                    }
+
+                if (rule.prohibitedPathways.isNotEmpty()) {
+                    append("क्या न करें: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
                 }
-                if (isDetail && !rule.environmentalImpact.isNullOrBlank()) {
-                    append("\nपर्यावरण प्रभाव: ${rule.environmentalImpact}\n")
-                }
-                append("\n(बॉटल AI — स्रोत: ${rule.source})")
+
+                append("कचरा अलग करने के बारे में कोई और सवाल हो तो बेझिझक पूछें! 😊")
             }.trim()
+
             "ta" -> buildString {
+                append("வணக்கம்! நீங்கள் கேட்ட பொருள்: $itemName.\n\n")
                 if (isHazardous) {
-                    append("⚠️ பாதுகாப்பு ஆலோசனை (அபாயகரமான கழிவு):\n$warning\n\n")
-                } else {
-                    append("சிறந்த சிந்தனை! அகற்றுவதற்கு முன் சரிபார்த்ததற்கு நன்றி.\n\n")
+                    append("⚠️ முக்கியமான பாதுகாப்பு எச்சரிக்கை:\n$warning\n\n")
                 }
-                append("$itemName க்கான வழிகாட்டுதல்:\n")
-                append("• பரிந்துரைக்கப்பட்ட அகற்றல்: ${rule.disposalMethod}\n")
-                append("• இலக்கு தொட்டி: $targetBin\n")
-                append("• மறுசுழற்சி செய்யக்கூடியதா: ${if (rule.isRecyclable) "ஆம்" else "இல்லை"}\n\n")
+                append("எந்தத் தொட்டியில் போட வேண்டும்?\n")
+                append("• $targetBin யில் போடவும் (${rule.disposalMethod}).\n\n")
+
+                if (!rule.environmentalImpact.isNullOrBlank()) {
+                    append("ஏன் இது முக்கியம்?\n")
+                    append("• ${rule.environmentalImpact}\n\n")
+                }
+
                 if (rule.preparationInstructions.isNotBlank()) {
-                    append("தயாரிப்பு வழிமுறைகள்:\n• ${rule.preparationInstructions}\n")
+                    append("நீங்கள் செய்ய வேண்டிய எளிய வழிகள்:\n")
+                    append("• ${rule.preparationInstructions}\n\n")
                 }
-                if (isDetail || rule.prohibitedPathways.isNotEmpty()) {
-                    if (rule.prohibitedPathways.isNotEmpty()) {
-                        append("\nசெய்யக்கூடாதவை: ${rule.prohibitedPathways.joinToString("; ")}\n")
-                    }
+
+                if (rule.prohibitedPathways.isNotEmpty()) {
+                    append("செய்யக்கூடாதவை: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
                 }
-                if (isDetail && !rule.environmentalImpact.isNullOrBlank()) {
-                    append("\nசுற்றுச்சூழல் தாக்கம்: ${rule.environmentalImpact}\n")
-                }
-                append("\n(பாட்டில் AI — ஆதாரம்: ${rule.source})")
+
+                append("வேறேதேனும் பொருளைப் பற்றி அறிய விரும்பினால் தயங்காமல் கேளுங்கள்! 😊")
             }.trim()
+
             "mr" -> buildString {
+                append("नमस्कार! तुमची वस्तू: $itemName.\n\n")
                 if (isHazardous) {
-                    append("⚠️ सुरक्षा सूचना (घातक कचरा):\n$warning\n\n")
-                } else {
-                    append("चांगली गोष्ट! कचरा टाकण्यापूर्वी खात्री केल्याबद्दल धन्यवाद.\n\n")
+                    append("⚠️ महत्त्वाची सुरक्षा सूचना:\n$warning\n\n")
                 }
-                append("$itemName साठी मार्गदर्शन:\n")
-                append("• शिफारस केलेली विल्हेवाट: ${rule.disposalMethod}\n")
-                append("• लक्षित कुंडी: $targetBin\n")
-                append("• पुनर्वापर करण्यायोग्य: ${if (rule.isRecyclable) "होय" else "नाही"}\n\n")
+                append("कोणत्या कुंडीत टाकावे?\n")
+                append("• $targetBin मध्ये टाका (${rule.disposalMethod}).\n\n")
+
+                if (!rule.environmentalImpact.isNullOrBlank()) {
+                    append("हे का गरजेचे आहे?\n")
+                    append("• ${rule.environmentalImpact}\n\n")
+                }
+
                 if (rule.preparationInstructions.isNotBlank()) {
-                    append("तयारीच्या सूचना:\n• ${rule.preparationInstructions}\n")
+                    append("तुमच्यासाठी सोप्या पायऱ्या:\n")
+                    append("• ${rule.preparationInstructions}\n\n")
                 }
-                if (isDetail || rule.prohibitedPathways.isNotEmpty()) {
-                    if (rule.prohibitedPathways.isNotEmpty()) {
-                        append("\nनिषिद्ध कृती: ${rule.prohibitedPathways.joinToString("; ")}\n")
-                    }
+
+                if (rule.prohibitedPathways.isNotEmpty()) {
+                    append("काय करू नये: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
                 }
-                if (isDetail && !rule.environmentalImpact.isNullOrBlank()) {
-                    append("\nपर्यावरणीय प्रभाव: ${rule.environmentalImpact}\n")
-                }
-                append("\n(बॉटल AI — स्रोत: ${rule.source})")
+
+                append("कचरा व्यवस्थापनाबद्दल आणखी काही प्रश्न असल्यास नक्की विचारा! 😊")
             }.trim()
+
             else -> buildString {
+                append("Hello there! Regarding $itemName:\n\n")
                 if (isHazardous) {
-                    append("⚠️ SAFETY ADVISORY (Hazardous Waste):\n$warning\n\n")
-                } else {
-                    append("Great job checking before disposing! Here is the guidance for $itemName:\n\n")
+                    append("⚠️ Important Safety Warning:\n$warning\n\n")
                 }
-                append("Guidance for $itemName:\n")
-                append("• Recommended Disposal: ${rule.disposalMethod}\n")
-                append("• Target Bin: $targetBin\n")
-                append("• Recyclable: ${if (rule.isRecyclable) "Yes" else "No"}\n\n")
+                append("Which bin does it go into?\n")
+                append("• $targetBin (${rule.disposalMethod}).\n\n")
+
+                if (!rule.environmentalImpact.isNullOrBlank()) {
+                    append("Why is this important?\n")
+                    append("• ${rule.environmentalImpact}\n\n")
+                }
+
                 if (rule.preparationInstructions.isNotBlank()) {
-                    append("Preparation Steps:\n• ${rule.preparationInstructions}\n")
+                    append("Simple steps for you:\n")
+                    append("• ${rule.preparationInstructions}\n\n")
                 }
-                if (isDetail || rule.prohibitedPathways.isNotEmpty()) {
-                    if (rule.prohibitedPathways.isNotEmpty()) {
-                        append("\nDo NOT: ${rule.prohibitedPathways.joinToString("; ")}\n")
-                    }
+
+                if (rule.prohibitedPathways.isNotEmpty()) {
+                    append("Please avoid: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
                 }
-                if (isDetail && !rule.environmentalImpact.isNullOrBlank()) {
-                    append("\nEco Note: ${rule.environmentalImpact}\n")
-                }
-                append("\n(Bottle AI — grounded in ${rule.source})")
+
+                append("Feel free to ask me about any other items you'd like to segregate! 😊")
             }.trim()
         }
     }

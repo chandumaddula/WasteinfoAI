@@ -894,6 +894,111 @@
         "crushed": "Flatten clean items to optimize storage space.",
         "wet": "पाईपमधील पाणी पूर्णपणे काढून टाका."
       }
+    },
+    {
+      "id": "RULE-STREAM-BIODEGRADABLE",
+      "category": "biodegradable",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ओला सेंद्रिय कचरा (हिरवा कुंडी) / घरगुती खत / बायोगॅस प्रकल्प",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "भाज्या व फळांची साले, उरलेले अन्न, चहा पावडर वेगळी करा. प्लास्टिक आवरण आणि रबर बँड काढून टाका.",
+      "safety_warnings": "सामान्य अन्न कचऱ्यासाठी कोणताही धोका नाही. सुक्या कचऱ्यात मिसळू नका.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "cleaning_tips": "धुण्याची गरज नाही. टाकण्यापूर्वी जास्तीचे पाणी काढून टाका.",
+      "reuse_ideas": [
+        "झाडांसाठी साले व अन्नापासून सेंद्रिय खत तयार करा"
+      ],
+      "environmental_impact": "ओल्या कचऱ्याचे खत केल्याने मिथेन वायूचे उत्सर्जन कमी होते.",
+      "source": "घनकचरा व्यवस्थापन नियम 2016 (ओला कचरा)"
+    },
+    {
+      "id": "RULE-STREAM-RECYCLABLES",
+      "category": "Recyclables",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "सुका पुनर्वापरयोग्य कचरा (निळा कुंडी) / भंगारवाला / पुनर्वापर केंद्र",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "डबे व बाटल्या रिकाम्या करून स्वच्छ व कोरड्या ठेवा. पुठ्ठे चपटे करा. ओल्या कचऱ्यात मिसळू नका.",
+      "safety_warnings": "फुटलेली काच आणि टोकदार पत्रा काळजीपूर्वक हाताळा; काच कागदात गुंडाळा.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue Bin)",
+        "Kabadiwala / Scrap Dealer",
+        "Material Recovery Facility"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Open Burning",
+        "Open Littering"
+      ],
+      "cleaning_tips": "अन्नाचे डाग व तेलकटपणा धुवून स्वच्छ करा.",
+      "reuse_ideas": [
+        "काचेच्या बरण्या आणि खोकी साठवणीसाठी पुन्हा वापरा"
+      ],
+      "environmental_impact": "पुनर्वापरामुळे नैसर्गिक संसाधने आणि ऊर्जा वाचते.",
+      "source": "घनकचरा व्यवस्थापन नियम 2016 (सुका कचरा)"
+    },
+    {
+      "id": "RULE-STREAM-EWASTE",
+      "category": "E-waste",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "अधिकृत ई-कचरा संकलन केंद्र / पुनर्वापरकर्ता (नारिंगी कुंडी)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "साहित्य न तोडता शाबूत ठेवा. बॅटरी वेगळी करा, वैयक्तिक डेटा पुसून अधिकृत केंद्रात जमा करा.",
+      "safety_warnings": "इलेक्ट्रॉनिक्स फोडू किंवा जाळू नका. स्क्रीन व घटकांमधील विषारी रसायने घातक असतात.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Producer Take-Back / EPR Collection Point"
+      ],
+      "prohibited_pathways": [
+        "Household Dustbin",
+        "Open Burning",
+        "Informal Scrap Breaking"
+      ],
+      "cleaning_tips": "बाहेरील भाग कोरड्या कापडाने पुसा. इलेक्ट्रॉनिक्स कधीही धुवू नका.",
+      "reuse_ideas": [
+        "चालू उपकरणे दुरुस्त करा, दान करा किंवा पुनर्विक्री करा"
+      ],
+      "environmental_impact": "ई-कचऱ्याचे योग्य पुनर्चक्रण जल व जमिनीचे प्रदूषण रोखते.",
+      "source": "ई-कचरा व्यवस्थापन नियम 2022"
+    },
+    {
+      "id": "RULE-STREAM-HAZARDOUS",
+      "category": "hazardous",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "धोकादायक कचरा संकलन केंद्र (लाल कुंडी)",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "मूळ बाटलीत घट्ट बंद ठेवा. रसायने एकत्र करू नका. बॅटरीच्या टोकांवर चिकटपट्टी लावा.",
+      "safety_warnings": "जाळू नका किंवा गटारात वाहू देऊ नका. मुले व आगीपासून दूर ठेवा.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Special Care / Hazardous Waste Collection",
+        "Authorized Hazardous Waste Facility",
+        "Pharmacy / Hospital Take-Back (medicines)"
+      ],
+      "prohibited_pathways": [
+        "Regular Household Bins",
+        "Drains and Toilets",
+        "Open Burning"
+      ],
+      "cleaning_tips": "रासायनिक बाटल्या धुवू नका. संकलन केंद्रासाठी सीलबंद ठेवा.",
+      "reuse_ideas": [],
+      "environmental_impact": "धोकादायक कचरा सामान्य कचऱ्यात टाकल्यास सफाई कामगारांना व पर्यावरणाला हानी पोहोचते.",
+      "source": "घनकचरा व्यवस्थापन नियम 2016 (धोकादायक कचरा)"
     }
   ]
 }
