@@ -250,7 +250,7 @@ fun HomeScreen(
                                 }
                             }
 
-                            if (state.syncMessage != null) {
+                            state.syncMessage?.let { syncMsg ->
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -258,7 +258,7 @@ fun HomeScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text(
-                                        text = state.syncMessage,
+                                        text = syncMsg,
                                         style = MaterialTheme.typography.labelSmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.weight(1f)
