@@ -51,7 +51,7 @@ class LoginViewModel(
         return when {
             lower.contains("e-waste") || lower.contains("municipal") || lower.contains("worker") -> "SANITATION_WORKER"
             lower.contains("plastic") || lower.contains("industr") -> "INSTITUTION"
-            lower.contains("education") || lower.contains("reviewer") || lower.contains("other") -> "REVIEWER"
+            (lower.contains("reviewer") || lower.contains("other")) && !lower.contains("education") && !lower.contains("school") && !lower.contains("student") -> "REVIEWER"
             else -> "RESIDENT"
         }
     }
@@ -90,24 +90,33 @@ class LoginViewModel(
 
                     if (isConnectionError) {
                         // Offline / Standalone Fallback: authenticate locally
-                        if (sessionManager.hasLocalAccount(cleanEmail)) {
-                            if (!sessionManager.verifyLocalAccount(cleanEmail, pass)) {
-                                _uiState.value = _uiState.value.copy(
-                                    isLoading = false,
-                                    errorMessage = "Invalid password for this account."
-                                )
-                                return@launch
-                            }
+                        if (!sessionManager.hasLocalAccount(cleanEmail)) {
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                errorMessage = "Account not found. Please register first or continue as guest."
+                            )
+                            return@launch
                         }
-                        sessionManager.saveLocalSession(cleanEmail, category, defaultRole)
+
+                        if (!sessionManager.verifyLocalAccount(cleanEmail, pass)) {
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                errorMessage = "Invalid password. Please check and try again."
+                            )
+                            return@launch
+                        }
+
+                        val savedCategory = sessionManager.getLocalAccountCategory(cleanEmail) ?: category
+                        val savedRole = sessionManager.getLocalAccountRole(cleanEmail) ?: defaultRole
+                        sessionManager.saveLocalSession(cleanEmail, savedCategory, savedRole)
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
                             isLoggedIn = true,
                             email = cleanEmail,
-                            role = defaultRole,
-                            category = category,
+                            role = savedRole,
+                            category = savedCategory,
                             errorMessage = null,
-                            successMessage = "Server unreachable. Running in Local Mode."
+                            successMessage = "Logged in successfully."
                         )
                         onDone?.invoke()
                     } else {
@@ -221,7 +230,8 @@ class LoginViewModel(
         val (email, role) = when {
             lower.contains("e-waste") || lower.contains("municipal") || lower.contains("worker") -> "ewaste.specialist@citygov.org" to "SANITATION_WORKER"
             lower.contains("plastic") || lower.contains("industr") -> "plastic.reduction@greenecoplant.com" to "INSTITUTION"
-            lower.contains("education") || lower.contains("reviewer") || lower.contains("other") -> "educator@sustainability.edu" to "REVIEWER"
+            lower.contains("education") || lower.contains("school") || lower.contains("student") -> "student@sustainability.edu" to "RESIDENT"
+            lower.contains("reviewer") || lower.contains("other") -> "educator@sustainability.edu" to "REVIEWER"
             lower.contains("community") -> "community.lead@neighborhood.org" to "RESIDENT"
             else -> "resident@wasteinfo.ai" to "RESIDENT"
         }

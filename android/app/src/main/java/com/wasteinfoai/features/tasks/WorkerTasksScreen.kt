@@ -34,6 +34,8 @@ fun WorkerTasksScreen(
     onNavigateBack: () -> Unit,
     onNavigateToCamera: (() -> Unit)? = null,
     onNavigateToMap: (() -> Unit)? = null,
+    onNavigateToAssistant: (() -> Unit)? = null,
+    onNavigateToHistory: (() -> Unit)? = null,
     onNavigateToCategorySelection: (() -> Unit)? = null,
     onLogout: (() -> Unit)? = null
 ) {
@@ -285,8 +287,12 @@ fun WorkerTasksScreen(
                     Screen.Tasks.route -> {}
                     Screen.Camera.route -> onNavigateToCamera?.invoke()
                     Screen.Map.route -> onNavigateToMap?.invoke()
+                    Screen.History.route -> onNavigateToHistory?.invoke()
                     Screen.CategorySelection.route -> onNavigateToCategorySelection?.invoke()
-                    else -> onNavigateBack()
+                    else -> {
+                        if (route.startsWith("assistant")) onNavigateToAssistant?.invoke()
+                        else onNavigateBack()
+                    }
                 }
             },
             onLogout = { onLogout?.invoke() ?: onNavigateBack() },

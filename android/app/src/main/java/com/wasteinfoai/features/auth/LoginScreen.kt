@@ -391,7 +391,7 @@ fun LoginScreen(
                                         return@Button
                                     }
                                     localError = null
-                                    viewModel.login(emailInput, passwordInput, uiState.category) {
+                                    viewModel.login(emailInput.trim(), passwordInput, uiState.category) {
                                         onNavigateToDashboard?.invoke(uiState.role)
                                     }
                                 }

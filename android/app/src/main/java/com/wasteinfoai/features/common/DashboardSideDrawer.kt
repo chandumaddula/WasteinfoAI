@@ -189,16 +189,17 @@ fun DashboardSideDrawer(
                     val normCat = userCategory.lowercase()
                     val normRole = userRole.uppercase()
 
-                    val isHousehold = normCat.contains("household") || normCat.contains("community") || normRole == "RESIDENT"
+                    val isHousehold = normCat.contains("household") || normCat.contains("community") || normCat.contains("education") || normCat.contains("school") || normCat.contains("student") || normRole == "RESIDENT"
                     val isWorker = normCat.contains("worker") || normCat.contains("sanitation") || normCat.contains("e-waste") || normRole == "SANITATION_WORKER"
                     val isIndustry = normCat.contains("industr") || normCat.contains("plastic") || normRole == "INSTITUTION"
-                    val isReviewer = normCat.contains("reviewer") || normCat.contains("other") || normCat.contains("education") || normRole == "REVIEWER"
+                    val isReviewer = (normCat.contains("reviewer") || normCat.contains("other") || normRole == "REVIEWER") && !normCat.contains("education") && !normCat.contains("school") && !normCat.contains("student")
                     val isAdmin = normRole == "ADMIN"
 
                     if (isHousehold) {
+                        val isEdu = normCat.contains("education") || normCat.contains("school") || normCat.contains("student")
                         DrawerItem(
-                            icon = Icons.Default.Home,
-                            label = if (normCat.contains("community")) "Community Recycling Hub" else "Household Recycling",
+                            icon = if (isEdu) Icons.Default.School else Icons.Default.Home,
+                            label = if (isEdu) "School & Students Hub" else if (normCat.contains("community")) "Community Recycling Hub" else "Household Recycling",
                             isSelected = currentRoute == Screen.Home.route,
                             onClick = {
                                 coroutineScope.launch { drawerState.close() }

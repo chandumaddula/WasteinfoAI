@@ -100,7 +100,7 @@ fun AppNavGraph(
                     val target = when {
                         lower.contains("worker") || lower.contains("e-waste") || lower.contains("sanitation") -> Screen.Tasks.route
                         lower.contains("industr") || lower.contains("plastic") || lower.contains("institution") -> Screen.IndustryDashboard.route
-                        lower.contains("education") || lower.contains("reviewer") || lower.contains("other") -> Screen.ReviewerDashboard.route
+                        (lower.contains("reviewer") || lower.contains("other")) && !lower.contains("education") && !lower.contains("school") && !lower.contains("student") -> Screen.ReviewerDashboard.route
                         lower.contains("admin") -> Screen.AdminDashboard.route
                         else -> Screen.Home.route
                     }
@@ -205,7 +205,7 @@ fun AppNavGraph(
             val targetDashboard = when {
                 userCat.contains("worker") || userCat.contains("e-waste") || userCat.contains("sanitation") -> Screen.Tasks.route
                 userCat.contains("industr") || userCat.contains("plastic") || userCat.contains("institution") -> Screen.IndustryDashboard.route
-                userCat.contains("education") || userCat.contains("reviewer") || userCat.contains("other") -> Screen.ReviewerDashboard.route
+                (userCat.contains("reviewer") || userCat.contains("other")) && !userCat.contains("education") && !userCat.contains("school") && !userCat.contains("student") -> Screen.ReviewerDashboard.route
                 userCat.contains("admin") -> Screen.AdminDashboard.route
                 else -> Screen.Home.route
             }
@@ -320,6 +320,10 @@ fun AppNavGraph(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToCamera = { navController.navigate(Screen.Camera.route) },
                 onNavigateToMap = { navController.navigate(Screen.Map.route) },
+                onNavigateToAssistant = {
+                    navController.navigate(Screen.Assistant.createRoute("E-waste management"))
+                },
+                onNavigateToHistory = { navController.navigate(Screen.History.route) },
                 onNavigateToCategorySelection = { navController.navigate(Screen.CategorySelection.route) },
                 onLogout = {
                     container.sessionManager.clearSession()
@@ -380,7 +384,7 @@ fun AppNavGraph(
                     val target = when {
                         lower.contains("worker") || lower.contains("e-waste") || lower.contains("sanitation") -> Screen.Tasks.route
                         lower.contains("industr") || lower.contains("plastic") || lower.contains("institution") -> Screen.IndustryDashboard.route
-                        lower.contains("education") || lower.contains("reviewer") || lower.contains("other") -> Screen.ReviewerDashboard.route
+                        (lower.contains("reviewer") || lower.contains("other")) && !lower.contains("education") && !lower.contains("school") && !lower.contains("student") -> Screen.ReviewerDashboard.route
                         lower.contains("admin") -> Screen.AdminDashboard.route
                         else -> Screen.Home.route
                     }
@@ -406,7 +410,7 @@ private fun getDashboardRouteForSession(sessionManager: com.wasteinfoai.data.rem
         role == "ADMIN" || lower.contains("admin") -> Screen.AdminDashboard.route
         role == "SANITATION_WORKER" || role == "WORKER" || lower.contains("worker") || lower.contains("e-waste") || lower.contains("sanitation") -> Screen.Tasks.route
         role == "INSTITUTION" || lower.contains("industr") || lower.contains("plastic") || lower.contains("institution") -> Screen.IndustryDashboard.route
-        role == "REVIEWER" || lower.contains("education") || lower.contains("reviewer") || lower.contains("other") -> Screen.ReviewerDashboard.route
+        (role == "REVIEWER" || lower.contains("reviewer") || lower.contains("other")) && !lower.contains("education") && !lower.contains("school") && !lower.contains("student") -> Screen.ReviewerDashboard.route
         else -> Screen.Home.route
     }
 }

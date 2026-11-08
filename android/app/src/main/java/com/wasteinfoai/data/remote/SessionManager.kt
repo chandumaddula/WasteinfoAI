@@ -117,24 +117,53 @@ class SessionManager(context: Context) {
 
     fun registerLocalAccount(email: String, password: String?, fullName: String?, category: String, role: String) {
         val cleanEmail = email.trim().lowercase()
+        val normalized = normalizeAccountKey(cleanEmail)
         prefs.edit()
             .putString("local_acc_${cleanEmail}_pwd", password ?: "")
             .putString("local_acc_${cleanEmail}_name", fullName ?: cleanEmail.substringBefore("@"))
             .putString("local_acc_${cleanEmail}_category", category)
             .putString("local_acc_${cleanEmail}_role", role)
+            .putString("local_acc_${normalized}_pwd", password ?: "")
+            .putString("local_acc_${normalized}_name", fullName ?: cleanEmail.substringBefore("@"))
+            .putString("local_acc_${normalized}_category", category)
+            .putString("local_acc_${normalized}_role", role)
             .apply()
+    }
+
+    private fun normalizeAccountKey(identifier: String): String {
+        val clean = identifier.trim().lowercase()
+        val sanitized = clean.replace(Regex("[^a-z0-9._%+-]"), "_")
+        return if (clean.contains("@")) clean else "$sanitized@offline.local"
     }
 
     fun hasLocalAccount(email: String): Boolean {
         val cleanEmail = email.trim().lowercase()
-        return prefs.contains("local_acc_${cleanEmail}_pwd")
+        val normalized = normalizeAccountKey(cleanEmail)
+        return prefs.contains("local_acc_${cleanEmail}_pwd") || prefs.contains("local_acc_${normalized}_pwd")
     }
 
     fun verifyLocalAccount(email: String, password: String?): Boolean {
         val cleanEmail = email.trim().lowercase()
-        val storedPwd = prefs.getString("local_acc_${cleanEmail}_pwd", null) ?: return true
-        if (storedPwd.isBlank()) return true
-        return storedPwd == (password ?: "")
+        val normalized = normalizeAccountKey(cleanEmail)
+        val storedPwd = prefs.getString("local_acc_${cleanEmail}_pwd", null)
+            ?: prefs.getString("local_acc_${normalized}_pwd", null)
+            ?: return false
+        val inputPwd = password ?: ""
+        return storedPwd == inputPwd
+    }
+
+    fun getLocalAccountCategory(email: String): String? {
+        val cleanEmail = email.trim().lowercase()
+        val normalized = normalizeAccountKey(cleanEmail)
+        return prefs.getString("local_acc_${cleanEmail}_category", null)
+            ?: prefs.getString("local_acc_${normalized}_category", null)
+    }
+
+    fun getLocalAccountRole(email: String): String? {
+        val cleanEmail = email.trim().lowercase()
+        val normalized = normalizeAccountKey(cleanEmail)
+        return prefs.getString("local_acc_${cleanEmail}_role", null)
+            ?: prefs.getString("local_acc_${normalized}_role", null)
     }
 
     fun saveLocalSession(email: String, category: String, role: String) {

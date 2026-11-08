@@ -236,12 +236,23 @@ private fun SuccessContent(
 
                         displayBoxes.forEach { (idx, item, b) ->
                             val isSelected = idx == state.selectedObjectIndex
+                            val isUserConfirmed = item?.isUserConfirmed == true || (isSelected && state.isUserConfirmed)
+                            val confirmedLabel = item?.userConfirmedLabel ?: if (isSelected) state.userConfirmedLabel else null
+
                             val topCandidate = item?.classification?.topKResults?.firstOrNull()
                                 ?: state.classification.topKResults.firstOrNull()
-                            val score = topCandidate?.score ?: item?.classification?.confidence ?: state.classification.confidence
-                            val rawLabel = topCandidate?.label?.ifEmpty { null }
-                                ?: item?.classification?.label?.ifEmpty { null }
-                                ?: state.classification.label
+                            val score = if (isUserConfirmed && !confirmedLabel.isNullOrBlank()) {
+                                1.0f
+                            } else {
+                                topCandidate?.score ?: item?.classification?.confidence ?: state.classification.confidence
+                            }
+                            val rawLabel = if (isUserConfirmed && !confirmedLabel.isNullOrBlank()) {
+                                confirmedLabel
+                            } else {
+                                topCandidate?.label?.ifEmpty { null }
+                                    ?: item?.classification?.label?.ifEmpty { null }
+                                    ?: state.classification.label
+                            }
                             val displayLabel = if (rawLabel.isNotEmpty()) {
                                 CategoryLocalization.getCategoryDisplayName(rawLabel, Locale.getDefault().language)
                             } else "Item"
@@ -271,10 +282,18 @@ private fun SuccessContent(
                                     color = tint,
                                     shape = RoundedCornerShape(bottomEnd = 6.dp)
                                 ) {
-                                    val badgeText = if (displayBoxes.size > 1) {
-                                        "${idx + 1}. $displayLabel ${(score * 100).toInt()}%"
+                                    val badgeText = if (isUserConfirmed && !confirmedLabel.isNullOrBlank()) {
+                                        if (displayBoxes.size > 1) {
+                                            "${idx + 1}. $displayLabel"
+                                        } else {
+                                            displayLabel
+                                        }
                                     } else {
-                                        "$displayLabel ${(score * 100).toInt()}%"
+                                        if (displayBoxes.size > 1) {
+                                            "${idx + 1}. $displayLabel ${(score * 100).toInt()}%"
+                                        } else {
+                                            "$displayLabel ${(score * 100).toInt()}%"
+                                        }
                                     }
                                     Text(
                                         text = badgeText,
@@ -1020,6 +1039,7 @@ private fun SuccessContent(
                 } else {
                     Spacer(modifier = Modifier.height(12.dp))
                     var consentGiven by remember { mutableStateOf(false) }
+                    var showWrongCategoryPicker by remember { mutableStateOf(false) }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -1036,10 +1056,17 @@ private fun SuccessContent(
                         }
                         OutlinedButton(
                             onClick = {
-                                showCategorySelector = true
+                                showWrongCategoryPicker = !showWrongCategoryPicker
                             },
                             modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(10.dp)
+                            shape = RoundedCornerShape(10.dp),
+                            colors = if (showWrongCategoryPicker) {
+                                ButtonDefaults.outlinedButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f)
+                                )
+                            } else {
+                                ButtonDefaults.outlinedButtonColors()
+                            }
                         ) {
                             Text("✕ Wrong", fontSize = 12.sp)
                         }
@@ -1051,6 +1078,61 @@ private fun SuccessContent(
                             shape = RoundedCornerShape(10.dp)
                         ) {
                             Text("? Not sure", fontSize = 12.sp)
+                        }
+                    }
+
+                    AnimatedVisibility(visible = showWrongCategoryPicker) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp)
+                        ) {
+                            Text(
+                                text = "What is the correct category?",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            val correctionCategories = listOf(
+                                "biodegradable", "organic", "plastic", "paper", "cardboard",
+                                "metal", "glass", "E-waste", "Battery", "trash"
+                            )
+                            FlowRow(
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                correctionCategories.forEach { cat ->
+                                    SuggestionChip(
+                                        onClick = {
+                                            onSelectCategory(cat, null)
+                                            onSubmitFeedback("WRONG_ITEM", cat, null, consentGiven)
+                                            showWrongCategoryPicker = false
+                                        },
+                                        label = {
+                                            Text(
+                                                CategoryLocalization.getCategoryDisplayName(cat, Locale.getDefault().language),
+                                                fontSize = 12.sp
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                TextButton(
+                                    onClick = {
+                                        onSubmitFeedback("WRONG_ITEM", null, null, consentGiven)
+                                        showWrongCategoryPicker = false
+                                    }
+                                ) {
+                                    Text("Just mark as wrong", fontSize = 11.sp)
+                                }
+                            }
                         }
                     }
 

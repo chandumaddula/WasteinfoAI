@@ -251,11 +251,11 @@ fun CategoryAuthScreen(
                             identifierInput = it
                             localError = null
                         },
-                        label = { Text("Phone Number or Name *") },
-                        placeholder = { Text("e.g. 9876543210 or Ramesh") },
+                        label = { Text("${category.idFieldLabel} *") },
+                        placeholder = { Text(category.idFieldPlaceholder) },
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Default.Person,
+                                imageVector = categoryIcon,
                                 contentDescription = null
                             )
                         },
@@ -271,8 +271,8 @@ fun CategoryAuthScreen(
                             passwordInput = it
                             localError = null
                         },
-                        label = { Text("PIN / Password") },
-                        placeholder = { Text("Enter simple PIN or password") },
+                        label = { Text(if (isRegisterMode) "Password * (min. 6 characters)" else "Password") },
+                        placeholder = { Text(if (isRegisterMode) "Enter password (min. 6 chars)" else "Enter your registered password") },
                         leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
                         trailingIcon = {
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
@@ -322,23 +322,32 @@ fun CategoryAuthScreen(
                     Button(
                         onClick = {
                             if (identifierInput.trim().isBlank()) {
-                                localError = "Please enter your Phone Number or Name"
+                                localError = "Please enter your ${category.idFieldLabel}"
+                                return@Button
+                            }
+                            if (passwordInput.isBlank()) {
+                                localError = "Please enter your password"
                                 return@Button
                             }
                             localError = null
-                            val pass = if (passwordInput.isNotBlank()) passwordInput else "1234"
                             if (isRegisterMode) {
+                                if (passwordInput.length < 6) {
+                                    localError = "Password must be at least 6 characters"
+                                    return@Button
+                                }
                                 val name = if (fullNameInput.isNotBlank()) fullNameInput.trim() else identifierInput.trim()
+                                val sanitizedId = identifierInput.trim().replace(Regex("[^A-Za-z0-9._%+-]"), "_")
+                                val emailToRegister = if (identifierInput.contains("@")) identifierInput.trim() else "$sanitizedId@offline.local"
                                 viewModel.register(
                                     fullName = name,
-                                    email = if (identifierInput.contains("@")) identifierInput.trim() else "${identifierInput.trim().replace(" ", "_")}@offline.local",
-                                    pass = pass,
-                                    confirmPass = pass,
+                                    email = emailToRegister,
+                                    pass = passwordInput,
+                                    confirmPass = passwordInput,
                                     category = category.id,
                                     onSuccess = {
                                         viewModel.login(
                                             email = identifierInput.trim(),
-                                            pass = pass,
+                                            pass = passwordInput,
                                             category = category.id,
                                             onDone = { onNavigateToDashboard(category.id) }
                                         )
@@ -347,7 +356,7 @@ fun CategoryAuthScreen(
                             } else {
                                 viewModel.login(
                                     email = identifierInput.trim(),
-                                    pass = pass,
+                                    pass = passwordInput,
                                     category = category.id,
                                     onDone = { onNavigateToDashboard(category.id) }
                                 )

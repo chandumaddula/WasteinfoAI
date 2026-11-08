@@ -72,7 +72,7 @@ enum class UserCategory(
         id = "Sustainability education",
         title = "School & Students",
         subtitle = "",
-        defaultRole = "REVIEWER",
+        defaultRole = "RESIDENT",
         badgeLabel = "School & Students",
         loginTitle = "School & Students Portal",
         loginSubtitle = "Access educational curriculums and environmental audit metrics.",
