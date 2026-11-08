@@ -108,6 +108,73 @@ class ReportRepository(
         }
     }
 
+    suspend fun markAllPendingAsSynced() = withContext(Dispatchers.IO) {
+        reportDao.markAllPendingAsSynced()
+    }
+
+    suspend fun syncPendingReports(): Resource<Int> = withContext(Dispatchers.IO) {
+        val pending = reportDao.getPendingBatch(50)
+        if (pending.isEmpty()) return@withContext Resource.Success(0)
+
+        val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
+
+        val requestItems = pending.map { report ->
+            ReportCreateRequest(
+                clientUuid = report.clientUuid,
+                wasteCategory = report.wasteCategory,
+                description = report.description,
+                latitude = report.latitude,
+                longitude = report.longitude,
+                manualLocation = report.manualLocation,
+                evidenceRef = report.evidenceRef,
+                clientCreatedAt = isoFormat.format(Date(report.createdAt))
+            )
+        }
+
+        try {
+            val response = apiService.syncBatch(SyncBatchRequest(items = requestItems))
+            if (response.isSuccessful && response.body() != null) {
+                val batchResult = response.body()!!
+                var syncedCount = 0
+                for (item in batchResult.results) {
+                    val local = pending.find { it.clientUuid == item.clientUuid } ?: continue
+                    when (item.status) {
+                        "ACCEPTED", "ALREADY_PROCESSED" -> {
+                            val serverReport = item.report
+                            val updated = local.copy(
+                                syncStatus = SyncState.SYNCED,
+                                serverId = serverReport?.id ?: local.serverId,
+                                serverStatus = serverReport?.status ?: local.serverStatus,
+                                serverVersion = serverReport?.version ?: local.serverVersion,
+                                reviewNote = serverReport?.reviewNote ?: local.reviewNote,
+                                assignedWorkerId = serverReport?.assignedWorkerId ?: local.assignedWorkerId,
+                                lastSyncError = null
+                            )
+                            reportDao.insertOrUpdate(updated)
+                            syncedCount++
+                        }
+                        "CONFLICT" -> {
+                            reportDao.updateSyncState(item.clientUuid, SyncState.CONFLICT, item.error?.message ?: "Idempotency conflict")
+                        }
+                        "REJECTED" -> {
+                            reportDao.updateSyncState(item.clientUuid, SyncState.PERMANENT_FAILURE, item.error?.message ?: "Rejected by server")
+                        }
+                        else -> {
+                            reportDao.updateSyncState(item.clientUuid, SyncState.PENDING_SYNC, "Unknown status: ${item.status}")
+                        }
+                    }
+                }
+                Resource.Success(syncedCount)
+            } else {
+                Resource.Error("Server returned code ${response.code()}: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Resource.Error("Could not connect to server: ${e.localizedMessage ?: "Network error"}")
+        }
+    }
+
     suspend fun fetchRemoteReports(status: String? = null): Resource<List<ReportResponse>> = withContext(Dispatchers.IO) {
         try {
             val res = apiService.listReports(limit = 100, status = status)

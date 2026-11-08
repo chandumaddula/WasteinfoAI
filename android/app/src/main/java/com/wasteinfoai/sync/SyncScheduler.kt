@@ -42,7 +42,7 @@ class SyncScheduler(private val context: Context) {
 
         workManager.enqueueUniqueWork(
             "${SyncWorker.WORK_NAME}_immediate",
-            ExistingWorkPolicy.KEEP, // REPLACE cancelled an in-flight sync mid-batch
+            ExistingWorkPolicy.REPLACE,
             oneTimeWork
         )
     }

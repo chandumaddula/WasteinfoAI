@@ -33,6 +33,9 @@ interface ReportDao {
     @Query("UPDATE reports SET syncStatus = :newState, lastSyncError = :error WHERE clientUuid = :clientUuid")
     suspend fun updateSyncState(clientUuid: String, newState: SyncState, error: String? = null)
 
+    @Query("UPDATE reports SET syncStatus = 'SYNCED', lastSyncError = null WHERE syncStatus = 'PENDING_SYNC'")
+    suspend fun markAllPendingAsSynced()
+
     @Query("DELETE FROM reports WHERE clientUuid = :clientUuid")
     suspend fun delete(clientUuid: String)
 }
