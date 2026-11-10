@@ -13,5 +13,5 @@ data class AssistantContext(
     val condition: String? = null,      // broken / crushed / wet / greasy / empty / full
     val jurisdiction: String? = null,
     val scanId: Long = 0L,
-    val languageCode: String? = null    // en, hi, te, ta, mr
+    val languageCode: String? = null    // en, hi, te, ta, mr, kn, ml, bn, gu
 )

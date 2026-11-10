@@ -23,6 +23,10 @@
     <string name="language_te">तेलुगु (Telugu)</string>
     <string name="language_ta">तमिल (Tamil)</string>
     <string name="language_mr">मराठी (Marathi)</string>
+    <string name="language_kn">ಕನ್ನಡ (Kannada)</string>
+    <string name="language_ml">മലയാളം (Malayalam)</string>
+    <string name="language_bn">বাংলা (Bengali)</string>
+    <string name="language_gu">ગુજરાતી (Gujarati)</string>
     <string name="language_changed_toast">भाषा बदलकर %1$s कर दी गई</string>
     <string name="action_cancel">रद्द करें</string>
     <string name="action_save">सहेजें</string>

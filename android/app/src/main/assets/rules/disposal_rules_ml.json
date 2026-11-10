@@ -1,0 +1,936 @@
+{
+  "version": "2.0.0",
+  "updated_at": "2026-10-20T00:00:00Z",
+  "description": "Verified Hierarchical Waste Disposal Rules (ML)",
+  "rules": [
+    {
+      "id": "RULE-BATTERY-001",
+      "category": "Battery",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / അപകടകരമായ മാലിന്യം (ചുവന്ന തൊട്ടി)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ഷോർട്ട് സർക്യൂട്ട് ഒഴിവാക്കാൻ ഇലക്ട്രിക്കൽ ടെർമിനലുകളിൽ നോൺ-കണ്ടക്റ്റീവ് ടേപ്പ് ഒട്ടിക്കുക. ഉണങ്ങിയ പ്ലാസ്റ്റിക് കണ്ടെയ്നറിൽ സൂക്ഷിക്കുക.",
+      "safety_warnings": "തീപിടുത്തത്തിനും രാസ ചോർച്ചയ്ക്കും സാധ്യത. സാധാരണ ചവറ്റുകുട്ടയിലോ നീല/പച്ച തൊട്ടിയിലോ നിക്ഷേപിക്കരുത്. ചൂട് ഏൽക്കരുത്.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized E-Waste Center",
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Household Compost (Green)",
+        "Dry Recyclables (Blue)",
+        "Open Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016 & ഇ-മാലിന്യ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "രാസ നാശവും തീപിടുത്ത സാധ്യതയും കാരണം ബാറ്ററികൾ വീട്ടിൽ വീണ്ടും ഉപയോഗിക്കാൻ കഴിയില്ല."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിച്ച് കഴുകരുത്. പൊടിയുണ്ടെങ്കിൽ ഉണങ്ങിയ തുണി ഉപയോഗിച്ച് തുടയ്ക്കുക.",
+      "environmental_impact": "ലെഡ്, കാഡ്മിയം, ലിഥിയം തുടങ്ങിയ ഘനലോഹങ്ങൾ ഭൂഗർഭജലത്തിൽ കലർന്ന് കടുത്ത വിഷബാധയ്ക്ക് കാരണമാകുന്നു.",
+      "condition_notes": {
+        "broken": "അപകടം: ചോരുന്ന ബാറ്ററിയിൽ നിന്ന് ആസിഡ് പുറത്തുവരുന്നു. കൈകൊണ്ട് തൊടരുത്. മണലിലോ പ്ലാസ്റ്റിക് ബോക്സിലോ സൂക്ഷിക്കുക.",
+        "crushed": "തീപിടുത്ത സാധ്യത: തകർന്ന ബാറ്ററികൾ ആന്തരിക ഷോർട്ട് സർക്യൂട്ടിനും പെട്ടെന്ന് തീപിടിക്കാനും ഇടയാക്കും.",
+        "wet": "പൂർണ്ണമായും ഉണക്കി സൂക്ഷിക്കുക. ലിഥിയം സെല്ലുകളിൽ വെള്ളം കയറുന്നത് വാതക സ്ഫോടനത്തിന് കാരണമാകും.",
+        "empty": "ചാർജ് തീർന്ന ബാറ്ററികളിലും വൈദ്യുതി അവശേഷിക്കുന്നു. വിതരണം ചെയ്യുന്നതിന് മുമ്പ് ടെർമിനലുകൾ ടേപ്പ് ചെയ്യുക.",
+        "full": "ഷോർട്ട് സർക്യൂട്ട് ഒഴിവാക്കാൻ ചാർജ്ജ് ചെയ്ത ബാറ്ററികൾ ലോഹ വസ്തുക്കളിൽ നിന്ന് മാറ്റി സൂക്ഷിക്കുക."
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-LI-ION",
+      "category": "Battery",
+      "specific_item": "Rechargeable Lithium-Ion Battery",
+      "material_code": "BATTERY_LI_ION",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / അപകടകരമായ മാലിന്യം (ചുവന്ന തൊട്ടി)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ഷോർട്ട് സർക്യൂട്ട് ഒഴിവാക്കാൻ ഇലക്ട്രിക്കൽ ടെർമിനലുകളിൽ നോൺ-കണ്ടക്റ്റീവ് ടേപ്പ് ഒട്ടിക്കുക. ഉണങ്ങിയ പ്ലാസ്റ്റിക് കണ്ടെയ്നറിൽ സൂക്ഷിക്കുക.",
+      "safety_warnings": "തീപിടുത്തത്തിനും രാസ ചോർച്ചയ്ക്കും സാധ്യത. സാധാരണ ചവറ്റുകുട്ടയിലോ നീല/പച്ച തൊട്ടിയിലോ നിക്ഷേപിക്കരുത്. ചൂട് ഏൽക്കരുത്.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Collection Point",
+        "Manufacturer Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Curbside Bins",
+        "Municipal Waste Truck Compactor"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016 & ഇ-മാലിന്യ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "രാസ നാശവും തീപിടുത്ത സാധ്യതയും കാരണം ബാറ്ററികൾ വീട്ടിൽ വീണ്ടും ഉപയോഗിക്കാൻ കഴിയില്ല."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിച്ച് കഴുകരുത്. പൊടിയുണ്ടെങ്കിൽ ഉണങ്ങിയ തുണി ഉപയോഗിച്ച് തുടയ്ക്കുക.",
+      "environmental_impact": "ലെഡ്, കാഡ്മിയം, ലിഥിയം തുടങ്ങിയ ഘനലോഹങ്ങൾ ഭൂഗർഭജലത്തിൽ കലർന്ന് കടുത്ത വിഷബാധയ്ക്ക് കാരണമാകുന്നു.",
+      "condition_notes": {
+        "broken": "അപകടം: ചോരുന്ന ബാറ്ററിയിൽ നിന്ന് ആസിഡ് പുറത്തുവരുന്നു. കൈകൊണ്ട് തൊടരുത്. മണലിലോ പ്ലാസ്റ്റിക് ബോക്സിലോ സൂക്ഷിക്കുക.",
+        "crushed": "തീപിടുത്ത സാധ്യത: തകർന്ന ബാറ്ററികൾ ആന്തരിക ഷോർട്ട് സർക്യൂട്ടിനും പെട്ടെന്ന് തീപിടിക്കാനും ഇടയാക്കും.",
+        "wet": "പൂർണ്ണമായും ഉണക്കി സൂക്ഷിക്കുക. ലിഥിയം സെല്ലുകളിൽ വെള്ളം കയറുന്നത് വാതക സ്ഫോടനത്തിന് കാരണമാകും.",
+        "empty": "ചാർജ് തീർന്ന ബാറ്ററികളിലും വൈദ്യുതി അവശേഷിക്കുന്നു. വിതരണം ചെയ്യുന്നതിന് മുമ്പ് ടെർമിനലുകൾ ടേപ്പ് ചെയ്യുക.",
+        "full": "ഷോർട്ട് സർക്യൂട്ട് ഒഴിവാക്കാൻ ചാർജ്ജ് ചെയ്ത ബാറ്ററികൾ ലോഹ വസ്തുക്കളിൽ നിന്ന് മാറ്റി സൂക്ഷിക്കുക."
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-ALKALINE",
+      "category": "Battery",
+      "specific_item": "Alkaline AA / AAA / 9V Battery",
+      "material_code": "BATTERY_ALKALINE",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / അപകടകരമായ മാലിന്യം (ചുവന്ന തൊട്ടി)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ഷോർട്ട് സർക്യൂട്ട് ഒഴിവാക്കാൻ ഇലക്ട്രിക്കൽ ടെർമിനലുകളിൽ നോൺ-കണ്ടക്റ്റീവ് ടേപ്പ് ഒട്ടിക്കുക. ഉണങ്ങിയ പ്ലാസ്റ്റിക് കണ്ടെയ്നറിൽ സൂക്ഷിക്കുക.",
+      "safety_warnings": "തീപിടുത്തത്തിനും രാസ ചോർച്ചയ്ക്കും സാധ്യത. സാധാരണ ചവറ്റുകുട്ടയിലോ നീല/പച്ച തൊട്ടിയിലോ നിക്ഷേപിക്കരുത്. ചൂട് ഏൽക്കരുത്.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)",
+        "Battery Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Dry Paper/Plastic Bin (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016 & ഇ-മാലിന്യ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "രാസ നാശവും തീപിടുത്ത സാധ്യതയും കാരണം ബാറ്ററികൾ വീട്ടിൽ വീണ്ടും ഉപയോഗിക്കാൻ കഴിയില്ല."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിച്ച് കഴുകരുത്. പൊടിയുണ്ടെങ്കിൽ ഉണങ്ങിയ തുണി ഉപയോഗിച്ച് തുടയ്ക്കുക.",
+      "environmental_impact": "ലെഡ്, കാഡ്മിയം, ലിഥിയം തുടങ്ങിയ ഘനലോഹങ്ങൾ ഭൂഗർഭജലത്തിൽ കലർന്ന് കടുത്ത വിഷബാധയ്ക്ക് കാരണമാകുന്നു.",
+      "condition_notes": {
+        "broken": "അപകടം: ചോരുന്ന ബാറ്ററിയിൽ നിന്ന് ആസിഡ് പുറത്തുവരുന്നു. കൈകൊണ്ട് തൊടരുത്. മണലിലോ പ്ലാസ്റ്റിക് ബോക്സിലോ സൂക്ഷിക്കുക.",
+        "crushed": "തീപിടുത്ത സാധ്യത: തകർന്ന ബാറ്ററികൾ ആന്തരിക ഷോർട്ട് സർക്യൂട്ടിനും പെട്ടെന്ന് തീപിടിക്കാനും ഇടയാക്കും.",
+        "wet": "പൂർണ്ണമായും ഉണക്കി സൂക്ഷിക്കുക. ലിഥിയം സെല്ലുകളിൽ വെള്ളം കയറുന്നത് വാതക സ്ഫോടനത്തിന് കാരണമാകും.",
+        "empty": "ചാർജ് തീർന്ന ബാറ്ററികളിലും വൈദ്യുതി അവശേഷിക്കുന്നു. വിതരണം ചെയ്യുന്നതിന് മുമ്പ് ടെർമിനലുകൾ ടേപ്പ് ചെയ്യുക.",
+        "full": "ഷോർട്ട് സർക്യൂട്ട് ഒഴിവാക്കാൻ ചാർജ്ജ് ചെയ്ത ബാറ്ററികൾ ലോഹ വസ്തുക്കളിൽ നിന്ന് മാറ്റി സൂക്ഷിക്കുക."
+      }
+    },
+    {
+      "id": "RULE-CARDBOARD-001",
+      "category": "cardboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഉണങ്ങിയ പുനരുപയോഗം (നീല തൊട്ടി) / ആക്രിക്കട",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "പ്ലാസ്റ്റിക് ടേപ്പുകൾ നീക്കം ചെയ്ത് കാർഡ്ബോർഡ് മടക്കി പരത്തുക.",
+      "safety_warnings": "ഈർപ്പവും തീയും തട്ടാതെ ഉണങ്ങിയ സ്ഥലത്ത് സൂക്ഷിക്കുക.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Door-to-door Kabadiwala Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Rain-Exposed Open Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "സാധനങ്ങൾ സൂക്ഷിക്കുന്നതിനോ പാക്കിംഗിനോ ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "പൊടി തട്ടിക്കളയുക. വെള്ളം തൊടരുത്.",
+      "environmental_impact": "കാർഡ്ബോർഡ് പുനരുപയോഗിക്കുന്നത് മരങ്ങൾ മുറിക്കുന്നത് തടയുകയും ഊർജ്ജം ലാഭിക്കുകയും ചെയ്യുന്നു.",
+      "condition_notes": {
+        "wet": "ഉണങ്ങിയ ശേഷം മാത്രം പുനരുപയോഗത്തിന് നൽകുക.",
+        "crushed": "കെട്ടുകളാക്കി നീല തൊട്ടിയിൽ വയ്ക്കുക."
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-SOILED",
+      "category": "cardboard",
+      "specific_item": "Greasy / Food-Soiled Cardboard",
+      "material_code": "PAP 20",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഗാർഹിക കമ്പോസ്റ്റ് / നനഞ്ഞ ജൈവ മാലിന്യ തൊട്ടി (പച്ച തൊട്ടി)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "പ്ലാസ്റ്റിക് ടേപ്പ് നീക്കം ചെയ്ത് ചെറിയ കഷ്ണങ്ങളാക്കി കമ്പോസ്റ്റിലേക്ക് ചേർക്കുക.",
+      "safety_warnings": "എണ്ണമയമുള്ള കാർഡ്ബോർഡ് നീല പുനരുപയോഗ തൊട്ടിയിൽ ഇടരുത്, ഇത് മറ്റ് പേപ്പറുകളെ നശിപ്പിക്കും.",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "General Municipal Refuse (Black Bin)",
+        "Industrial Composting if uncoated"
+      ],
+      "prohibited_pathways": [
+        "Dry Paper Recyclables (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "കമ്പോസ്റ്റിംഗിനായി കാർബൺ ഘടകമായി ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "എണ്ണമയമുള്ള കാർഡ്ബോർഡ് വെള്ളം ഉപയോഗിച്ച് കഴുകാൻ ശ്രമിക്കരുത്.",
+      "environmental_impact": "കമ്പോസ്റ്റിൽ എളുപ്പത്തിൽ വിഘടിച്ച് പോഷകസമൃദ്ധമായ വളമായി മാറുന്നു.",
+      "condition_notes": {
+        "greasy": "എണ്ണമയമുള്ള ഭാഗം കമ്പോസ്റ്റിൽ ഇടുക, പുനരുപയോഗത്തിന് നൽകരുത്.",
+        "wet": "ഭക്ഷണ അവശിഷ്ടങ്ങളുണ്ടെങ്കിൽ കമ്പോസ്റ്റിൽ ഇടുക."
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-TETRAPAK",
+      "category": "cardboard",
+      "specific_item": "Aseptic Liquid Carton (Tetra Pak)",
+      "material_code": "C/PAP 84",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഉണങ്ങിയ പുനരുപയോഗം (നീല തൊട്ടി) / ടെട്രാ പാക്ക് ശേഖരണ കേന്ദ്രം",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "പൂർണ്ണമായി ഒഴിച്ച്, വെള്ളത്തിൽ കഴുകി, പരത്തി ഉണക്കുക.",
+      "safety_warnings": "ദുർഗന്ധം ഒഴിവാക്കാൻ പാൽ അവശിഷ്ടങ്ങൾ പൂർണ്ണമായി നീക്കം ചെയ്യുക.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Tetra Pak Authorized Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "ചെറിയ ചെടികൾ നടാൻ തോട്ടത്തിൽ ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "ഉൾഭാഗം വെള്ളത്തിൽ കഴുകി നന്നായി ഉണക്കുക.",
+      "environmental_impact": "പേപ്പർ, അലുമിനിയം, പോളിത്തീൻ എന്നിവ വേർതിരിച്ച് പാനലുകൾ നിർമ്മിക്കാൻ ഉപയോഗിക്കുന്നു.",
+      "condition_notes": {
+        "empty": "പൂർണ്ണമായി ഒഴിച്ച് പരത്തുക.",
+        "crushed": "സ്ഥലം ലാഭിക്കാൻ പരത്തി നീല തൊട്ടിയിൽ ഇടുക."
+      }
+    },
+    {
+      "id": "RULE-GLASS-001",
+      "category": "glass",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഉണങ്ങിയ പുനരുപയോഗം (നീല തൊട്ടി) / ഗ്ലാസ് ശേഖരണ കേന്ദ്രം",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "വെള്ളത്തിൽ കഴുകി ഉണക്കുക. മെറ്റൽ അല്ലെങ്കിൽ പ്ലാസ്റ്റിക് അടപ്പുകൾ നീക്കം ചെയ്യുക.",
+      "safety_warnings": "പൊട്ടാതെ ശ്രദ്ധയോടെ കൈകാര്യം ചെയ്യുക.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Merchant / Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Unwrapped Glass in Trash"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "ഭക്ഷ്യവസ്തുക്കൾ സൂക്ഷിക്കുന്നതിനോ അലങ്കാരത്തിനോ ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "ചെറുചൂടുവെള്ളവും സോപ്പും ഉപയോഗിച്ച് കഴുകി ലേബൽ നീക്കം ചെയ്യുക.",
+      "environmental_impact": "ഗ്ലാസ് പുനരുപയോഗം അസംസ്കൃത വസ്തുക്കളുടെ ഉപഭോഗവും ഊർജ്ജവും ഗണ്യമായി കുറയ്ക്കുന്നു.",
+      "condition_notes": {
+        "empty": "പൂർണ്ണമായി ഒഴിച്ച് കഴുകുക."
+      }
+    },
+    {
+      "id": "RULE-ITEM-GLASS-BROKEN",
+      "category": "glass",
+      "specific_item": "Broken Glass / Shards",
+      "material_code": "GL 70",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "സുരക്ഷിതമായി പൊതിഞ്ഞ് ഡ്രൈ വേസ്റ്റിൽ നൽകുക / പ്രത്യേക സംസ്കരണം",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "കട്ടിയുള്ള പേപ്പറിലോ കാർഡ്ബോർഡിലോ പൊതിഞ്ഞ് 'പൊട്ടിയ ഗ്ലാസ്' എന്ന് അടയാളപ്പെടുത്തുക.",
+      "safety_warnings": "ശുചീകരണ തൊഴിലാളികളുടെ കൈകളിൽ മുറിവേൽക്കാൻ സാധ്യതയുണ്ട്. തുറന്ന തൊട്ടിയിൽ ഇടരുത്.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Wrapped Domestic Hazardous Waste (Red Bin)"
+      ],
+      "prohibited_pathways": [
+        "Loose in Plastic Carry Bags",
+        "Loose in Curbside Bins"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "പൊട്ടിയ ഗ്ലാസ് കലാപരമായ മൊസൈക് വർക്കുകൾക്ക് ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "കൈകൊണ്ട് പൊട്ടിയ ഗ്ലാസ് കഴുകാൻ ശ്രമിക്കരുത്.",
+      "environmental_impact": "ഗുണനിലവാരം നഷ്ടപ്പെടാതെ ഗ്ലാസ് പരിധിയില്ലാതെ പുനരുപയോഗിക്കാം.",
+      "condition_notes": {
+        "broken": "സുരക്ഷിതമായി ബോക്സിൽ പൊതിഞ്ഞു വയ്ക്കുക."
+      }
+    },
+    {
+      "id": "RULE-KEYBOARD-001",
+      "category": "Keyboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / ഓറഞ്ച് തൊട്ടി",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "വ്യക്തിഗത വിവരങ്ങൾ മായ്ക്കുക. ബാറ്ററി മാറ്റുക. ഭദ്രമായി പാക്ക് ചെയ്യുക.",
+      "safety_warnings": "ഉപകരണങ്ങൾ പൊട്ടിക്കുകയോ കത്തിക്കുകയോ ചെയ്യരുത്.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility",
+        "Manufacturer EPR Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Municipal Garbage Dump",
+        "Open Scrap Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഇ-മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "പ്രവർത്തിക്കുന്നവയാണെങ്കിൽ നന്നാക്കി മറ്റുള്ളവർക്ക് നൽകാം."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിക്കരുത്. ഉണങ്ങിയ തുണി കൊണ്ട് തുടയ്ക്കാം.",
+      "environmental_impact": "സ്വർണ്ണം, വെള്ളി, ചെമ്പ് തുടങ്ങിയ വിലപിടിപ്പുള്ള ലോഹങ്ങൾ വേർതിരിച്ചെടുക്കാം.",
+      "condition_notes": {
+        "broken": "പൊട്ടിയവ ബോക്സിൽ സുരക്ഷിതമായി വച്ച് കൈമാറുക."
+      }
+    },
+    {
+      "id": "RULE-METAL-001",
+      "category": "metal",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഉണങ്ങിയ പുനരുപയോഗം (നീല തൊട്ടി) / ആക്രിക്കട",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ഭക്ഷണ അവശിഷ്ടങ്ങൾ കഴുകി കളഞ്ഞ് ഉണക്കുക.",
+      "safety_warnings": "തുരുമ്പിച്ചതോ മൂർച്ചയുള്ളതോ ആയ അരികുകൾ മുറിവുണ്ടാക്കാം.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Metal Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "ഉപകരണങ്ങൾ സൂക്ഷിക്കാനോ മറ്റ് ആവശ്യങ്ങൾക്കോ ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "ഗ്രീസ് അല്ലെങ്കിൽ എണ്ണ തുടച്ചു മാറ്റുക.",
+      "environmental_impact": "ലോഹ പുനരുപയോഗം ഖനനവും കാർബൺ പുറന്തള്ളലും കുറയ്ക്കുന്നു.",
+      "condition_notes": {
+        "empty": "പൂർണ്ണമായി ശൂന്യമാക്കുക."
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-ALU-CAN",
+      "category": "metal",
+      "specific_item": "Aluminum Beverage Can",
+      "material_code": "ALU 41",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഉണങ്ങിയ പുനരുപയോഗം (നീല തൊട്ടി) / മെറ്റൽ സ്ക്രാപ്പ് വ്യാപാരികൾ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "വെള്ളത്തിൽ കഴുകി, സ്ഥലം ലാഭിക്കാൻ ചെറുതായി ചവിട്ടി പരത്തുക.",
+      "safety_warnings": "ക്യാനിന്റെ വശങ്ങൾ മൂർച്ചയുള്ളതായിരിക്കാം, കൈ മുറിയാതെ സൂക്ഷിക്കുക.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Recyclers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "പെൻ സ്റ്റാൻഡ് അല്ലെങ്കിൽ ക്രാഫ്റ്റ് ആവശ്യങ്ങൾക്ക് ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "പാനീയത്തിന്റെ അവശിഷ്ടങ്ങൾ പോകാൻ വെള്ളത്തിൽ കഴുകി ഉണക്കുക.",
+      "environmental_impact": "അലുമിനിയം പുനരുപയോഗം പുതിയ ഉൽപ്പാദനത്തേക്കാൾ 95% കുറവ് ഊർജ്ജം മാത്രമേ ഉപയോഗിക്കുന്നുള്ളൂ.",
+      "condition_notes": {
+        "crushed": "പരത്തി നീല തൊട്ടിയിൽ ഇടുക."
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-AEROSOL",
+      "category": "metal",
+      "specific_item": "Aerosol Spray Container",
+      "material_code": "FE 40",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അപകടകരമായ മാലിന്യം (ചുവന്ന തൊട്ടി) / പ്രത്യേക മെറ്റൽ ഡിപ്പോ",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "കാൻ പൂർണ്ണമായും ശൂന്യമാണെന്ന് ഉറപ്പാക്കുക. ദ്വാരമുണ്ടാക്കരുത്.",
+      "safety_warnings": "മർദ്ദമുള്ള വാതകം അടങ്ങിയിരിക്കുന്നതിനാൽ ചൂടിൽ പൊട്ടിത്തെറിക്കാൻ സാധ്യതയുണ്ട്.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Municipal Truck Compactor",
+        "Open Fire",
+        "Puncturing"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "സുരക്ഷാ കാരണങ്ങളാൽ എയറോസോൾ ക്യാനുകൾ വീണ്ടും ഉപയോഗിക്കരുത്."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിച്ച് കഴുകരുത്. പുറംഭാഗം തുണി ഉപയോഗിച്ച് തുടയ്ക്കുക.",
+      "environmental_impact": "സുരക്ഷിതമായി സംസ്കരിച്ചില്ലെങ്കിൽ അന്തരീക്ഷ മലിനീകരണത്തിന് കാരണമാകും.",
+      "condition_notes": {
+        "empty": "നോസിൽ അമർത്തി പൂർണ്ണമായി ശൂന്യമാക്കുക.",
+        "crushed": "എയറോസോൾ ക്യാനുകൾ ഒരിക്കലും ചതയ്ക്കരുത്."
+      }
+    },
+    {
+      "id": "RULE-MICROWAVE-001",
+      "category": "Microwave",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / ഓറഞ്ച് തൊട്ടി",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "വ്യക്തിഗത വിവരങ്ങൾ മായ്ക്കുക. ബാറ്ററി മാറ്റുക. ഭദ്രമായി പാക്ക് ചെയ്യുക.",
+      "safety_warnings": "ഉപകരണങ്ങൾ പൊട്ടിക്കുകയോ കത്തിക്കുകയോ ചെയ്യരുത്.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycling Center",
+        "Appliance Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Informal Disassembly",
+        "Standard Garbage"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഇ-മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "പ്രവർത്തിക്കുന്നവയാണെങ്കിൽ നന്നാക്കി മറ്റുള്ളവർക്ക് നൽകാം."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിക്കരുത്. ഉണങ്ങിയ തുണി കൊണ്ട് തുടയ്ക്കാം.",
+      "environmental_impact": "സ്വർണ്ണം, വെള്ളി, ചെമ്പ് തുടങ്ങിയ വിലപിടിപ്പുള്ള ലോഹങ്ങൾ വേർതിരിച്ചെടുക്കാം.",
+      "condition_notes": {
+        "broken": "പൊട്ടിയവ ബോക്സിൽ സുരക്ഷിതമായി വച്ച് കൈമാറുക."
+      }
+    },
+    {
+      "id": "RULE-MOBILE-001",
+      "category": "Mobile",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / ഓറഞ്ച് തൊട്ടി",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "വ്യക്തിഗത വിവരങ്ങൾ മായ്ക്കുക. ബാറ്ററി മാറ്റുക. ഭദ്രമായി പാക്ക് ചെയ്യുക.",
+      "safety_warnings": "ഉപകരണങ്ങൾ പൊട്ടിക്കുകയോ കത്തിക്കുകയോ ചെയ്യരുത്.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Kiosks",
+        "Electronics Retailer Take-Back",
+        "Registered Recycler"
+      ],
+      "prohibited_pathways": [
+        "Curbside Dustbin",
+        "Landfill Dumpsite"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഇ-മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "പ്രവർത്തിക്കുന്നവയാണെങ്കിൽ നന്നാക്കി മറ്റുള്ളവർക്ക് നൽകാം."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിക്കരുത്. ഉണങ്ങിയ തുണി കൊണ്ട് തുടയ്ക്കാം.",
+      "environmental_impact": "സ്വർണ്ണം, വെള്ളി, ചെമ്പ് തുടങ്ങിയ വിലപിടിപ്പുള്ള ലോഹങ്ങൾ വേർതിരിച്ചെടുക്കാം.",
+      "condition_notes": {
+        "broken": "പൊട്ടിയവ ബോക്സിൽ സുരക്ഷിതമായി വച്ച് കൈമാറുക."
+      }
+    },
+    {
+      "id": "RULE-MOUSE-001",
+      "category": "Mouse",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / ഓറഞ്ച് തൊട്ടി",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "വ്യക്തിഗത വിവരങ്ങൾ മായ്ക്കുക. ബാറ്ററി മാറ്റുക. ഭദ്രമായി പാക്ക് ചെയ്യുക.",
+      "safety_warnings": "ഉപകരണങ്ങൾ പൊട്ടിക്കുകയോ കത്തിക്കുകയോ ചെയ്യരുത്.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Municipal General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഇ-മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "പ്രവർത്തിക്കുന്നവയാണെങ്കിൽ നന്നാക്കി മറ്റുള്ളവർക്ക് നൽകാം."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിക്കരുത്. ഉണങ്ങിയ തുണി കൊണ്ട് തുടയ്ക്കാം.",
+      "environmental_impact": "സ്വർണ്ണം, വെള്ളി, ചെമ്പ് തുടങ്ങിയ വിലപിടിപ്പുള്ള ലോഹങ്ങൾ വേർതിരിച്ചെടുക്കാം.",
+      "condition_notes": {
+        "broken": "പൊട്ടിയവ ബോക്സിൽ സുരക്ഷിതമായി വച്ച് കൈമാറുക."
+      }
+    },
+    {
+      "id": "RULE-ORGANIC-001",
+      "category": "organic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "നനഞ്ഞ ജൈവ മാലിന്യ തൊട്ടി (പച്ച തൊട്ടി) / കമ്പോസ്റ്റിംഗ്",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "പ്ലാസ്റ്റിക് കവറുകൾ ഒഴിവാക്കി ജൈവ അവശിഷ്ടങ്ങൾ മാത്രം നിക്ഷേപിക്കുക.",
+      "safety_warnings": "പ്ലാസ്റ്റിക്കോ രാസവസ്തുക്കളോ പച്ച തൊട്ടിയിൽ ഇടരുത്.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "വീട്ടിൽ തന്നെ കമ്പോസ്റ്റോ ബയോഗ്യാസോ നിർമ്മിക്കാം."
+      ],
+      "cleaning_tips": "കഴുകേണ്ടതില്ല. നേരിട്ട് പച്ച തൊട്ടിയിൽ ഇടുക.",
+      "environmental_impact": "മണ്ണിന്റെ ഫലഭൂയിഷ്ഠത വർദ്ധിപ്പിക്കുകയും മീഥെയ്ൻ വാതകം കുറയ്ക്കുകയും ചെയ്യുന്നു.",
+      "condition_notes": {
+        "wet": "നനവ് സ്വാഭാവികമാണ്, നേരിട്ട് നിക്ഷേപിക്കാം."
+      }
+    },
+    {
+      "id": "RULE-PAPER-001",
+      "category": "paper",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഉണങ്ങിയ പുനരുപയോഗം (നീല തൊട്ടി) / പേപ്പർ വ്യാപാരികൾ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "പിന്നുകളും പ്ലാസ്റ്റിക് കവറുകളും നീക്കം ചെയ്ത് കെട്ടിവയ്ക്കുക.",
+      "safety_warnings": "ഈർപ്പവും തീയും തട്ടാതെ സൂക്ഷിക്കുക.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Raddi / Kabadiwala Merchants"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "റഫ് നോട്ട്, ക്രാഫ്റ്റ് ആവശ്യങ്ങൾക്ക് ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "കഴുകരുത്. ഉണങ്ങിയിരിക്കണം.",
+      "environmental_impact": "ഒരു ടൺ പേപ്പർ പുനരുപയോഗിക്കുമ്പോൾ 17 മരങ്ങളും 26,000 ലിറ്റർ വെള്ളവും ലാഭിക്കാം.",
+      "condition_notes": {
+        "wet": "നനഞ്ഞ പേപ്പർ ഉണങ്ങിയ ശേഷം മാത്രം ഇടുക അല്ലെങ്കിൽ കമ്പോസ്റ്റിലേക്ക് മാറ്റുക."
+      }
+    },
+    {
+      "id": "RULE-PCB-001",
+      "category": "PCB",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / ഓറഞ്ച് തൊട്ടി",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "വ്യക്തിഗത വിവരങ്ങൾ മായ്ക്കുക. ബാറ്ററി മാറ്റുക. ഭദ്രമായി പാക്ക് ചെയ്യുക.",
+      "safety_warnings": "ഉപകരണങ്ങൾ പൊട്ടിക്കുകയോ കത്തിക്കുകയോ ചെയ്യരുത്.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized Central Pollution Control Board (CPCB) Dismantler"
+      ],
+      "prohibited_pathways": [
+        "Informal Scrap Acid Baths",
+        "Open Burning",
+        "Landfills"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഇ-മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "പ്രവർത്തിക്കുന്നവയാണെങ്കിൽ നന്നാക്കി മറ്റുള്ളവർക്ക് നൽകാം."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിക്കരുത്. ഉണങ്ങിയ തുണി കൊണ്ട് തുടയ്ക്കാം.",
+      "environmental_impact": "സ്വർണ്ണം, വെള്ളി, ചെമ്പ് തുടങ്ങിയ വിലപിടിപ്പുള്ള ലോഹങ്ങൾ വേർതിരിച്ചെടുക്കാം.",
+      "condition_notes": {
+        "broken": "പൊട്ടിയവ ബോക്സിൽ സുരക്ഷിതമായി വച്ച് കൈമാറുക."
+      }
+    },
+    {
+      "id": "RULE-PLASTIC-001",
+      "category": "plastic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഉണങ്ങിയ പുനരുപയോഗം (നീല തൊട്ടി) / പ്ലാസ്റ്റിക് ശേഖരണം",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ഭക്ഷണ അവശിഷ്ടങ്ങൾ കഴുകി ഉണക്കുക.",
+      "safety_warnings": "പ്ലാസ്റ്റിക് കത്തിക്കരുത്. വെയിലിൽ കൂടുതൽ സമയം വയ്ക്കരുത്.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Plastic Collection Kiosk",
+        "Scrap Merchant"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Drains / Water Bodies",
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "പ്ലാസ്റ്റിക് മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2021",
+      "reuse_ideas": [
+        "സാധനങ്ങൾ സൂക്ഷിക്കുന്നതിന് വീണ്ടും ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "വെള്ളവും സോപ്പും ഉപയോഗിച്ച് കഴുകി ഉണക്കുക.",
+      "environmental_impact": "റീസൈക്ലിംഗ് മാലിന്യക്കൂമ്പാരങ്ങളുടെ ഭാരം കുറയ്ക്കുന്നു.",
+      "condition_notes": {
+        "empty": "ഉണക്കി നീല തൊട്ടിയിൽ ഇടുക."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-PET",
+      "category": "plastic",
+      "specific_item": "PET Beverage Bottle (RIC 1)",
+      "material_code": "PET 01",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഉണങ്ങിയ പുനരുപയോഗം (നീല തൊട്ടി) / പ്ലാസ്റ്റിക് റീസൈക്ലിംഗ്",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ഒഴിച്ച്, കഴുകി, ചവിട്ടി പരത്തി അടപ്പ് അടയ്ക്കുക.",
+      "safety_warnings": "പ്ലാസ്റ്റിക് ഒരിക്കലും കത്തിക്കരുത്, ഇത് വിഷപ്പുക പരത്തും.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Blue Dry Waste Bin",
+        "Bottle Return Kiosk",
+        "Door-to-door Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Littering",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016 & പ്ലാസ്റ്റിക് മാലിന്യ ചട്ടങ്ങൾ 2021",
+      "reuse_ideas": [
+        "തുള്ളിനന സംവിധാനത്തിനോ ചെടിച്ചട്ടികൾക്കോ ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "ഉൾഭാഗം വെള്ളത്തിൽ കഴുകി ഉണക്കുക.",
+      "environmental_impact": "PET കുപ്പികൾ പുനരുപയോഗിച്ച് തുണിനൂലുകളും പുതിയ ഉൽപ്പന്നങ്ങളും നിർമ്മിക്കുന്നു.",
+      "condition_notes": {
+        "crushed": "ചതച്ച് വലിപ്പം കുറയ്ക്കുക."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-HDPE",
+      "category": "plastic",
+      "specific_item": "HDPE Rigid Bottle / Jug (RIC 2)",
+      "material_code": "HDPE 02",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഉണങ്ങിയ പുനരുപയോഗം (നീല തൊട്ടി) / പ്ലാസ്റ്റിക് ശേഖരണ കേന്ദ്രം",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ഷാംപൂ അല്ലെങ്കിൽ ഡിറ്റർജന്റ് പൂർണ്ണമായും കഴുകി കളയുക.",
+      "safety_warnings": "രാസവസ്തുക്കളുടെ കുപ്പികളാണെങ്കിൽ ശ്രദ്ധയോടെ കൈകാര്യം ചെയ്യുക.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "പ്ലാസ്റ്റിക് മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2021",
+      "reuse_ideas": [
+        "പൂന്തോട്ടാവശ്യങ്ങൾക്കോ ടൂൾബോക്സിനോ ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "ചെറുചൂടുവെള്ളത്തിൽ കഴുകി ഉണക്കുക.",
+      "environmental_impact": "HDPE വളരെ ഈടുനിൽക്കുന്ന പ്ലാസ്റ്റിക്കാണ്, ഇത് പൈപ്പുകളായും ഫർണിച്ചറുകളായും മാറുന്നു.",
+      "condition_notes": {
+        "empty": "പൂർണ്ണമായി കഴുകി വൃത്തിയാക്കുക."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-MLP",
+      "category": "plastic",
+      "specific_item": "Multi-Layer Plastic Pouch (RIC 7)",
+      "material_code": "OTHER 07",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ഉണങ്ങിയ മാലിന്യം / സിമന്റ് ഫാക്ടറികളിലെ ഇന്ധനം (RDF)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "ഭക്ഷണ അവശിഷ്ടങ്ങൾ നീക്കം ചെയ്ത് ഉണക്കുക.",
+      "safety_warnings": "തുറസ്സായ സ്ഥലത്ത് കത്തിക്കരുത്. ഡ്രെയിനേജിൽ വലിച്ചെറിയരുത്.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Cement Kiln Co-Processing",
+        "Road Construction Bitumen Blend"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Organic Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "പ്ലാസ്റ്റിക് മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2021",
+      "reuse_ideas": [
+        "ഇക്കോ-ബ്രിക്ക് (Eco-brick) നിർമ്മാണത്തിന് ഉപയോഗിക്കാം."
+      ],
+      "cleaning_tips": "തുടച്ച് ഉണക്കുക.",
+      "environmental_impact": "റോഡ് നിർമ്മാണത്തിനും ഇന്ധനമായും റീസൈക്കിൾ ചെയ്യുന്നു.",
+      "condition_notes": {
+        "greasy": "ഭക്ഷണ അവശിഷ്ടങ്ങൾ തുടച്ചു മാറ്റുക."
+      }
+    },
+    {
+      "id": "RULE-PLAYER-001",
+      "category": "Player",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / ഓറഞ്ച് തൊട്ടി",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "വ്യക്തിഗത വിവരങ്ങൾ മായ്ക്കുക. ബാറ്ററി മാറ്റുക. ഭദ്രമായി പാക്ക് ചെയ്യുക.",
+      "safety_warnings": "ഉപകരണങ്ങൾ പൊട്ടിക്കുകയോ കത്തിക്കുകയോ ചെയ്യരുത്.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility"
+      ],
+      "prohibited_pathways": [
+        "Household General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഇ-മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "പ്രവർത്തിക്കുന്നവയാണെങ്കിൽ നന്നാക്കി മറ്റുള്ളവർക്ക് നൽകാം."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിക്കരുത്. ഉണങ്ങിയ തുണി കൊണ്ട് തുടയ്ക്കാം.",
+      "environmental_impact": "സ്വർണ്ണം, വെള്ളി, ചെമ്പ് തുടങ്ങിയ വിലപിടിപ്പുള്ള ലോഹങ്ങൾ വേർതിരിച്ചെടുക്കാം.",
+      "condition_notes": {
+        "broken": "പൊട്ടിയവ ബോക്സിൽ സുരക്ഷിതമായി വച്ച് കൈമാറുക."
+      }
+    },
+    {
+      "id": "RULE-PRINTER-001",
+      "category": "Printer",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / ഓറഞ്ച് തൊട്ടി",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "വ്യക്തിഗത വിവരങ്ങൾ മായ്ക്കുക. ബാറ്ററി മാറ്റുക. ഭദ്രമായി പാക്ക് ചെയ്യുക.",
+      "safety_warnings": "ഉപകരണങ്ങൾ പൊട്ടിക്കുകയോ കത്തിക്കുകയോ ചെയ്യരുത്.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Brand Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Dumping with General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഇ-മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "പ്രവർത്തിക്കുന്നവയാണെങ്കിൽ നന്നാക്കി മറ്റുള്ളവർക്ക് നൽകാം."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിക്കരുത്. ഉണങ്ങിയ തുണി കൊണ്ട് തുടയ്ക്കാം.",
+      "environmental_impact": "സ്വർണ്ണം, വെള്ളി, ചെമ്പ് തുടങ്ങിയ വിലപിടിപ്പുള്ള ലോഹങ്ങൾ വേർതിരിച്ചെടുക്കാം.",
+      "condition_notes": {
+        "broken": "പൊട്ടിയവ ബോക്സിൽ സുരക്ഷിതമായി വച്ച് കൈമാറുക."
+      }
+    },
+    {
+      "id": "RULE-TELEVISION-001",
+      "category": "Television",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / ഓറഞ്ച് തൊട്ടി",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "വ്യക്തിഗത വിവരങ്ങൾ മായ്ക്കുക. ബാറ്ററി മാറ്റുക. ഭദ്രമായി പാക്ക് ചെയ്യുക.",
+      "safety_warnings": "ഉപകരണങ്ങൾ പൊട്ടിക്കുകയോ കത്തിക്കുകയോ ചെയ്യരുത്.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Depot",
+        "Manufacturer Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Manual Screen Smashing",
+        "Informal Scrap Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഇ-മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "പ്രവർത്തിക്കുന്നവയാണെങ്കിൽ നന്നാക്കി മറ്റുള്ളവർക്ക് നൽകാം."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിക്കരുത്. ഉണങ്ങിയ തുണി കൊണ്ട് തുടയ്ക്കാം.",
+      "environmental_impact": "സ്വർണ്ണം, വെള്ളി, ചെമ്പ് തുടങ്ങിയ വിലപിടിപ്പുള്ള ലോഹങ്ങൾ വേർതിരിച്ചെടുക്കാം.",
+      "condition_notes": {
+        "broken": "പൊട്ടിയവ ബോക്സിൽ സുരക്ഷിതമായി വച്ച് കൈമാറുക."
+      }
+    },
+    {
+      "id": "RULE-TRASH-001",
+      "category": "trash",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "പുനരുപയോഗിക്കാൻ കഴിയാത്ത മാലിന്യം (കറുത്ത തൊട്ടി)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "റീസൈക്ലിംഗ് ഇനങ്ങളോ ജൈവ മാലിന്യമോ ഇല്ലെന്ന് ഉറപ്പാക്കുക.",
+      "safety_warnings": "കത്തിക്കരുത്. ഓടകളിൽ വലിച്ചെറിയരുത്.",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "Municipal Inert Waste Collection (Black Bin)"
+      ],
+      "prohibited_pathways": [
+        "Recycling Bins",
+        "Compost"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "reuse_ideas": [
+        "പുനരുപയോഗിക്കാൻ സാധിക്കാത്ത അന്തിമ മാലിന്യം."
+      ],
+      "cleaning_tips": "വൃത്തിയാക്കേണ്ടതില്ല.",
+      "environmental_impact": "ലാൻഡ്‌ഫില്ലിലേക്ക് അയക്കുന്നു.",
+      "condition_notes": {
+        "empty": "കറുത്ത തൊട്ടിയിൽ നിക്ഷേപിക്കുക."
+      }
+    },
+    {
+      "id": "RULE-WASHING_MACHINE-001",
+      "category": "Washing Machine",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / ഓറഞ്ച് തൊട്ടി",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "വ്യക്തിഗത വിവരങ്ങൾ മായ്ക്കുക. ബാറ്ററി മാറ്റുക. ഭദ്രമായി പാക്ക് ചെയ്യുക.",
+      "safety_warnings": "ഉപകരണങ്ങൾ പൊട്ടിക്കുകയോ കത്തിക്കുകയോ ചെയ്യരുത്.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized White-Goods Recycler",
+        "Brand Exchange Schemes"
+      ],
+      "prohibited_pathways": [
+        "Curbside Abandonment"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ഇന്ത്യ ഇ-മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2022",
+      "reuse_ideas": [
+        "പ്രവർത്തിക്കുന്നവയാണെങ്കിൽ നന്നാക്കി മറ്റുള്ളവർക്ക് നൽകാം."
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിക്കരുത്. ഉണങ്ങിയ തുണി കൊണ്ട് തുടയ്ക്കാം.",
+      "environmental_impact": "സ്വർണ്ണം, വെള്ളി, ചെമ്പ് തുടങ്ങിയ വിലപിടിപ്പുള്ള ലോഹങ്ങൾ വേർതിരിച്ചെടുക്കാം.",
+      "condition_notes": {
+        "broken": "പൊട്ടിയവ ബോക്സിൽ സുരക്ഷിതമായി വച്ച് കൈമാറുക."
+      }
+    },
+    {
+      "id": "RULE-STREAM-BIODEGRADABLE",
+      "category": "biodegradable",
+      "disposal_method": "നനഞ്ഞ ജൈവ മാലിന്യ തൊട്ടി (പച്ച തൊട്ടി) / കമ്പോസ്റ്റിംഗ്",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "പ്ലാസ്റ്റിക് കവറുകൾ ഒഴിവാക്കി ജൈവ അവശിഷ്ടങ്ങൾ മാത്രം നിക്ഷേപിക്കുക.",
+      "safety_warnings": "പ്ലാസ്റ്റിക്കോ രാസവസ്തുക്കളോ പച്ച തൊട്ടിയിൽ ഇടരുത്.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "cleaning_tips": "കഴുകേണ്ടതില്ല. നേരിട്ട് പച്ച തൊട്ടിയിൽ ഇടുക.",
+      "reuse_ideas": [
+        "വീട്ടിൽ തന്നെ കമ്പോസ്റ്റോ ബയോഗ്യാസോ നിർമ്മിക്കാം."
+      ],
+      "environmental_impact": "മണ്ണിന്റെ ഫലഭൂയിഷ്ഠത വർദ്ധിപ്പിക്കുകയും മീഥെയ്ൻ വാതകം കുറയ്ക്കുകയും ചെയ്യുന്നു.",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "condition_notes": {
+        "wet": "നനവ് സ്വാഭാവികമാണ്, നേരിട്ട് നിക്ഷേപിക്കാം."
+      }
+    },
+    {
+      "id": "RULE-STREAM-RECYCLABLES",
+      "category": "Recyclables",
+      "disposal_method": "ഉണങ്ങിയ പുനരുപയോഗ മാലിന്യ തൊട്ടി (നീല തൊട്ടി)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "കഴുകി, ഉണക്കി, തരംതിരിച്ച് നീല തൊട്ടിയിൽ ഇടുക.",
+      "safety_warnings": "നനഞ്ഞ മാലിന്യവുമായി കലർത്തരുത്.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue Bin)",
+        "Kabadiwala / Scrap Dealer",
+        "Material Recovery Facility"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Open Burning",
+        "Open Littering"
+      ],
+      "cleaning_tips": "വെള്ളത്തിൽ കഴുകി ഉണക്കുക.",
+      "reuse_ideas": [
+        "വിവിധ ആവശ്യങ്ങൾക്കായി പുനരുപയോഗിക്കുക."
+      ],
+      "environmental_impact": "കാർബൺ പ്രഭാവം കുറയ്ക്കുകയും പ്രകൃതിവിഭവങ്ങൾ സംരക്ഷിക്കുകയും ചെയ്യുന്നു.",
+      "source": "ഇന്ത്യ ഖരമാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2016",
+      "condition_notes": {
+        "empty": "ഉണക്കി നീല തൊട്ടിയിൽ ഇടുക."
+      }
+    },
+    {
+      "id": "RULE-STREAM-EWASTE",
+      "category": "E-waste",
+      "disposal_method": "അംഗീകൃത ഇ-മാലിന്യ കേന്ദ്രം / ഓറഞ്ച് തൊട്ടി",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "വ്യക്തിഗത വിവരങ്ങൾ മായ്ക്കുക. ബാറ്ററി മാറ്റുക. ഭദ്രമായി പാക്ക് ചെയ്യുക.",
+      "safety_warnings": "ഉപകരണങ്ങൾ പൊട്ടിക്കുകയോ കത്തിക്കുകയോ ചെയ്യരുത്.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Producer Take-Back / EPR Collection Point"
+      ],
+      "prohibited_pathways": [
+        "Household Dustbin",
+        "Open Burning",
+        "Informal Scrap Breaking"
+      ],
+      "cleaning_tips": "വെള്ളം ഉപയോഗിക്കരുത്. ഉണങ്ങിയ തുണി കൊണ്ട് തുടയ്ക്കാം.",
+      "reuse_ideas": [
+        "പ്രവർത്തിക്കുന്നവയാണെങ്കിൽ നന്നാക്കി മറ്റുള്ളവർക്ക് നൽകാം."
+      ],
+      "environmental_impact": "സ്വർണ്ണം, വെള്ളി, ചെമ്പ് തുടങ്ങിയ വിലപിടിപ്പുള്ള ലോഹങ്ങൾ വേർതിരിച്ചെടുക്കാം.",
+      "source": "ഇന്ത്യ ഇ-മാലിന്യ സംസ്കരണ ചട്ടങ്ങൾ 2022",
+      "condition_notes": {
+        "broken": "പൊട്ടിയവ ബോക്സിൽ സുരക്ഷിതമായി വച്ച് കൈമാറുക."
+      }
+    },
+    {
+      "id": "RULE-STREAM-HAZARDOUS",
+      "category": "hazardous",
+      "disposal_method": "അപകടകരമായ മാലിന്യ ശേഖരണം (ചുവന്ന തൊട്ടി)",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "ചോർച്ചയില്ലാതെ യഥാർത്ഥ കണ്ടെയ്നറിൽ അടച്ചു സൂക്ഷിക്കുക.",
+      "safety_warnings": "വിഷലിപ്തവും കത്തുന്നതുമാണ്. കുട്ടികളിൽ നിന്ന് അകറ്റി വയ്ക്കുക.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Special Care / Hazardous Waste Collection",
+        "Authorized Hazardous Waste Facility",
+        "Pharmacy / Hospital Take-Back (medicines)"
+      ],
+      "prohibited_pathways": [
+        "Regular Household Bins",
+        "Drains and Toilets",
+        "Open Burning"
+      ],
+      "cleaning_tips": "കഴുകാൻ ശ്രമിക്കരുത്.",
+      "reuse_ideas": [
+        "അപകടകരമായ മാലിന്യങ്ങൾ പുനരുപയോഗിക്കാൻ പാടില്ല."
+      ],
+      "environmental_impact": "മണ്ണും വെള്ളവും മലിനമാകാതിരിക്കാൻ സഹായിക്കുന്നു.",
+      "source": "ഇന്ത്യ അപകടകരമായ മാലിന്യ ചട്ടങ്ങൾ 2016",
+      "condition_notes": {
+        "broken": "പ്ലാസ്റ്റിക് കവറിൽ പൊതിഞ്ഞ് സൂക്ഷിക്കുക."
+      }
+    }
+  ]
+}

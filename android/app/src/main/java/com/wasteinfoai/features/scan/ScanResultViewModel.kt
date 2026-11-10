@@ -589,6 +589,66 @@ class ScanResultViewModel(
                     append(localizedRule.preparationInstructions)
                 }
             }
+            "kn" -> buildString {
+                append("ಗುರುತಿಸಲಾದ ವಸ್ತು: $localizedItemName. ")
+                if (isHazardous) {
+                    append("ಎಚ್ಚರಿಕೆ: ಅಪಾಯಕಾರಿ ತ್ಯಾಜ್ಯ. $safetyWarning. ")
+                }
+                if (localizedBin.isNotBlank()) {
+                    append("ಇದನ್ನು $localizedBin ನಲ್ಲಿ ಹಾಕಿ. ")
+                }
+                if (localizedRule.disposalMethod.isNotBlank()) {
+                    append("ವಿಲೇವಾರಿ ವಿಧಾನ: ${localizedRule.disposalMethod}. ")
+                }
+                if (localizedRule.preparationInstructions.isNotBlank()) {
+                    append(localizedRule.preparationInstructions)
+                }
+            }
+            "ml" -> buildString {
+                append("കണ്ടെത്തിയ ഇനം: $localizedItemName. ")
+                if (isHazardous) {
+                    append("മുന്നറിയിപ്പ്: അപകടകരമായ മാലിന്യം. $safetyWarning. ")
+                }
+                if (localizedBin.isNotBlank()) {
+                    append("ഇത് $localizedBin ൽ നിക്ഷേപിക്കുക. ")
+                }
+                if (localizedRule.disposalMethod.isNotBlank()) {
+                    append("സംസ്കരണ രീതി: ${localizedRule.disposalMethod}. ")
+                }
+                if (localizedRule.preparationInstructions.isNotBlank()) {
+                    append(localizedRule.preparationInstructions)
+                }
+            }
+            "bn" -> buildString {
+                append("শনাক্তকৃত বস্তু: $localizedItemName। ")
+                if (isHazardous) {
+                    append("সতর্কতা: বিপজ্জনক বর্জ্য। $safetyWarning। ")
+                }
+                if (localizedBin.isNotBlank()) {
+                    append("এটি $localizedBin এ ফেলুন। ")
+                }
+                if (localizedRule.disposalMethod.isNotBlank()) {
+                    append("নিষ্পত্তি পদ্ধতি: ${localizedRule.disposalMethod}। ")
+                }
+                if (localizedRule.preparationInstructions.isNotBlank()) {
+                    append(localizedRule.preparationInstructions)
+                }
+            }
+            "gu" -> buildString {
+                append("ઓળખાયેલ વસ્તુ: $localizedItemName. ")
+                if (isHazardous) {
+                    append("ચેતવણી: જોખમી કચરો. $safetyWarning. ")
+                }
+                if (localizedBin.isNotBlank()) {
+                    append("આને $localizedBin માં નાખો. ")
+                }
+                if (localizedRule.disposalMethod.isNotBlank()) {
+                    append("નિકાલ પદ્ધતિ: ${localizedRule.disposalMethod}. ")
+                }
+                if (localizedRule.preparationInstructions.isNotBlank()) {
+                    append(localizedRule.preparationInstructions)
+                }
+            }
             else -> buildString {
                 append("Identified as $localizedItemName. ")
                 if (isHazardous) {
@@ -689,6 +749,78 @@ class ScanResultViewModel(
                     )
                     append("वस्तू ${i + 1}: $itemLabel. ")
                     if (binName.isNotBlank()) append("$binName मध्ये टाका. ")
+                    if (rule.disposalMethod.isNotBlank()) append("${rule.disposalMethod}. ")
+                }
+            }
+            "kn" -> buildString {
+                append("ಒಟ್ಟು ${state.items.size} ವಸ್ತುಗಳು ಕಂಡುಬಂದಿವೆ. ")
+                state.items.forEachIndexed { i, item ->
+                    val rawLabel = item.userConfirmedLabel
+                        ?: item.identification.specificItem
+                        ?: item.identification.coarseCategory
+                    val itemLabel = CategoryLocalization.getCategoryDisplayName(rawLabel, lang)
+                    val binName = CategoryLocalization.getBinColorDisplayName(item.rule.targetBinColor, lang)
+                    val rule = disposalRuleEngine.getHierarchicalRule(
+                        category = item.classification.label,
+                        specificItem = item.identification.specificItem,
+                        languageCode = lang
+                    )
+                    append("ವಸ್ತು ${i + 1}: $itemLabel. ")
+                    if (binName.isNotBlank()) append("$binName ನಲ್ಲಿ ಹಾಕಿ. ")
+                    if (rule.disposalMethod.isNotBlank()) append("${rule.disposalMethod}. ")
+                }
+            }
+            "ml" -> buildString {
+                append("ആകെ ${state.items.size} ഇനങ്ങൾ കണ്ടെത്തി. ")
+                state.items.forEachIndexed { i, item ->
+                    val rawLabel = item.userConfirmedLabel
+                        ?: item.identification.specificItem
+                        ?: item.identification.coarseCategory
+                    val itemLabel = CategoryLocalization.getCategoryDisplayName(rawLabel, lang)
+                    val binName = CategoryLocalization.getBinColorDisplayName(item.rule.targetBinColor, lang)
+                    val rule = disposalRuleEngine.getHierarchicalRule(
+                        category = item.classification.label,
+                        specificItem = item.identification.specificItem,
+                        languageCode = lang
+                    )
+                    append("ഇനം ${i + 1}: $itemLabel. ")
+                    if (binName.isNotBlank()) append("$binName ൽ ഇടുക. ")
+                    if (rule.disposalMethod.isNotBlank()) append("${rule.disposalMethod}. ")
+                }
+            }
+            "bn" -> buildString {
+                append("মোট ${state.items.size}টি বস্তু পাওয়া গেছে। ")
+                state.items.forEachIndexed { i, item ->
+                    val rawLabel = item.userConfirmedLabel
+                        ?: item.identification.specificItem
+                        ?: item.identification.coarseCategory
+                    val itemLabel = CategoryLocalization.getCategoryDisplayName(rawLabel, lang)
+                    val binName = CategoryLocalization.getBinColorDisplayName(item.rule.targetBinColor, lang)
+                    val rule = disposalRuleEngine.getHierarchicalRule(
+                        category = item.classification.label,
+                        specificItem = item.identification.specificItem,
+                        languageCode = lang
+                    )
+                    append("বস্তু ${i + 1}: $itemLabel। ")
+                    if (binName.isNotBlank()) append("$binName এ ফেলুন। ")
+                    if (rule.disposalMethod.isNotBlank()) append("${rule.disposalMethod}। ")
+                }
+            }
+            "gu" -> buildString {
+                append("કુલ ${state.items.size} વસ્તુઓ મળી. ")
+                state.items.forEachIndexed { i, item ->
+                    val rawLabel = item.userConfirmedLabel
+                        ?: item.identification.specificItem
+                        ?: item.identification.coarseCategory
+                    val itemLabel = CategoryLocalization.getCategoryDisplayName(rawLabel, lang)
+                    val binName = CategoryLocalization.getBinColorDisplayName(item.rule.targetBinColor, lang)
+                    val rule = disposalRuleEngine.getHierarchicalRule(
+                        category = item.classification.label,
+                        specificItem = item.identification.specificItem,
+                        languageCode = lang
+                    )
+                    append("વસ્તુ ${i + 1}: $itemLabel. ")
+                    if (binName.isNotBlank()) append("$binName માં નાખો. ")
                     if (rule.disposalMethod.isNotBlank()) append("${rule.disposalMethod}. ")
                 }
             }

@@ -11,7 +11,8 @@ data class AssistantResponse(
     val isLlmGenerated: Boolean,
     val isHazardous: Boolean,
     val groundedCategory: String?,
-    val targetBinColor: String?
+    val targetBinColor: String?,
+    val modelBadge: String? = null
 )
 
 /**
@@ -114,13 +115,15 @@ class AssistantService(
 
         var candidateText: String? = null
         var isLlm = false
+        var modelBadge: String? = null
 
-        // 1. Cloud Assistant (if enabled & online)
+        // 1. Cloud Assistant / Gemini (if enabled & online)
         if (cloudClient.isEligible()) {
             val cloudReply = cloudClient.generateReply(effectiveContext, rule, message, history)
             if (isValidLlmText(cloudReply)) {
                 candidateText = sanitizeLlmText(cloudReply!!)
                 isLlm = true
+                modelBadge = cloudClient.lastModelUsed ?: "Gemini 1.5 Flash"
                 onToken(candidateText)
             }
         }
@@ -131,6 +134,7 @@ class AssistantService(
             if (isValidLlmText(llamaReply)) {
                 candidateText = sanitizeLlmText(llamaReply!!)
                 isLlm = true
+                modelBadge = "Llama 3.2"
             }
         }
 
@@ -138,6 +142,7 @@ class AssistantService(
         if (candidateText == null) {
             candidateText = offlineResponder.respond(effectiveContext, rule, message, history)
             isLlm = false
+            modelBadge = null
             onToken(candidateText)
         }
 
@@ -153,7 +158,8 @@ class AssistantService(
             isLlmGenerated = isLlm,
             isHazardous = isHazardous,
             groundedCategory = rule?.category ?: effectiveCategory,
-            targetBinColor = rule?.targetBinColor
+            targetBinColor = rule?.targetBinColor,
+            modelBadge = modelBadge
         )
     }
 

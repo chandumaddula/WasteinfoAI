@@ -30,6 +30,10 @@ Always follow these strict safety rules:
             "te" -> "Respond strictly in Telugu using Telugu script."
             "ta" -> "Respond strictly in Tamil using Tamil script."
             "mr" -> "Respond strictly in Marathi using Devanagari script."
+            "kn" -> "Respond strictly in Kannada using Kannada script."
+            "ml" -> "Respond strictly in Malayalam using Malayalam script."
+            "bn" -> "Respond strictly in Bengali using Bengali script."
+            "gu" -> "Respond strictly in Gujarati using Gujarati script."
             else -> "Respond in clear English."
         }
     }

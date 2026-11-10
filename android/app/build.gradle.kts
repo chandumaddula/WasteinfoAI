@@ -21,6 +21,11 @@ android {
         buildConfigField("String", "LLM_MODEL_DOWNLOAD_URL", "\"https://huggingface.co/datasets/wasteinfoAI/models/resolve/main/llama3_2_1b_instruct_q4.pte\"")
         buildConfigField("String", "LLM_TOKENIZER_DOWNLOAD_URL", "\"https://huggingface.co/datasets/wasteinfoAI/models/resolve/main/tokenizer.bin\"")
         buildConfigField("String", "CLOUD_ASSISTANT_URL", "\"\"")
+
+        val geminiApiKey = (project.findProperty("GEMINI_API_KEY") as? String)
+            ?: System.getenv("GEMINI_API_KEY")
+            ?: ""
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
     }
 
     buildTypes {

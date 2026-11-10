@@ -23,6 +23,10 @@
     <string name="language_te">తెలుగు (Telugu)</string>
     <string name="language_ta">தமிழ் (Tamil)</string>
     <string name="language_mr">मराठी (Marathi)</string>
+    <string name="language_kn">ಕನ್ನಡ (Kannada)</string>
+    <string name="language_ml">മലയാളം (Malayalam)</string>
+    <string name="language_bn">বাংলা (Bengali)</string>
+    <string name="language_gu">ગુજરાતી (Gujarati)</string>
     <string name="language_changed_toast">Language changed to %1$s</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_save">Save</string>

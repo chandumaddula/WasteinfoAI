@@ -17,6 +17,10 @@ import java.util.Locale
  * - Telugu: Locale("te", "IN")
  * - Tamil: Locale("ta", "IN")
  * - Marathi: Locale("mr", "IN")
+ * - Kannada: Locale("kn", "IN")
+ * - Malayalam: Locale("ml", "IN")
+ * - Bengali: Locale("bn", "IN")
+ * - Gujarati: Locale("gu", "IN")
  */
 class TextToSpeechManager(private val context: Context) : TextToSpeech.OnInitListener, AutoCloseable {
 
@@ -30,6 +34,10 @@ class TextToSpeechManager(private val context: Context) : TextToSpeech.OnInitLis
                 "te" -> Locale("te", "IN")
                 "ta" -> Locale("ta", "IN")
                 "mr" -> Locale("mr", "IN")
+                "kn" -> Locale("kn", "IN")
+                "ml" -> Locale("ml", "IN")
+                "bn" -> Locale("bn", "IN")
+                "gu" -> Locale("gu", "IN")
                 else -> Locale("en", "IN")
             }
         }

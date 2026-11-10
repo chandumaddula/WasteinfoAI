@@ -10,7 +10,7 @@ import android.util.Log
 
 /**
  * Handles multilingual offline voice-to-text recognition using Android's native SpeechRecognizer.
- * Supports: en-IN, hi-IN, te-IN, ta-IN, mr-IN.
+ * Supports: en-IN, hi-IN, te-IN, ta-IN, mr-IN, kn-IN, ml-IN, bn-IN, gu-IN.
  * Configured with [RecognizerIntent.EXTRA_PREFER_OFFLINE] for offline-first operation.
  */
 class SpeechInputHelper(private val context: Context) {
@@ -24,6 +24,10 @@ class SpeechInputHelper(private val context: Context) {
                 "te" -> "te-IN"
                 "ta" -> "ta-IN"
                 "mr" -> "mr-IN"
+                "kn" -> "kn-IN"
+                "ml" -> "ml-IN"
+                "bn" -> "bn-IN"
+                "gu" -> "gu-IN"
                 else -> "en-IN"
             }
         }

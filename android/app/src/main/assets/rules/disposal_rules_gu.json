@@ -1,0 +1,936 @@
+{
+  "version": "2.0.0",
+  "updated_at": "2026-10-20T00:00:00Z",
+  "description": "Verified Hierarchical Waste Disposal Rules (GU)",
+  "rules": [
+    {
+      "id": "RULE-BATTERY-001",
+      "category": "Battery",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો કેન્દ્ર / જોખમી કચરો (લાલ ડબ્બો)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "શોર્ટ સર્કિટ અટકાવવા ટર્મિનલ છેડા પર નોન-કન્ડક્ટિવ ટેપ લગાવો. સૂકા પ્લાસ્ટિક કન્ટેનરમાં રાખો.",
+      "safety_warnings": "આગ અને રાસાયણિક ગળતરનું ગંભીર જોખમ. સામાન્ય કચરા કે વાદળી/લીલા ડબ્બામાં ન નાખો. ગરમીથી દૂર રાખો.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized E-Waste Center",
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Household Compost (Green)",
+        "Dry Recyclables (Blue)",
+        "Open Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬ અને ઇ-કચરો નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "રાસાયણિક કાટ અને આગના જોખમોને કારણે બેટરીનો ફરીથી ઉપયોગ કરવો સુરક્ષિત નથી."
+      ],
+      "cleaning_tips": "પાણીથી ન ધોવું. ધૂળ હોય તો સૂકા કપડાથી હળવેથી લૂછો. ક્યારેય પાણીમાં ન બોળો.",
+      "environmental_impact": "ભારે ધાતુઓ (સીસું, કેડમિયમ, લિથિયમ) ભૂગર્ભજળમાં ભળીને ગંભીર પ્રદૂષણ ફેલાવે છે.",
+      "condition_notes": {
+        "broken": "જોખમ: લીક થતી બેટરીમાંથી એસિડ નીકળે છે. ખુલ્લા હાથે ન અડવું. રેતી કે પ્લાસ્ટિક બોક્સમાં રાખો.",
+        "crushed": "ગંભીર આગનું જોખમ: દબાયેલી બેટરીમાં શોર્ટ સર્કિટ થઈ આગ લાગી શકે છે.",
+        "wet": "સંપૂર્ણ સૂકી રાખો. લિથિયમ સેલમાં પાણી જવાથી ગેસ વિસ્ફોટ થઈ શકે છે.",
+        "empty": "ડિસ્ચાર્જ થયેલી બેટરીમાં પણ વીજળી બચી હોય છે. હંમેશા છેડા પર ટેપ લગાવીને નિકાલ કરો.",
+        "full": "ધાતુની વસ્તુઓ સાથે શોર્ટ સર્કિટ ન થાય તે માટે ચાર્જ થયેલી બેટરીને અલગ રાખો."
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-LI-ION",
+      "category": "Battery",
+      "specific_item": "Rechargeable Lithium-Ion Battery",
+      "material_code": "BATTERY_LI_ION",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો કેન્દ્ર / જોખમી કચરો (લાલ ડબ્બો)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "શોર્ટ સર્કિટ અટકાવવા ટર્મિનલ છેડા પર નોન-કન્ડક્ટિવ ટેપ લગાવો. સૂકા પ્લાસ્ટિક કન્ટેનરમાં રાખો.",
+      "safety_warnings": "આગ અને રાસાયણિક ગળતરનું ગંભીર જોખમ. સામાન્ય કચરા કે વાદળી/લીલા ડબ્બામાં ન નાખો. ગરમીથી દૂર રાખો.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Collection Point",
+        "Manufacturer Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Curbside Bins",
+        "Municipal Waste Truck Compactor"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬ અને ઇ-કચરો નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "રાસાયણિક કાટ અને આગના જોખમોને કારણે બેટરીનો ફરીથી ઉપયોગ કરવો સુરક્ષિત નથી."
+      ],
+      "cleaning_tips": "પાણીથી ન ધોવું. ધૂળ હોય તો સૂકા કપડાથી હળવેથી લૂછો. ક્યારેય પાણીમાં ન બોળો.",
+      "environmental_impact": "ભારે ધાતુઓ (સીસું, કેડમિયમ, લિથિયમ) ભૂગર્ભજળમાં ભળીને ગંભીર પ્રદૂષણ ફેલાવે છે.",
+      "condition_notes": {
+        "broken": "જોખમ: લીક થતી બેટરીમાંથી એસિડ નીકળે છે. ખુલ્લા હાથે ન અડવું. રેતી કે પ્લાસ્ટિક બોક્સમાં રાખો.",
+        "crushed": "ગંભીર આગનું જોખમ: દબાયેલી બેટરીમાં શોર્ટ સર્કિટ થઈ આગ લાગી શકે છે.",
+        "wet": "સંપૂર્ણ સૂકી રાખો. લિથિયમ સેલમાં પાણી જવાથી ગેસ વિસ્ફોટ થઈ શકે છે.",
+        "empty": "ડિસ્ચાર્જ થયેલી બેટરીમાં પણ વીજળી બચી હોય છે. હંમેશા છેડા પર ટેપ લગાવીને નિકાલ કરો.",
+        "full": "ધાતુની વસ્તુઓ સાથે શોર્ટ સર્કિટ ન થાય તે માટે ચાર્જ થયેલી બેટરીને અલગ રાખો."
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-ALKALINE",
+      "category": "Battery",
+      "specific_item": "Alkaline AA / AAA / 9V Battery",
+      "material_code": "BATTERY_ALKALINE",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો કેન્દ્ર / જોખમી કચરો (લાલ ડબ્બો)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "શોર્ટ સર્કિટ અટકાવવા ટર્મિનલ છેડા પર નોન-કન્ડક્ટિવ ટેપ લગાવો. સૂકા પ્લાસ્ટિક કન્ટેનરમાં રાખો.",
+      "safety_warnings": "આગ અને રાસાયણિક ગળતરનું ગંભીર જોખમ. સામાન્ય કચરા કે વાદળી/લીલા ડબ્બામાં ન નાખો. ગરમીથી દૂર રાખો.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)",
+        "Battery Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Dry Paper/Plastic Bin (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬ અને ઇ-કચરો નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "રાસાયણિક કાટ અને આગના જોખમોને કારણે બેટરીનો ફરીથી ઉપયોગ કરવો સુરક્ષિત નથી."
+      ],
+      "cleaning_tips": "પાણીથી ન ધોવું. ધૂળ હોય તો સૂકા કપડાથી હળવેથી લૂછો. ક્યારેય પાણીમાં ન બોળો.",
+      "environmental_impact": "ભારે ધાતુઓ (સીસું, કેડમિયમ, લિથિયમ) ભૂગર્ભજળમાં ભળીને ગંભીર પ્રદૂષણ ફેલાવે છે.",
+      "condition_notes": {
+        "broken": "જોખમ: લીક થતી બેટરીમાંથી એસિડ નીકળે છે. ખુલ્લા હાથે ન અડવું. રેતી કે પ્લાસ્ટિક બોક્સમાં રાખો.",
+        "crushed": "ગંભીર આગનું જોખમ: દબાયેલી બેટરીમાં શોર્ટ સર્કિટ થઈ આગ લાગી શકે છે.",
+        "wet": "સંપૂર્ણ સૂકી રાખો. લિથિયમ સેલમાં પાણી જવાથી ગેસ વિસ્ફોટ થઈ શકે છે.",
+        "empty": "ડિસ્ચાર્જ થયેલી બેટરીમાં પણ વીજળી બચી હોય છે. હંમેશા છેડા પર ટેપ લગાવીને નિકાલ કરો.",
+        "full": "ધાતુની વસ્તુઓ સાથે શોર્ટ સર્કિટ ન થાય તે માટે ચાર્જ થયેલી બેટરીને અલગ રાખો."
+      }
+    },
+    {
+      "id": "RULE-CARDBOARD-001",
+      "category": "cardboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "સૂકો પુનઃઉપયોગ (વાદળી ડબ્બો) / કાગળના ભંગારના વેપારી",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "પ્લાસ્ટિક ટેપ અને પિન કાઢી પૂઠું ચપટું કરી વાળી લો.",
+      "safety_warnings": "ભેજ અને આગથી દૂર સૂકી જગ્યાએ રાખો.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Door-to-door Kabadiwala Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Rain-Exposed Open Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "સામાન સંગ્રહવા, પેકિંગ કરવા કે ક્રાફ્ટ પ્રોજેક્ટમાં વાપરો."
+      ],
+      "cleaning_tips": "ધૂળ ખંખેરી લો. પાણીથી ન ધોવું.",
+      "environmental_impact": "પૂઠાના પુનઃઉપયોગથી વૃક્ષો કપાતા અટકે છે અને ઊર્જા બચે છે.",
+      "condition_notes": {
+        "wet": "સૂકવી લો. સડી ગયું હોય તો જૈવિક કચરામાં નાખો.",
+        "crushed": "વાળીને બાંધી વાદળી ડબ્બામાં મૂકો."
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-SOILED",
+      "category": "cardboard",
+      "specific_item": "Greasy / Food-Soiled Cardboard",
+      "material_code": "PAP 20",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ઘરેલું ખાતર / ભીનો જૈવિક કચરો (લીલો ડબ્બો)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "પ્લાસ્ટિક ટેપ હટાવી નાના ટુકડા કરી ખાતરમાં નાખો.",
+      "safety_warnings": "તેલવાળું પૂઠું વાદળી રિસાયક્લિંગ ડબ્બામાં ન નાખો, તે અન્ય કાગળને બગાડે છે.",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "General Municipal Refuse (Black Bin)",
+        "Industrial Composting if uncoated"
+      ],
+      "prohibited_pathways": [
+        "Dry Paper Recyclables (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "ખાતર બનાવવા માટે કાર્બન સ્ત્રોત તરીકે ઉપયોગ કરો."
+      ],
+      "cleaning_tips": "તેલવાળા પૂઠાને પાણીથી ધોવાનો પ્રયાસ ન કરો.",
+      "environmental_impact": "ખાતરમાં સરળતાથી ઓગળીને સારું ખાતર બને છે.",
+      "condition_notes": {
+        "greasy": "તેલવાળો ભાગ ખાતરમાં નાખો, રિસાયક્લિંગમાં ન આપો.",
+        "wet": "ખોરાકના ડાઘ હોય તો ખાતરમાં નાખો."
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-TETRAPAK",
+      "category": "cardboard",
+      "specific_item": "Aseptic Liquid Carton (Tetra Pak)",
+      "material_code": "C/PAP 84",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "સૂકો પુનઃઉપયોગ (વાદળી ડબ્બો) / ટેટ્રા પેક સંગ્રહ કેન્દ્ર",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "સંપૂર્ણ ખાલી કરી, પાણીથી ધોઈ, ચપટું કરી સૂકવી લો.",
+      "safety_warnings": "દૂધના અવશેષો અંદર ન રહે તેનું ધ્યાન રાખો, દુર્ગંધ અટકાવો.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Tetra Pak Authorized Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "નાના છોડ વાવવા માટે અથવા ક્રાફ્ટ કામમાં વાપરો."
+      ],
+      "cleaning_tips": "અંદરનો ભાગ પાણીથી સરખી રીતે ધોઈને સૂકવી લો.",
+      "environmental_impact": "કાગળ, એલ્યુમિનિયમ અને પોલિથીન અલગ કરી પુનઃઉપયોગી બોર્ડ બનાવાય છે.",
+      "condition_notes": {
+        "empty": "સંપૂર્ણ ખાલી કરી ચપટું કરો.",
+        "crushed": "જગ્યા બચાવવા ચપટું કરી વાદળી ડબ્બામાં નાખો."
+      }
+    },
+    {
+      "id": "RULE-GLASS-001",
+      "category": "glass",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "સૂકો પુનઃઉપયોગ (વાદળી ડબ્બો) / કાચ સંગ્રહ કેન્દ્ર",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "પાણીથી ધોઈ સૂકવી લો. ઢાંકણ અલગ કરો.",
+      "safety_warnings": "તૂટે નહીં તે રીતે સાવચેતીપૂર્વક સંભાળો.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Merchant / Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Unwrapped Glass in Trash"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "મસાલા ભરવા, ફૂલદાની કે દીવા તરીકે વાપરો."
+      ],
+      "cleaning_tips": "હૂંફાળા પાણી અને સાબુથી ધોઈ લેબલ ઉતારો.",
+      "environmental_impact": "કાચ રિસાયકલ કરવાથી કાચો માલ અને પુષ્કળ ઊર્જા બચે છે.",
+      "condition_notes": {
+        "empty": "પ્રવાહી સંપૂર્ણ ખાલી કરી ધોઈ લો."
+      }
+    },
+    {
+      "id": "RULE-ITEM-GLASS-BROKEN",
+      "category": "glass",
+      "specific_item": "Broken Glass / Shards",
+      "material_code": "GL 70",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "કાગળમાં લપેટી સૂકા કચરામાં આપો / વિશેષ નિકાલ",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "જાડા કાગળ કે પૂઠામાં લપેટી ઉપર 'તૂટેલો કાચ' લખો.",
+      "safety_warnings": "સફાઈ કામદારોના હાથ કપાઈ જવાનું ગંભીર જોખમ. ખુલ્લા ડબ્બામાં સીધો ન નાખો.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Wrapped Domestic Hazardous Waste (Red Bin)"
+      ],
+      "prohibited_pathways": [
+        "Loose in Plastic Carry Bags",
+        "Loose in Curbside Bins"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "તૂટેલા કાચમાંથી મોઝેક આર્ટ બની શકે પણ સાવચેતી જરૂરી છે."
+      ],
+      "cleaning_tips": "તૂટેલા કાચના ટુકડા હાથથી ધોવાનો પ્રયાસ ન કરો.",
+      "environmental_impact": "કાચ ગુણવત્તા ગુમાવ્યા વગર અસંખ્ય વાર રિસાયકલ થઈ શકે છે.",
+      "condition_notes": {
+        "broken": "જાડા બોક્સમાં સુરક્ષિત પેક કરી રાખો."
+      }
+    },
+    {
+      "id": "RULE-KEYBOARD-001",
+      "category": "Keyboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો સંગ્રહ કેન્દ્ર / નારંગી ડબ્બો",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "અંગત ડેટા ડિલીટ કરો. બેટરી અલગ કરો. સુરક્ષિત પેક કરો.",
+      "safety_warnings": "ઉપકરણો તોડશો કે બાળશો નહીં. અંદર રહેલ સીસું ઝેરી છે.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility",
+        "Manufacturer EPR Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Municipal Garbage Dump",
+        "Open Scrap Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઇ-કચરો વ્યવસ્થાપન નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "ચાલુ હોય તો રિપેર કરાવી જરૂરિયાતમંદને દાન કરો."
+      ],
+      "cleaning_tips": "પાણી ન વાપરવું. માત્ર સૂકા કપડાથી લૂછો.",
+      "environmental_impact": "સોનું, ચાંદી, તાંબુ પાછું મેળવી શકાય છે અને પ્રદૂષણ અટકે છે.",
+      "condition_notes": {
+        "broken": "તૂટેલા ઉપકરણો બોક્સમાં સુરક્ષિત રાખી સોંપો."
+      }
+    },
+    {
+      "id": "RULE-METAL-001",
+      "category": "metal",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "સૂકો પુનઃઉપયોગ (વાદળી ડબ્બો) / ધાતુ ભંગાર વેપારી",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ખોરાકના ડાઘ ધોઈ સૂકવો. તીક્ષ્ણ ધાર હોય તો લપેટી લો.",
+      "safety_warnings": "કાટવાળી કે તીક્ષ્ણ ધાતુની ધારથી ઈજા થવાનું જોખમ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Metal Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "ભંગાર ધાતુનો ઉપયોગ સાધનો બનાવવામાં કરો."
+      ],
+      "cleaning_tips": "તેલ કે ગ્રીસ લૂછીને સાફ કરો.",
+      "environmental_impact": "ધાતુ રિસાયકલ કરવાથી ખાણકામ અને પ્રદૂષણ ઘટે છે.",
+      "condition_notes": {
+        "empty": "સંપૂર્ણ ખાલી કરી સાફ કરો."
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-ALU-CAN",
+      "category": "metal",
+      "specific_item": "Aluminum Beverage Can",
+      "material_code": "ALU 41",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "સૂકો પુનઃઉપયોગ (વાદળી ડબ્બો) / ભંગારના વેપારી",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "પાણીથી ધોઈ, જગ્યા બચાવવા પગથી દબાવી ચપટી કરો.",
+      "safety_warnings": "કેનની ધાર તીક્ષ્ણ હોઈ શકે છે, હાથ ન કપાય તે જોવું.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Recyclers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "પેન સ્ટેન્ડ કે ક્રાફ્ટ વસ્તુઓ બનાવો."
+      ],
+      "cleaning_tips": "મીઠા પીણાના અવશેષો ધોઈને સૂકવી લો.",
+      "environmental_impact": "એલ્યુમિનિયમ રિસાયકલ કરવાથી નવું બનાવવા કરતાં ૯૫% ઓછી ઊર્જા વપરાય છે.",
+      "condition_notes": {
+        "crushed": "ચપટું કરી વાદળી ડબ્બામાં નાખો."
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-AEROSOL",
+      "category": "metal",
+      "specific_item": "Aerosol Spray Container",
+      "material_code": "FE 40",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "જોખમી કચરો (લાલ ડબ્બો) / વિશેષ ધાતુ સંગ્રહ",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "કેન સંપૂર્ણ ખાલી છે તેની ખાતરી કરો. કાણું ન પાડવું.",
+      "safety_warnings": "દબાણયુક્ત વાયુ હોવાથી તડકામાં કે આગમાં વિસ્ફોટ થવાનું જોખમ છે.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Municipal Truck Compactor",
+        "Open Fire",
+        "Puncturing"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "સુરક્ષા જોખમોને લીધે એરોસોલ કેન ફરી ન વાપરો."
+      ],
+      "cleaning_tips": "પાણીથી ન ધોવું. બહારથી સૂકા કપડાથી લૂછો.",
+      "environmental_impact": "યોગ્ય નિકાલ ન થાય તો વાતાવરણમાં હાનિકારક વાયુઓ ફેલાય છે.",
+      "condition_notes": {
+        "empty": "નોઝલ દબાવી પૂરેપૂરી ખાલી કરો.",
+        "crushed": "એરોસોલ કેનને ક્યારેય ચગદો કે કચડો નહીં."
+      }
+    },
+    {
+      "id": "RULE-MICROWAVE-001",
+      "category": "Microwave",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો સંગ્રહ કેન્દ્ર / નારંગી ડબ્બો",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "અંગત ડેટા ડિલીટ કરો. બેટરી અલગ કરો. સુરક્ષિત પેક કરો.",
+      "safety_warnings": "ઉપકરણો તોડશો કે બાળશો નહીં. અંદર રહેલ સીસું ઝેરી છે.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycling Center",
+        "Appliance Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Informal Disassembly",
+        "Standard Garbage"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઇ-કચરો વ્યવસ્થાપન નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "ચાલુ હોય તો રિપેર કરાવી જરૂરિયાતમંદને દાન કરો."
+      ],
+      "cleaning_tips": "પાણી ન વાપરવું. માત્ર સૂકા કપડાથી લૂછો.",
+      "environmental_impact": "સોનું, ચાંદી, તાંબુ પાછું મેળવી શકાય છે અને પ્રદૂષણ અટકે છે.",
+      "condition_notes": {
+        "broken": "તૂટેલા ઉપકરણો બોક્સમાં સુરક્ષિત રાખી સોંપો."
+      }
+    },
+    {
+      "id": "RULE-MOBILE-001",
+      "category": "Mobile",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો સંગ્રહ કેન્દ્ર / નારંગી ડબ્બો",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "અંગત ડેટા ડિલીટ કરો. બેટરી અલગ કરો. સુરક્ષિત પેક કરો.",
+      "safety_warnings": "ઉપકરણો તોડશો કે બાળશો નહીં. અંદર રહેલ સીસું ઝેરી છે.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Kiosks",
+        "Electronics Retailer Take-Back",
+        "Registered Recycler"
+      ],
+      "prohibited_pathways": [
+        "Curbside Dustbin",
+        "Landfill Dumpsite"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઇ-કચરો વ્યવસ્થાપન નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "ચાલુ હોય તો રિપેર કરાવી જરૂરિયાતમંદને દાન કરો."
+      ],
+      "cleaning_tips": "પાણી ન વાપરવું. માત્ર સૂકા કપડાથી લૂછો.",
+      "environmental_impact": "સોનું, ચાંદી, તાંબુ પાછું મેળવી શકાય છે અને પ્રદૂષણ અટકે છે.",
+      "condition_notes": {
+        "broken": "તૂટેલા ઉપકરણો બોક્સમાં સુરક્ષિત રાખી સોંપો."
+      }
+    },
+    {
+      "id": "RULE-MOUSE-001",
+      "category": "Mouse",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો સંગ્રહ કેન્દ્ર / નારંગી ડબ્બો",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "અંગત ડેટા ડિલીટ કરો. બેટરી અલગ કરો. સુરક્ષિત પેક કરો.",
+      "safety_warnings": "ઉપકરણો તોડશો કે બાળશો નહીં. અંદર રહેલ સીસું ઝેરી છે.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Municipal General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઇ-કચરો વ્યવસ્થાપન નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "ચાલુ હોય તો રિપેર કરાવી જરૂરિયાતમંદને દાન કરો."
+      ],
+      "cleaning_tips": "પાણી ન વાપરવું. માત્ર સૂકા કપડાથી લૂછો.",
+      "environmental_impact": "સોનું, ચાંદી, તાંબુ પાછું મેળવી શકાય છે અને પ્રદૂષણ અટકે છે.",
+      "condition_notes": {
+        "broken": "તૂટેલા ઉપકરણો બોક્સમાં સુરક્ષિત રાખી સોંપો."
+      }
+    },
+    {
+      "id": "RULE-ORGANIC-001",
+      "category": "organic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ભીનો જૈવિક કચરો (લીલો ડબ્બો) / કમ્પોસ્ટિંગ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "પ્લાસ્ટિક કવર કે રબર કાઢી માત્ર શાકભાજી/ખોરાક નાખો.",
+      "safety_warnings": "પ્લાસ્ટિક કે જોખમી વસ્તુ લીલા ડબ્બામાં ન નાખો.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "ઘરે જ ઉત્તમ કુદરતી ખાતર બનાવો."
+      ],
+      "cleaning_tips": "ધોવાની જરૂર નથી. સીધું લીલા ડબ્બામાં નાખો.",
+      "environmental_impact": "જમીનની ફળદ્રુપતા વધારે છે અને મિથેન ગેસ બનતો રોકે છે.",
+      "condition_notes": {
+        "wet": "ભીનાશ કુદરતી છે, સીધું લીલા ડબ્બામાં નાખો."
+      }
+    },
+    {
+      "id": "RULE-PAPER-001",
+      "category": "paper",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "સૂકો પુનઃઉપયોગ (વાદળી ડબ્બો) / કાગળના વેપારી",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "પિન અને પ્લાસ્ટિક કવર કાઢી બંડલ બનાવો.",
+      "safety_warnings": "ભેજ અને આગથી બચાવો.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Raddi / Kabadiwala Merchants"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "રફ નોટ્સ, કાગળની થેલી કે ડસ્ટબિન લાઇનર તરીકે વાપરો."
+      ],
+      "cleaning_tips": "ધોવું નહીં. સૂકું રાખવું.",
+      "environmental_impact": "૧ ટન કાગળ રિસાયકલ થવાથી ૧૭ વૃક્ષો અને ૨૬,૦૦૦ લિટર પાણી બચે છે.",
+      "condition_notes": {
+        "wet": "ભીનો કાગળ સૂકવીને નાખો અથવા ખાતરમાં નાખો."
+      }
+    },
+    {
+      "id": "RULE-PCB-001",
+      "category": "PCB",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો સંગ્રહ કેન્દ્ર / નારંગી ડબ્બો",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "અંગત ડેટા ડિલીટ કરો. બેટરી અલગ કરો. સુરક્ષિત પેક કરો.",
+      "safety_warnings": "ઉપકરણો તોડશો કે બાળશો નહીં. અંદર રહેલ સીસું ઝેરી છે.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized Central Pollution Control Board (CPCB) Dismantler"
+      ],
+      "prohibited_pathways": [
+        "Informal Scrap Acid Baths",
+        "Open Burning",
+        "Landfills"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઇ-કચરો વ્યવસ્થાપન નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "ચાલુ હોય તો રિપેર કરાવી જરૂરિયાતમંદને દાન કરો."
+      ],
+      "cleaning_tips": "પાણી ન વાપરવું. માત્ર સૂકા કપડાથી લૂછો.",
+      "environmental_impact": "સોનું, ચાંદી, તાંબુ પાછું મેળવી શકાય છે અને પ્રદૂષણ અટકે છે.",
+      "condition_notes": {
+        "broken": "તૂટેલા ઉપકરણો બોક્સમાં સુરક્ષિત રાખી સોંપો."
+      }
+    },
+    {
+      "id": "RULE-PLASTIC-001",
+      "category": "plastic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "સૂકો પુનઃઉપયોગ (વાદળી ડબ્બો) / પ્લાસ્ટિક કેન્દ્ર",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ખોરાકના અવશેષો ધોઈ સૂકવો.",
+      "safety_warnings": "પ્લાસ્ટિક બાળશો નહીં. તડકામાં લાંબો સમય ન રાખો.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Plastic Collection Kiosk",
+        "Scrap Merchant"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Drains / Water Bodies",
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "પ્લાસ્ટિક કચરો વ્યવસ્થાપન નિયમો ૨૦૨૧",
+      "reuse_ideas": [
+        "ઘરગથ્થુ સંગ્રહના ડબ્બા તરીકે વાપરો."
+      ],
+      "cleaning_tips": "પાણી અને સાબુથી ધોઈ સૂકવો.",
+      "environmental_impact": "રિસાયક્લિંગથી ડમ્પિંગ યાર્ડ પરનો બોજ ઘટે છે.",
+      "condition_notes": {
+        "empty": "સૂકવીને વાદળી ડબ્બામાં નાખો."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-PET",
+      "category": "plastic",
+      "specific_item": "PET Beverage Bottle (RIC 1)",
+      "material_code": "PET 01",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "સૂકો પુનઃઉપયોગ (વાદળી ડબ્બો) / પ્લાસ્ટિક રિસાયક્લિંગ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ખાલી કરી, ધોઈ, દબાવી ચપટી કરી ઢાંકણું બંધ કરો.",
+      "safety_warnings": "પ્લાસ્ટિકની બોટલ ક્યારેય બાળશો નહીં, ઝેરી ધુમાડો નીકળે છે.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Blue Dry Waste Bin",
+        "Bottle Return Kiosk",
+        "Door-to-door Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Littering",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો નિયમો ૨૦૧૬ અને પ્લાસ્ટિક કચરો નિયમો ૨૦૨૧",
+      "reuse_ideas": [
+        "છોડમાં પાણી આપવા કે કુંડા તરીકે વાપરો."
+      ],
+      "cleaning_tips": "અંદરથી પાણીથી ધોઈ સૂકવી લો.",
+      "environmental_impact": "PET બોટલ રિસાયકલ કરી કાપડના દોરા અને નવી બોટલો બને છે.",
+      "condition_notes": {
+        "crushed": "ચપટી કરવાથી કચરાના ડબ્બામાં જગ્યા બચે છે."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-HDPE",
+      "category": "plastic",
+      "specific_item": "HDPE Rigid Bottle / Jug (RIC 2)",
+      "material_code": "HDPE 02",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "સૂકો પુનઃઉપયોગ (વાદળી ડબ્બો) / પ્લાસ્ટિક કલેક્ટર",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "શેમ્પૂ કે ડિટર્જન્ટના અવશેષો પાણીથી સરખી રીતે ધોઈ લો.",
+      "safety_warnings": "કેમિકલની બોટલ હોય તો સાવચેતીથી સાફ કરો.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "પ્લાસ્ટિક કચરો વ્યવસ્થાપન નિયમો ૨૦૨૧",
+      "reuse_ideas": [
+        "બગીચાના સાધનો કે ટૂલબોક્સ તરીકે વાપરો."
+      ],
+      "cleaning_tips": "હૂંફાળા પાણીથી ધોઈ સૂકવો.",
+      "environmental_impact": "HDPE ટકાઉ પ્લાસ્ટિક છે જેમાંથી પાઈપ અને ફર્નિચર બને છે.",
+      "condition_notes": {
+        "empty": "સંપૂર્ણ ખાલી કરી સાફ કરો."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-MLP",
+      "category": "plastic",
+      "specific_item": "Multi-Layer Plastic Pouch (RIC 7)",
+      "material_code": "OTHER 07",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "સૂકો કચરો / સિમેન્ટ ફેક્ટરીમાં બળતણ તરીકે (RDF)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "અંદરનો ખોરાક કાઢીને સૂકવી લો.",
+      "safety_warnings": "ખુલ્લામાં બાળશો નહીં. ગટરમાં ન ફેંકો.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Cement Kiln Co-Processing",
+        "Road Construction Bitumen Blend"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Organic Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "પ્લાસ્ટિક કચરો વ્યવસ્થાપન નિયમો ૨૦૨૧",
+      "reuse_ideas": [
+        "ઇકો-બ્રિક (Eco-brick) બનાવવા વાપરી શકાય."
+      ],
+      "cleaning_tips": "અંદરથી લૂછી સૂકવો.",
+      "environmental_impact": "રસ્તા બનાવવા અને બળતણ તરીકે વપરાય છે.",
+      "condition_notes": {
+        "greasy": "ચીકાશ લૂછીને સાફ કરો."
+      }
+    },
+    {
+      "id": "RULE-PLAYER-001",
+      "category": "Player",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો સંગ્રહ કેન્દ્ર / નારંગી ડબ્બો",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "અંગત ડેટા ડિલીટ કરો. બેટરી અલગ કરો. સુરક્ષિત પેક કરો.",
+      "safety_warnings": "ઉપકરણો તોડશો કે બાળશો નહીં. અંદર રહેલ સીસું ઝેરી છે.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility"
+      ],
+      "prohibited_pathways": [
+        "Household General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઇ-કચરો વ્યવસ્થાપન નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "ચાલુ હોય તો રિપેર કરાવી જરૂરિયાતમંદને દાન કરો."
+      ],
+      "cleaning_tips": "પાણી ન વાપરવું. માત્ર સૂકા કપડાથી લૂછો.",
+      "environmental_impact": "સોનું, ચાંદી, તાંબુ પાછું મેળવી શકાય છે અને પ્રદૂષણ અટકે છે.",
+      "condition_notes": {
+        "broken": "તૂટેલા ઉપકરણો બોક્સમાં સુરક્ષિત રાખી સોંપો."
+      }
+    },
+    {
+      "id": "RULE-PRINTER-001",
+      "category": "Printer",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો સંગ્રહ કેન્દ્ર / નારંગી ડબ્બો",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "અંગત ડેટા ડિલીટ કરો. બેટરી અલગ કરો. સુરક્ષિત પેક કરો.",
+      "safety_warnings": "ઉપકરણો તોડશો કે બાળશો નહીં. અંદર રહેલ સીસું ઝેરી છે.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Brand Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Dumping with General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઇ-કચરો વ્યવસ્થાપન નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "ચાલુ હોય તો રિપેર કરાવી જરૂરિયાતમંદને દાન કરો."
+      ],
+      "cleaning_tips": "પાણી ન વાપરવું. માત્ર સૂકા કપડાથી લૂછો.",
+      "environmental_impact": "સોનું, ચાંદી, તાંબુ પાછું મેળવી શકાય છે અને પ્રદૂષણ અટકે છે.",
+      "condition_notes": {
+        "broken": "તૂટેલા ઉપકરણો બોક્સમાં સુરક્ષિત રાખી સોંપો."
+      }
+    },
+    {
+      "id": "RULE-TELEVISION-001",
+      "category": "Television",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો સંગ્રહ કેન્દ્ર / નારંગી ડબ્બો",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "અંગત ડેટા ડિલીટ કરો. બેટરી અલગ કરો. સુરક્ષિત પેક કરો.",
+      "safety_warnings": "ઉપકરણો તોડશો કે બાળશો નહીં. અંદર રહેલ સીસું ઝેરી છે.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Depot",
+        "Manufacturer Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Manual Screen Smashing",
+        "Informal Scrap Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઇ-કચરો વ્યવસ્થાપન નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "ચાલુ હોય તો રિપેર કરાવી જરૂરિયાતમંદને દાન કરો."
+      ],
+      "cleaning_tips": "પાણી ન વાપરવું. માત્ર સૂકા કપડાથી લૂછો.",
+      "environmental_impact": "સોનું, ચાંદી, તાંબુ પાછું મેળવી શકાય છે અને પ્રદૂષણ અટકે છે.",
+      "condition_notes": {
+        "broken": "તૂટેલા ઉપકરણો બોક્સમાં સુરક્ષિત રાખી સોંપો."
+      }
+    },
+    {
+      "id": "RULE-TRASH-001",
+      "category": "trash",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "બિન-પુનઃઉપયોગી કચરો (કાળો ડબ્બો) / લેન્ડફિલ",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "કોઈ રિસાયકલ કે ભીનો કચરો નથી તેની ખાતરી કરો.",
+      "safety_warnings": "આગ ન લગાવો. ગટરમાં ન નાખો.",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "Municipal Inert Waste Collection (Black Bin)"
+      ],
+      "prohibited_pathways": [
+        "Recycling Bins",
+        "Compost"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "reuse_ideas": [
+        "રિસાયકલ ન થઈ શકે તેવો અંતિમ કચરો."
+      ],
+      "cleaning_tips": "સાફ કરવાની જરૂર નથી.",
+      "environmental_impact": "લેન્ડફિલમાં મોકલવામાં આવે છે.",
+      "condition_notes": {
+        "empty": "કાળા ડબ્બામાં નાખો."
+      }
+    },
+    {
+      "id": "RULE-WASHING_MACHINE-001",
+      "category": "Washing Machine",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "અધિકૃત ઇ-કચરો સંગ્રહ કેન્દ્ર / નારંગી ડબ્બો",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "અંગત ડેટા ડિલીટ કરો. બેટરી અલગ કરો. સુરક્ષિત પેક કરો.",
+      "safety_warnings": "ઉપકરણો તોડશો કે બાળશો નહીં. અંદર રહેલ સીસું ઝેરી છે.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized White-Goods Recycler",
+        "Brand Exchange Schemes"
+      ],
+      "prohibited_pathways": [
+        "Curbside Abandonment"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ભારત ઇ-કચરો વ્યવસ્થાપન નિયમો ૨૦૨૨",
+      "reuse_ideas": [
+        "ચાલુ હોય તો રિપેર કરાવી જરૂરિયાતમંદને દાન કરો."
+      ],
+      "cleaning_tips": "પાણી ન વાપરવું. માત્ર સૂકા કપડાથી લૂછો.",
+      "environmental_impact": "સોનું, ચાંદી, તાંબુ પાછું મેળવી શકાય છે અને પ્રદૂષણ અટકે છે.",
+      "condition_notes": {
+        "broken": "તૂટેલા ઉપકરણો બોક્સમાં સુરક્ષિત રાખી સોંપો."
+      }
+    },
+    {
+      "id": "RULE-STREAM-BIODEGRADABLE",
+      "category": "biodegradable",
+      "disposal_method": "ભીનો જૈવિક કચરો (લીલો ડબ્બો) / કમ્પોસ્ટિંગ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "પ્લાસ્ટિક કવર કે રબર કાઢી માત્ર શાકભાજી/ખોરાક નાખો.",
+      "safety_warnings": "પ્લાસ્ટિક કે જોખમી વસ્તુ લીલા ડબ્બામાં ન નાખો.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "cleaning_tips": "ધોવાની જરૂર નથી. સીધું લીલા ડબ્બામાં નાખો.",
+      "reuse_ideas": [
+        "ઘરે જ ઉત્તમ કુદરતી ખાતર બનાવો."
+      ],
+      "environmental_impact": "જમીનની ફળદ્રુપતા વધારે છે અને મિથેન ગેસ બનતો રોકે છે.",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "condition_notes": {
+        "wet": "ભીનાશ કુદરતી છે, સીધું લીલા ડબ્બામાં નાખો."
+      }
+    },
+    {
+      "id": "RULE-STREAM-RECYCLABLES",
+      "category": "Recyclables",
+      "disposal_method": "સૂકો પુનઃઉપયોગી કચરો (વાદળી ડબ્બો)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ધોઈ, સૂકવી, અલગ કરી વાદળી ડબ્બામાં નાખો.",
+      "safety_warnings": "ભીના કચરા સાથે ન ભેળવો.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue Bin)",
+        "Kabadiwala / Scrap Dealer",
+        "Material Recovery Facility"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Open Burning",
+        "Open Littering"
+      ],
+      "cleaning_tips": "પાણીથી ધોઈ સૂકવી લો.",
+      "reuse_ideas": [
+        "ઘરગથ્થુ વસ્તુઓ તરીકે ફરી ઉપયોગ કરો."
+      ],
+      "environmental_impact": "કાર્બન ફૂટપ્રિન્ટ ઘટાડે છે અને કુદરતી સ્ત્રોતો બચાવે છે.",
+      "source": "ભારત ઘન કચરો વ્યવસ્થાપન નિયમો ૨૦૧૬",
+      "condition_notes": {
+        "empty": "સૂકવીને વાદળી ડબ્બામાં નાખો."
+      }
+    },
+    {
+      "id": "RULE-STREAM-EWASTE",
+      "category": "E-waste",
+      "disposal_method": "અધિકૃત ઇ-કચરો સંગ્રહ કેન્દ્ર / નારંગી ડબ્બો",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "અંગત ડેટા ડિલીટ કરો. બેટરી અલગ કરો. સુરક્ષિત પેક કરો.",
+      "safety_warnings": "ઉપકરણો તોડશો કે બાળશો નહીં. અંદર રહેલ સીસું ઝેરી છે.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Producer Take-Back / EPR Collection Point"
+      ],
+      "prohibited_pathways": [
+        "Household Dustbin",
+        "Open Burning",
+        "Informal Scrap Breaking"
+      ],
+      "cleaning_tips": "પાણી ન વાપરવું. માત્ર સૂકા કપડાથી લૂછો.",
+      "reuse_ideas": [
+        "ચાલુ હોય તો રિપેર કરાવી જરૂરિયાતમંદને દાન કરો."
+      ],
+      "environmental_impact": "સોનું, ચાંદી, તાંબુ પાછું મેળવી શકાય છે અને પ્રદૂષણ અટકે છે.",
+      "source": "ભારત ઇ-કચરો વ્યવસ્થાપન નિયમો ૨૦૨૨",
+      "condition_notes": {
+        "broken": "તૂટેલા ઉપકરણો બોક્સમાં સુરક્ષિત રાખી સોંપો."
+      }
+    },
+    {
+      "id": "RULE-STREAM-HAZARDOUS",
+      "category": "hazardous",
+      "disposal_method": "જોખમી કચરો સંગ્રહ (લાલ ડબ્બો) / સરકારી કેન્દ્ર",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "ગળતર ન થાય તે માટે મૂળ ડબ્બામાં ઢાંકણ બંધ રાખો.",
+      "safety_warnings": "ઝેરી અને જ્વલનશીલ. બાળકો અને પાલતુથી દૂર રાખો.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Special Care / Hazardous Waste Collection",
+        "Authorized Hazardous Waste Facility",
+        "Pharmacy / Hospital Take-Back (medicines)"
+      ],
+      "prohibited_pathways": [
+        "Regular Household Bins",
+        "Drains and Toilets",
+        "Open Burning"
+      ],
+      "cleaning_tips": "ધોવાનો પ્રયાસ ન કરવો.",
+      "reuse_ideas": [
+        "જોખમી કચરો ફરી વાપરવો સુરક્ષિત નથી."
+      ],
+      "environmental_impact": "જમીન અને પાણીનું ગંભીર પ્રદૂષણ રોકે છે.",
+      "source": "ભારત જોખમી કચરો નિયમો ૨૦૧૬",
+      "condition_notes": {
+        "broken": "પ્લાસ્ટિક બેગમાં મૂકી લાલ ડબ્બામાં આપો."
+      }
+    }
+  ]
+}

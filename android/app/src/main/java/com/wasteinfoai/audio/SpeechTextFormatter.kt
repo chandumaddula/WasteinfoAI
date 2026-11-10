@@ -44,18 +44,30 @@ object SpeechTextFormatter {
         var teCount = 0
         var taCount = 0
         var devCount = 0
+        var knCount = 0
+        var mlCount = 0
+        var bnCount = 0
+        var guCount = 0
 
         for (ch in text) {
             when (ch.code) {
                 in 0x0C00..0x0C7F -> teCount++
                 in 0x0B80..0x0BFF -> taCount++
                 in 0x0900..0x097F -> devCount++
+                in 0x0C80..0x0CFF -> knCount++
+                in 0x0D00..0x0D7F -> mlCount++
+                in 0x0980..0x09FF -> bnCount++
+                in 0x0A80..0x0AFF -> guCount++
             }
         }
 
         return when {
             teCount > 5 -> "te"
             taCount > 5 -> "ta"
+            knCount > 5 -> "kn"
+            mlCount > 5 -> "ml"
+            bnCount > 5 -> "bn"
+            guCount > 5 -> "gu"
             devCount > 5 -> if (fallbackLang == "mr") "mr" else "hi"
             else -> fallbackLang?.trim()?.lowercase()?.take(2) ?: "en"
         }
@@ -79,6 +91,10 @@ object SpeechTextFormatter {
             .replace(Regex("⚠️?\\s*सुरक्षा\\s*(?:अस्वीकृति|सलाह).*?[:—\\n]"), "सुरक्षा चेतावनी: ")
             .replace(Regex("⚠️?\\s*பாதுகாப்பு\\s*(?:மறுப்பு|ஆலோசனை).*?[:—\\n]"), "பாதுகாப்பு எச்சரிக்கை: ")
             .replace(Regex("⚠️?\\s*सुरक्षा\\s*(?:नकार|सूचना).*?[:—\\n]"), "सुरक्षा सूचना: ")
+            .replace(Regex("⚠️?\\s*ಸುರಕ್ಷತಾ\\s*(?:ನಿರಾಕರಣೆ|ಸಲಹೆ|ಎಚ್ಚರಿಕೆ).*?[:—\\n]"), "ಸುರಕ್ಷತಾ ಎಚ್ಚರಿಕೆ: ")
+            .replace(Regex("⚠️?\\s*സുരക്ഷാ\\s*(?:നിരസിക്കൽ|മുന്നറിയിപ്പ്).*?[:—\\n]"), "സുരക്ഷാ മുന്നറിയിപ്പ്: ")
+            .replace(Regex("⚠️?\\s*নিরাপত্তা\\s*(?:প্রত্যাখ্যান|সতর্কতা).*?[:—\\n]"), "নিরাপত্তা সতর্কতা: ")
+            .replace(Regex("⚠️?\\s*સુરક્ષા\\s*(?:ઇનકાર|સલાહ|ચેતવણી).*?[:—\\n]"), "સુરક્ષા ચેતવણી: ")
 
         // 3. Remove code blocks and inline code ticks
         processed = processed.replace(Regex("```[\\s\\S]*?```"), "")
@@ -168,6 +184,46 @@ object SpeechTextFormatter {
                                 0 -> "प्रथम, "
                                 bulletItems.lastIndex -> "शेवटी, "
                                 else -> "नंतर, "
+                            }
+                            result.add("$prefix$item")
+                        }
+                    }
+                    "kn" -> {
+                        bulletItems.forEachIndexed { idx, item ->
+                            val prefix = when (idx) {
+                                0 -> "ಮೊದಲಿಗೆ, "
+                                bulletItems.lastIndex -> "ಕೊನೆಯದಾಗಿ, "
+                                else -> "ನಂತರ, "
+                            }
+                            result.add("$prefix$item")
+                        }
+                    }
+                    "ml" -> {
+                        bulletItems.forEachIndexed { idx, item ->
+                            val prefix = when (idx) {
+                                0 -> "ആദ്യമായി, "
+                                bulletItems.lastIndex -> "അവസാനമായി, "
+                                else -> "തുടർന്ന്, "
+                            }
+                            result.add("$prefix$item")
+                        }
+                    }
+                    "bn" -> {
+                        bulletItems.forEachIndexed { idx, item ->
+                            val prefix = when (idx) {
+                                0 -> "প্রথমে, "
+                                bulletItems.lastIndex -> "অবশেষে, "
+                                else -> "তারপর, "
+                            }
+                            result.add("$prefix$item")
+                        }
+                    }
+                    "gu" -> {
+                        bulletItems.forEachIndexed { idx, item ->
+                            val prefix = when (idx) {
+                                0 -> "પ્રથમ, "
+                                bulletItems.lastIndex -> "છેલ્લે, "
+                                else -> "પછી, "
                             }
                             result.add("$prefix$item")
                         }

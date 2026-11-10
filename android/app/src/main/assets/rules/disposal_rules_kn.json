@@ -1,0 +1,945 @@
+{
+  "version": "2.0.0",
+  "updated_at": "2026-10-20T00:00:00Z",
+  "description": "Verified Hierarchical Waste Disposal Rules (KN)",
+  "rules": [
+    {
+      "id": "RULE-BATTERY-001",
+      "category": "Battery",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಕೇಂದ್ರ / ಅಪಾಯಕಾರಿ ತ್ಯಾಜ್ಯ (ಕೆಂಪು ಬುಟ್ಟಿ)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ಶಾರ್ಟ್ ಸರ್ಕ್ಯೂಟ್ ತಡೆಯಲು ಟರ್ಮಿನಲ್ ತುದಿಗಳಿಗೆ ನಾನ್-ಕಂಡಕ್ಟಿವ್ ಟೇಪ್ ಅಂಟಿಸಿ. ಒಣ ಪ್ಲಾಸ್ಟಿಕ್ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇರಿಸಿ.",
+      "safety_warnings": "ಬೆಂಕಿ ಮತ್ತು ರಾಸಾಯನಿಕ ಸೋರಿಕೆಯ ಅಪಾಯ. ಸಾಮಾನ್ಯ ಕಸ ಅಥವಾ ಹಸಿರು/ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಬೇಡಿ. ಶಾಖಕ್ಕೆ ಒಡ್ಡಬೇಡಿ.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized E-Waste Center",
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Household Compost (Green)",
+        "Dry Recyclables (Blue)",
+        "Open Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016 ಮತ್ತು ಇ-ತ್ಯಾಜ್ಯ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ರಾಸಾಯನಿಕ ತುಕ್ಕು ಮತ್ತು ಅಗ್ನಿ ಅಪಾಯಗಳಿಂದಾಗಿ ಬ್ಯಾಟರಿಗಳನ್ನು ಮನೆಯಲ್ಲಿ ಮರುಬಳಕೆ ಮಾಡಲಾಗುವುದಿಲ್ಲ."
+      ],
+      "cleaning_tips": "ನೀರಿನಿಂದ ತೊಳೆಯಬೇಡಿ. ಧೂಳಿದ್ದರೆ ಒಣ ಬಟ್ಟೆಯಿಂದ ನಿಧಾನವಾಗಿ ಒರೆಸಿ. ಎಂದಿಗೂ ನೀರಿನಲ್ಲಿ ಮುಳುಗಿಸಬೇಡಿ.",
+      "environmental_impact": "ಭಾರ ಲೋಹಗಳು (ಸೀಸ, ಕ್ಯಾಡ್ಮಿಯಮ್, ಲಿಥಿಯಮ್) ಅಂತರ್ಜಲ ಸೇರಿ ತೀವ್ರ ವಿಷಕಾರಿ ಮಾಲಿನ್ಯ ಉಂಟುಮಾಡುತ್ತವೆ.",
+      "condition_notes": {
+        "broken": "ಅಪಾಯ: ಸೋರುತ್ತಿರುವ ಬ್ಯಾಟರಿಯಿಂದ ಆಮ್ಲ ಹೊರಬರುತ್ತದೆ. ಕೈಯಿಂದ ಮುಟ್ಟಬೇಡಿ. ಮರಳು ಅಥವಾ ಪ್ಲಾಸ್ಟಿಕ್ ಡಬ್ಬಿಯಲ್ಲಿ ಇರಿಸಿ.",
+        "crushed": "ತೀವ್ರ ಬೆಂಕಿಯ ಅಪಾಯ: ಪುಡಿಯಾದ ಬ್ಯಾಟರಿಗಳಲ್ಲಿ ಆಂತರಿಕ ಶಾರ್ಟ್-ಸರ್ಕ್ಯೂಟ್ ಉಂಟಾಗಿ ಬೆಂಕಿ ಹೊತ್ತಿಕೊಳ್ಳಬಹುದು.",
+        "wet": "ಸಂಪೂರ್ಣವಾಗಿ ಒಣಗಿಸಿ ಇರಿಸಿ. ಲಿಥಿಯಂ ಕೋಶಗಳಿಗೆ ನೀರು ತಗುಲಿದರೆ ಅನಿಲ ಸ್ಫೋಟವಾಗಬಹುದು.",
+        "empty": "ಡಿಸ್ಚಾರ್ಜ್ ಆದ ಬ್ಯಾಟರಿಗಳಲ್ಲೂ ಕರೆಂಟ್ ಇರುತ್ತದೆ. ವಿಲೇವಾರಿ ಮಾಡುವ ಮುನ್ನ ಟರ್ಮಿನಲ್‌ಗಳಿಗೆ ಟೇಪ್ ಹಾಕಿ.",
+        "full": "ಶಾರ್ಟ್ ಸರ್ಕ್ಯೂಟ್ ತಪ್ಪಿಸಲು ಚಾರ್ಜ್ ಇರುವ ಬ್ಯಾಟರಿಗಳನ್ನು ಲೋಹದ ವಸ್ತುಗಳಿಂದ ದೂರವಿಡಿ."
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-LI-ION",
+      "category": "Battery",
+      "specific_item": "Rechargeable Lithium-Ion Battery",
+      "material_code": "BATTERY_LI_ION",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಕೇಂದ್ರ / ಅಪಾಯಕಾರಿ ತ್ಯಾಜ್ಯ (ಕೆಂಪು ಬುಟ್ಟಿ)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ಶಾರ್ಟ್ ಸರ್ಕ್ಯೂಟ್ ತಡೆಯಲು ಟರ್ಮಿನಲ್ ತುದಿಗಳಿಗೆ ನಾನ್-ಕಂಡಕ್ಟಿವ್ ಟೇಪ್ ಅಂಟಿಸಿ. ಒಣ ಪ್ಲಾಸ್ಟಿಕ್ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇರಿಸಿ.",
+      "safety_warnings": "ಬೆಂಕಿ ಮತ್ತು ರಾಸಾಯನಿಕ ಸೋರಿಕೆಯ ಅಪಾಯ. ಸಾಮಾನ್ಯ ಕಸ ಅಥವಾ ಹಸಿರು/ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಬೇಡಿ. ಶಾಖಕ್ಕೆ ಒಡ್ಡಬೇಡಿ.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Collection Point",
+        "Manufacturer Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Curbside Bins",
+        "Municipal Waste Truck Compactor"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016 ಮತ್ತು ಇ-ತ್ಯಾಜ್ಯ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ರಾಸಾಯನಿಕ ತುಕ್ಕು ಮತ್ತು ಅಗ್ನಿ ಅಪಾಯಗಳಿಂದಾಗಿ ಬ್ಯಾಟರಿಗಳನ್ನು ಮನೆಯಲ್ಲಿ ಮರುಬಳಕೆ ಮಾಡಲಾಗುವುದಿಲ್ಲ."
+      ],
+      "cleaning_tips": "ನೀರಿನಿಂದ ತೊಳೆಯಬೇಡಿ. ಧೂಳಿದ್ದರೆ ಒಣ ಬಟ್ಟೆಯಿಂದ ನಿಧಾನವಾಗಿ ಒರೆಸಿ. ಎಂದಿಗೂ ನೀರಿನಲ್ಲಿ ಮುಳುಗಿಸಬೇಡಿ.",
+      "environmental_impact": "ಭಾರ ಲೋಹಗಳು (ಸೀಸ, ಕ್ಯಾಡ್ಮಿಯಮ್, ಲಿಥಿಯಮ್) ಅಂತರ್ಜಲ ಸೇರಿ ತೀವ್ರ ವಿಷಕಾರಿ ಮಾಲಿನ್ಯ ಉಂಟುಮಾಡುತ್ತವೆ.",
+      "condition_notes": {
+        "broken": "ಅಪಾಯ: ಸೋರುತ್ತಿರುವ ಬ್ಯಾಟರಿಯಿಂದ ಆಮ್ಲ ಹೊರಬರುತ್ತದೆ. ಕೈಯಿಂದ ಮುಟ್ಟಬೇಡಿ. ಮರಳು ಅಥವಾ ಪ್ಲಾಸ್ಟಿಕ್ ಡಬ್ಬಿಯಲ್ಲಿ ಇರಿಸಿ.",
+        "crushed": "ತೀವ್ರ ಬೆಂಕಿಯ ಅಪಾಯ: ಪುಡಿಯಾದ ಬ್ಯಾಟರಿಗಳಲ್ಲಿ ಆಂತರಿಕ ಶಾರ್ಟ್-ಸರ್ಕ್ಯೂಟ್ ಉಂಟಾಗಿ ಬೆಂಕಿ ಹೊತ್ತಿಕೊಳ್ಳಬಹುದು.",
+        "wet": "ಸಂಪೂರ್ಣವಾಗಿ ಒಣಗಿಸಿ ಇರಿಸಿ. ಲಿಥಿಯಂ ಕೋಶಗಳಿಗೆ ನೀರು ತಗುಲಿದರೆ ಅನಿಲ ಸ್ಫೋಟವಾಗಬಹುದು.",
+        "empty": "ಡಿಸ್ಚಾರ್ಜ್ ಆದ ಬ್ಯಾಟರಿಗಳಲ್ಲೂ ಕರೆಂಟ್ ಇರುತ್ತದೆ. ವಿಲೇವಾರಿ ಮಾಡುವ ಮುನ್ನ ಟರ್ಮಿನಲ್‌ಗಳಿಗೆ ಟೇಪ್ ಹಾಕಿ.",
+        "full": "ಶಾರ್ಟ್ ಸರ್ಕ್ಯೂಟ್ ತಪ್ಪಿಸಲು ಚಾರ್ಜ್ ಇರುವ ಬ್ಯಾಟರಿಗಳನ್ನು ಲೋಹದ ವಸ್ತುಗಳಿಂದ ದೂರವಿಡಿ."
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-ALKALINE",
+      "category": "Battery",
+      "specific_item": "Alkaline AA / AAA / 9V Battery",
+      "material_code": "BATTERY_ALKALINE",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಕೇಂದ್ರ / ಅಪಾಯಕಾರಿ ತ್ಯಾಜ್ಯ (ಕೆಂಪು ಬುಟ್ಟಿ)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ಶಾರ್ಟ್ ಸರ್ಕ್ಯೂಟ್ ತಡೆಯಲು ಟರ್ಮಿನಲ್ ತುದಿಗಳಿಗೆ ನಾನ್-ಕಂಡಕ್ಟಿವ್ ಟೇಪ್ ಅಂಟಿಸಿ. ಒಣ ಪ್ಲಾಸ್ಟಿಕ್ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇರಿಸಿ.",
+      "safety_warnings": "ಬೆಂಕಿ ಮತ್ತು ರಾಸಾಯನಿಕ ಸೋರಿಕೆಯ ಅಪಾಯ. ಸಾಮಾನ್ಯ ಕಸ ಅಥವಾ ಹಸಿರು/ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಬೇಡಿ. ಶಾಖಕ್ಕೆ ಒಡ್ಡಬೇಡಿ.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)",
+        "Battery Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Dry Paper/Plastic Bin (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016 ಮತ್ತು ಇ-ತ್ಯಾಜ್ಯ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ರಾಸಾಯನಿಕ ತುಕ್ಕು ಮತ್ತು ಅಗ್ನಿ ಅಪಾಯಗಳಿಂದಾಗಿ ಬ್ಯಾಟರಿಗಳನ್ನು ಮನೆಯಲ್ಲಿ ಮರುಬಳಕೆ ಮಾಡಲಾಗುವುದಿಲ್ಲ."
+      ],
+      "cleaning_tips": "ನೀರಿನಿಂದ ತೊಳೆಯಬೇಡಿ. ಧೂಳಿದ್ದರೆ ಒಣ ಬಟ್ಟೆಯಿಂದ ನಿಧಾನವಾಗಿ ಒರೆಸಿ. ಎಂದಿಗೂ ನೀರಿನಲ್ಲಿ ಮುಳುಗಿಸಬೇಡಿ.",
+      "environmental_impact": "ಭಾರ ಲೋಹಗಳು (ಸೀಸ, ಕ್ಯಾಡ್ಮಿಯಮ್, ಲಿಥಿಯಮ್) ಅಂತರ್ಜಲ ಸೇರಿ ತೀವ್ರ ವಿಷಕಾರಿ ಮಾಲಿನ್ಯ ಉಂಟುಮಾಡುತ್ತವೆ.",
+      "condition_notes": {
+        "broken": "ಅಪಾಯ: ಸೋರುತ್ತಿರುವ ಬ್ಯಾಟರಿಯಿಂದ ಆಮ್ಲ ಹೊರಬರುತ್ತದೆ. ಕೈಯಿಂದ ಮುಟ್ಟಬೇಡಿ. ಮರಳು ಅಥವಾ ಪ್ಲಾಸ್ಟಿಕ್ ಡಬ್ಬಿಯಲ್ಲಿ ಇರಿಸಿ.",
+        "crushed": "ತೀವ್ರ ಬೆಂಕಿಯ ಅಪಾಯ: ಪುಡಿಯಾದ ಬ್ಯಾಟರಿಗಳಲ್ಲಿ ಆಂತರಿಕ ಶಾರ್ಟ್-ಸರ್ಕ್ಯೂಟ್ ಉಂಟಾಗಿ ಬೆಂಕಿ ಹೊತ್ತಿಕೊಳ್ಳಬಹುದು.",
+        "wet": "ಸಂಪೂರ್ಣವಾಗಿ ಒಣಗಿಸಿ ಇರಿಸಿ. ಲಿಥಿಯಂ ಕೋಶಗಳಿಗೆ ನೀರು ತಗುಲಿದರೆ ಅನಿಲ ಸ್ಫೋಟವಾಗಬಹುದು.",
+        "empty": "ಡಿಸ್ಚಾರ್ಜ್ ಆದ ಬ್ಯಾಟರಿಗಳಲ್ಲೂ ಕರೆಂಟ್ ಇರುತ್ತದೆ. ವಿಲೇವಾರಿ ಮಾಡುವ ಮುನ್ನ ಟರ್ಮಿನಲ್‌ಗಳಿಗೆ ಟೇಪ್ ಹಾಕಿ.",
+        "full": "ಶಾರ್ಟ್ ಸರ್ಕ್ಯೂಟ್ ತಪ್ಪಿಸಲು ಚಾರ್ಜ್ ಇರುವ ಬ್ಯಾಟರಿಗಳನ್ನು ಲೋಹದ ವಸ್ತುಗಳಿಂದ ದೂರವಿಡಿ."
+      }
+    },
+    {
+      "id": "RULE-CARDBOARD-001",
+      "category": "cardboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ (ನೀಲಿ ಬುಟ್ಟಿ) / ಕಾಗದ ಮರುಬಳಕೆದಾರರು",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ಪ್ಲಾಸ್ಟಿಕ್ ಟೇಪ್ ಮತ್ತು ಸ್ಟೇಪ್ಲರ್‌ಗಳನ್ನು ತೆಗೆದು, ಪೆಟ್ಟಿಗೆಯನ್ನು ಚಪ್ಪಟೆ ಮಾಡಿ ಮಡಚಿ.",
+      "safety_warnings": "ತೇವಾಂಶ ಮತ್ತು ಬೆಂಕಿಯಿಂದ ದೂರವಿಡಿ. ಒಣ ಸ್ಥಳದಲ್ಲಿ ಸಂಗ್ರಹಿಸಿ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Door-to-door Kabadiwala Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Rain-Exposed Open Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ವಸ್ತುಗಳನ್ನು ಸಂಗ್ರಹಿಸಲು, ಶಿಪ್ಪಿಂಗ್ ಪೆಟ್ಟಿಗೆಗಳಾಗಿ ಅಥವಾ ಕ್ರಾಫ್ಟ್ ಯೋಜನೆಗಳಿಗೆ ಬಳಸಿ."
+      ],
+      "cleaning_tips": "ಧೂಳು ತೆಗೆಯಿರಿ. ನೀರಿನಿಂದ ತೊಳೆಯಬೇಡಿ.",
+      "environmental_impact": "ರಟ್ಟಿನ ಮರುಬಳಕೆಯು ಮರಗಳನ್ನು ಕಡಿಯುವುದನ್ನು ತಪ್ಪಿಸುತ್ತದೆ ಮತ್ತು ಶಕ್ತಿಯನ್ನು ಉಳಿಸುತ್ತದೆ.",
+      "condition_notes": {
+        "wet": "ಒಣಗಲು ಬಿಡಿ. ಕೊಳೆತಿದ್ದರೆ ಸಾವಯವ ಬುಟ್ಟಿಗೆ ಹಾಕಿ.",
+        "crushed": "ಮಡಚಿ ಕಟ್ಟಿ ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಿ.",
+        "empty": "ಪೆಟ್ಟಿಗೆಯ ಒಳಗಿರುವ ಎಲ್ಲಾ ಥರ್ಮೋಕೋಲ್ ಮತ್ತು ಪ್ಲಾಸ್ಟಿಕ್ ತೆಗೆಯಿರಿ."
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-SOILED",
+      "category": "cardboard",
+      "specific_item": "Greasy / Food-Soiled Cardboard",
+      "material_code": "PAP 20",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಮನೆಯ ಕಾಂಪೋಸ್ಟ್ / ಹಸಿ ಸಾವಯವ ತ್ಯಾಜ್ಯ ಬುಟ್ಟಿ (ಹಸಿರು)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "ಪ್ಲಾಸ್ಟಿಕ್ ಟೇಪ್ ತೆಗೆದು ಸಣ್ಣ ತುಂಡುಗಳಾಗಿ ಹರಿದು ಕಾಂಪೋಸ್ಟ್‌ಗೆ ಹಾಕಿ.",
+      "safety_warnings": "ಎಣ್ಣೆಯುಕ್ತ ಗಟ್ಟೆಯನ್ನು ನೀಲಿ ಮರುಬಳಕೆ ಬುಟ್ಟಿಗೆ ಹಾಕಬೇಡಿ, ಇದು ಇತರ ಕಾಗದಗಳನ್ನು ಹಾಳುಮಾಡುತ್ತದೆ.",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "General Municipal Refuse (Black Bin)",
+        "Industrial Composting if uncoated"
+      ],
+      "prohibited_pathways": [
+        "Dry Paper Recyclables (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ಕಾಂಪೋಸ್ಟ್‌ಗಾಗಿ ಕಂದು ಸಾವಯವ ವಸ್ತುವಾಗಿ ಬಳಸಿ ಅಥವಾ ಗಿಡಗಳ ಬುಡಕ್ಕೆ ಮಲ್ಚ್ ಆಗಿ ಬಳಸಿ."
+      ],
+      "cleaning_tips": "ಎಣ್ಣೆಯುಕ್ತ ರಟ್ಟನ್ನು ನೀರಿನಿಂದ ತೊಳೆಯಲು ಪ್ರಯತ್ನಿಸಬೇಡಿ.",
+      "environmental_impact": "ಕಾಂಪೋಸ್ಟ್‌ನಲ್ಲಿ ಸುಲಭವಾಗಿ ಕರಗಿ ಉಪಯುಕ್ತ ಗೊಬ್ಬರವಾಗುತ್ತದೆ.",
+      "condition_notes": {
+        "greasy": "ಎಣ್ಣೆಯುಕ್ತ ಭಾಗವನ್ನು ಕಾಂಪೋಸ್ಟ್‌ನಲ್ಲಿ ಹಾಕಿ, ಮರುಬಳಕೆಗೆ ನೀಡಬೇಡಿ.",
+        "wet": "ಆಹಾರದ ಕಲೆಯಿದ್ದರೆ ಕಾಂಪೋಸ್ಟ್‌ಗೆ ಹಾಕಿ.",
+        "broken": "ಸಣ್ಣ ತುಂಡುಗಳಾಗಿ ಹರಿದು ಕಾಂಪೋಸ್ಟ್‌ಗೆ ಸೇರಿಸಿ."
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-TETRAPAK",
+      "category": "cardboard",
+      "specific_item": "Aseptic Liquid Carton (Tetra Pak)",
+      "material_code": "C/PAP 84",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ (ನೀಲಿ ಬುಟ್ಟಿ) / ಟೆಟ್ರಾ ಪ್ಯಾಕ್ ಮರುಬಳಕೆ ಕೇಂದ್ರ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ಖಾಲಿ ಮಾಡಿ, ನೀರಿನಿಂದ ಒಮ್ಮೆ ತೊಳೆದು, ಚಪ್ಪಟೆ ಮಾಡಿ ಒಣಗಿಸಿ.",
+      "safety_warnings": "ಒಳಗೆ ಹಾಲಿನ ಅವಶೇಷ ಉಳಿಯದಂತೆ ನೋಡಿಕೊಳ್ಳಿ, ದುರ್ವಾಸನೆ ತಡೆಯಿರಿ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Tetra Pak Authorized Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ಮನೆಯಲ್ಲಿ ಸಣ್ಣ ಸಸಿ ನೆಡಲು ಅಥವಾ ಕ್ರಾಫ್ಟ್ ವಸ್ತುಗಳಿಗೆ ಬಳಸಬಹುದು."
+      ],
+      "cleaning_tips": "ಒಳಭಾಗವನ್ನು ನೀರಿನಿಂದ ಚೆನ್ನಾಗಿ ತೊಳೆದು ನೀರಿಲ್ಲದಂತೆ ಒಣಗಿಸಿ.",
+      "environmental_impact": "ಕಾಗದ, ಅಲ್ಯೂಮಿನಿಯಂ ಮತ್ತು ಪಾಲಿಥಿನ್ ಬೇರ್ಪಡಿಸಿ ಮರುಬಳಕೆ ಬೋರ್ಡ್‌ಗಳನ್ನು ತಯಾರಿಸಲಾಗುತ್ತದೆ.",
+      "condition_notes": {
+        "empty": "ಸಂಪೂರ್ಣವಾಗಿ ಖಾಲಿ ಮಾಡಿ ಚಪ್ಪಟೆ ಮಾಡಿ.",
+        "crushed": "ಜಾಗ ಉಳಿಸಲು ಚೆನ್ನಾಗಿ ಚಪ್ಪಟೆ ಮಾಡಿ ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಿ.",
+        "wet": "ನೀರು ಒಣಗಿದ ನಂತರ ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-GLASS-001",
+      "category": "glass",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ (ನೀಲಿ ಬುಟ್ಟಿ) / ಗಾಜು ಸಂಗ್ರಹ ಕೇಂದ್ರ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ನೀರಿನಿಂದ ತೊಳೆದು ಒಣಗಿಸಿ. ಲೋಹ ಅಥವಾ ಪ್ಲಾಸ್ಟಿಕ್ ಮುಚ್ಚಳವನ್ನು ತೆಗೆಯಿರಿ.",
+      "safety_warnings": "ಒಡೆಯದಂತೆ ಎಚ್ಚರಿಕೆಯಿಂದ ನಿರ್ವಹಿಸಿ. ಗೀರುಗಳಿರುವ ಗಾಜನ್ನು ಎಚ್ಚರಿಕೆಯಿಂದ ಇರಿಸಿ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Merchant / Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Unwrapped Glass in Trash"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ಮಸಾಲೆ ಪದಾರ್ಥಗಳ ಸಂಗ್ರಹ, ಹೂದಾನಿ ಅಥವಾ ದೀಪಗಳ ಅಲಂಕಾರಕ್ಕೆ ಮರುಬಳಸಿ."
+      ],
+      "cleaning_tips": "ಬೆಚ್ಚಗಿನ ನೀರು ಮತ್ತು ಸಾಬೂನಿನಿಂದ ತೊಳೆದು ಲೇಬಲ್ ತೆಗೆಯಿರಿ.",
+      "environmental_impact": "ಗಾಜು ಮರುಬಳಕೆಯಿಂದ ಕಚ್ಚಾ ವಸ್ತುಗಳು ಮತ್ತು ಅಪಾರ ಇಂಧನ ಉಳಿತಾಯವಾಗುತ್ತದೆ.",
+      "condition_notes": {
+        "broken": "ಒಡೆದರೆ ಕಾರ್ಡ್‌ಬೋರ್ಡ್‌ನಲ್ಲಿ ಸುತ್ತಿ ಎಚ್ಚರಿಕೆ ಬರೆದು ಇರಿಸಿ.",
+        "empty": "ದ್ರವ ಪದಾರ್ಥಗಳನ್ನು ಪೂರ್ಣವಾಗಿ ಖಾಲಿ ಮಾಡಿ.",
+        "wet": "ತೊಳೆದ ನಂತರ ಒಣಗಿಸಿ ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-ITEM-GLASS-BROKEN",
+      "category": "glass",
+      "specific_item": "Broken Glass / Shards",
+      "material_code": "GL 70",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಸುರಕ್ಷಿತವಾಗಿ ಸುತ್ತಿ ಒಣ ತ್ಯಾಜ್ಯಕ್ಕೆ ನೀಡಿ / ವಿಶೇಷ ವಿಲೇವಾರಿ",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "ದಪ್ಪ ಕಾಗದ ಅಥವಾ ರಟ್ಟಿನಲ್ಲಿ ಸುತ್ತಿ, ಮೇಲೆ 'ಒಡೆದ ಗಾಜು' ಎಂದು ಬರೆಯಿರಿ.",
+      "safety_warnings": "ಸ್ವಚ್ಛತಾ ಕಾರ್ಮಿಕರ ಕೈಗಳನ್ನು ಕತ್ತರಿಸುವ ಗಂಭೀರ ಅಪಾಯ. ತೆರೆದ ಬುಟ್ಟಿಗೆ ನೇರವಾಗಿ ಹಾಕಬೇಡಿ.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Wrapped Domestic Hazardous Waste (Red Bin)"
+      ],
+      "prohibited_pathways": [
+        "Loose in Plastic Carry Bags",
+        "Loose in Curbside Bins"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ಒಡೆದ ಗಾಜಿನಿಂದ ಕ್ರಾಫ್ಟ್ ಮೊಸಾಯಿಕ್ ಕಲೆ ಮಾಡಬಹುದು ಆದರೆ ಅತ್ಯಂತ ಎಚ್ಚರಿಕೆ ಅಗತ್ಯ."
+      ],
+      "cleaning_tips": "ಒಡೆದ ಗಾಜಿನ ಚೂರುಗಳನ್ನು ಕೈಗಳಿಂದ ತೊಳೆಯಲು ಹೋಗಬೇಡಿ.",
+      "environmental_impact": "ಗಾಜನ್ನು ಗುಣಮಟ್ಟ ಕಳೆದುಕೊಳ್ಳದೆ ಅನಂತ ಬಾರಿ ಮರುಬಳಕೆ ಮಾಡಬಹುದು.",
+      "condition_notes": {
+        "broken": "ದಪ್ಪ ಕಾರ್ಡ್ಬೋರ್ಡ್ ಬಾಕ್ಸ್ ಅಥವಾ ಪೇಪರ್‌ನಲ್ಲಿ ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+        "wet": "ಒಣಗಿಸಿ ಸುರಕ್ಷಿತವಾಗಿ ಕಟ್ಟಿ."
+      }
+    },
+    {
+      "id": "RULE-KEYBOARD-001",
+      "category": "Keyboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ / ಕಿತ್ತಳೆ ಬುಟ್ಟಿ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ವೈಯಕ್ತಿಕ ಡೇಟಾ ಅಳಿಸಿ. ಬ್ಯಾಟರಿಯನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ. ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+      "safety_warnings": "ಉಪಕರಣಗಳನ್ನು ಒಡೆಯಬೇಡಿ ಅಥವಾ ಸುಡಬೇಡಿ. ಒಳಗಿರುವ ಸೀಸ, ಪಾದರಸ ವಿಷಕಾರಿ.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility",
+        "Manufacturer EPR Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Municipal Garbage Dump",
+        "Open Scrap Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಇ-ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದ್ದರೆ ದುರಸ್ತಿ ಮಾಡಿ ಅಗತ್ಯವಿರುವವರಿಗೆ ದಾನ ಮಾಡಿ."
+      ],
+      "cleaning_tips": "ನೀರು ಬಳಸಬೇಡಿ. ಒಣ ಬಟ್ಟೆಯಿಂದ ಮಾತ್ರ ಒರೆಸಿ.",
+      "environmental_impact": "ಇ-ತ್ಯಾಜ್ಯದಿಂದ ಚಿನ್ನ, ಬೆಳ್ಳಿ, ತಾಮ್ರ ಮರುಪಡೆಯಬಹುದು ಮತ್ತು ಪರಿಸರ ಮಾಲಿನ್ಯ ತಡೆಯಬಹುದು.",
+      "condition_notes": {
+        "broken": "ಒಡೆದ ಉಪಕರಣಗಳನ್ನು ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇಟ್ಟು ಎಚ್ಚರಿಕೆಯಿಂದ ನೀಡಿ."
+      }
+    },
+    {
+      "id": "RULE-METAL-001",
+      "category": "metal",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ (ನೀಲಿ ಬುಟ್ಟಿ) / ಲೋಹದ ಗುಜರಿ ವ್ಯಾಪಾರಿಗಳು",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ಆಹಾರದ ಕಲೆಗಳನ್ನು ತೊಳೆದು ಒಣಗಿಸಿ. ಹರಿತವಾದ ತುದಿಗಳಿದ್ದರೆ ರಟ್ಟಿನಲ್ಲಿ ಸುತ್ತಿ.",
+      "safety_warnings": "ತುಕ್ಕು ಹಿಡಿದ ಅಥವಾ ಹರಿತವಾದ ಲೋಹದ ಅಂಚುಗಳಿಂದ ಗಾಯವಾಗುವ ಅಪಾಯವಿದೆ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Metal Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ಸ್ಕ್ರ್ಯಾಪ್ ಲೋಹವನ್ನು ಗ್ಯಾರೇಜ್ ಉಪಕರಣಗಳು ಅಥವಾ ಗೃಹೋಪಯೋಗಿ ವಸ್ತುಗಳಿಗೆ ಮರುಬಳಸಿ."
+      ],
+      "cleaning_tips": "ಎಣ್ಣೆ ಅಥವಾ ಗ್ರೀಸ್ ಇದ್ದರೆ ಒರೆಸಿ ಸ್ವಚ್ಛಗೊಳಿಸಿ.",
+      "environmental_impact": "ಲೋಹದ ಮರುಬಳಕೆಯಿಂದ ಗಣಿಗಾರಿಕೆ ಮತ್ತು ಇಂಗಾಲದ ಹೊರಸೂಸುವಿಕೆ ಕಡಿಮೆಯಾಗುತ್ತದೆ.",
+      "condition_notes": {
+        "greasy": "ಎಣ್ಣೆ ಮತ್ತು ಗ್ರೀಸ್ ಸ್ವಚ್ಛಗೊಳಿಸಿ.",
+        "empty": "ಸಂಪೂರ್ಣವಾಗಿ ಖಾಲಿ ಮಾಡಿ."
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-ALU-CAN",
+      "category": "metal",
+      "specific_item": "Aluminum Beverage Can",
+      "material_code": "ALU 41",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ (ನೀಲಿ ಬುಟ್ಟಿ) / ಲೋಹದ ಸ್ಕ್ರ್ಯಾಪ್ ವಿತರಕರು",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ನೀರಿನಿಂದ ಒಮ್ಮೆ ತೊಳೆದು, ಜಾಗ ಉಳಿಸಲು ಪಾದದಿಂದ ನಿಧಾನವಾಗಿ ಜಜ್ಜಿ.",
+      "safety_warnings": "ಕ್ಯಾನ್ ಅಂಚುಗಳು ಹರಿತವಾಗಿರಬಹುದು, ಕೈ ಕತ್ತರಿಸದಂತೆ ಎಚ್ಚರವಹಿಸಿ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Recyclers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ಪೆನ್ ಹೋಲ್ಡರ್, ಕ್ರಾಫ್ಟ್ ಅಥವಾ ಅಲಂಕಾರಿಕ ದೀಪಗಳನ್ನಾಗಿ ಪರಿವರ್ತಿಸಿ."
+      ],
+      "cleaning_tips": "ಸಿಹಿ ಪಾನೀಯದ ಅವಶೇಷ ಹೋಗುವಂತೆ ನೀರಿನಿಂದ ತೊಳೆದು ಒಣಗಿಸಿ.",
+      "environmental_impact": "ಅಲ್ಯೂಮಿನಿಯಂ ಮರುಬಳಕೆಯು ಹೊಸದಾಗಿ ಉತ್ಪಾದಿಸುವುದಕ್ಕಿಂತ 95% ಕಡಿಮೆ ಶಕ್ತಿಯನ್ನು ಬಳಸುತ್ತದೆ.",
+      "condition_notes": {
+        "crushed": "ಜಜ್ಜಿ ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಿ.",
+        "empty": "ಖಾಲಿ ಮಾಡಿ ತೊಳೆದು ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-AEROSOL",
+      "category": "metal",
+      "specific_item": "Aerosol Spray Container",
+      "material_code": "FE 40",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಪಾಯಕಾರಿ ತ್ಯಾಜ್ಯ (ಕೆಂಪು ಬುಟ್ಟಿ) / ವಿಶೇಷ ಲೋಹ ಸಂಗ್ರಹ",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "ಕ್ಯಾನ್ ಸಂಪೂರ್ಣವಾಗಿ ಖಾಲಿಯಾಗಿದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ. ತೂತು ಮಾಡಬೇಡಿ.",
+      "safety_warnings": "ಒತ್ತಡದ ಅನಿಲ ಇರುವುದರಿಂದ ಬಿಸಿಲಿನಲ್ಲಿ ಅಥವಾ ಬೆಂಕಿಯಲ್ಲಿ ಸ್ಫೋಟಗೊಳ್ಳುವ ಗಂಭೀರ ಅಪಾಯವಿದೆ.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Municipal Truck Compactor",
+        "Open Fire",
+        "Puncturing"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ಸುರಕ್ಷತಾ ಅಪಾಯಗಳ ಕಾರಣ ಏರೋಸಾಲ್ ಕ್ಯಾನ್‌ಗಳನ್ನು ಮರುಬಳಕೆ ಮಾಡಬೇಡಿ."
+      ],
+      "cleaning_tips": "ನೀರಿನಿಂದ ತೊಳೆಯಬೇಡಿ. ಹೊರಭಾಗವನ್ನು ಒಣ ಬಟ್ಟೆಯಿಂದ ಒರೆಸಿ.",
+      "environmental_impact": "ಸರಿಯಾಗಿ ವಿಲೇವಾರಿ ಮಾಡದಿದ್ದರೆ ಪರಿಸರಕ್ಕೆ ಹಾನಿಕಾರಕ ಅನಿಲಗಳು ಬಿಡುಗಡೆಯಾಗುತ್ತವೆ.",
+      "condition_notes": {
+        "empty": "ನಳಿಕೆಯನ್ನು ಒತ್ತಿ ಪೂರ್ಣವಾಗಿ ಖಾಲಿ ಮಾಡಿ.",
+        "crushed": "ಒತ್ತಡದ ಕ್ಯಾನ್‌ಗಳನ್ನು ಎಂದಿಗೂ ಜಜ್ಜಬೇಡಿ ಅಥವಾ ಪುಡಿಮಾಡಬೇಡಿ."
+      }
+    },
+    {
+      "id": "RULE-MICROWAVE-001",
+      "category": "Microwave",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ / ಕಿತ್ತಳೆ ಬುಟ್ಟಿ",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ವೈಯಕ್ತಿಕ ಡೇಟಾ ಅಳಿಸಿ. ಬ್ಯಾಟರಿಯನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ. ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+      "safety_warnings": "ಉಪಕರಣಗಳನ್ನು ಒಡೆಯಬೇಡಿ ಅಥವಾ ಸುಡಬೇಡಿ. ಒಳಗಿರುವ ಸೀಸ, ಪಾದರಸ ವಿಷಕಾರಿ.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycling Center",
+        "Appliance Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Informal Disassembly",
+        "Standard Garbage"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಇ-ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದ್ದರೆ ದುರಸ್ತಿ ಮಾಡಿ ಅಗತ್ಯವಿರುವವರಿಗೆ ದಾನ ಮಾಡಿ."
+      ],
+      "cleaning_tips": "ನೀರು ಬಳಸಬೇಡಿ. ಒಣ ಬಟ್ಟೆಯಿಂದ ಮಾತ್ರ ಒರೆಸಿ.",
+      "environmental_impact": "ಇ-ತ್ಯಾಜ್ಯದಿಂದ ಚಿನ್ನ, ಬೆಳ್ಳಿ, ತಾಮ್ರ ಮರುಪಡೆಯಬಹುದು ಮತ್ತು ಪರಿಸರ ಮಾಲಿನ್ಯ ತಡೆಯಬಹುದು.",
+      "condition_notes": {
+        "broken": "ಒಡೆದ ಉಪಕರಣಗಳನ್ನು ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇಟ್ಟು ಎಚ್ಚರಿಕೆಯಿಂದ ನೀಡಿ."
+      }
+    },
+    {
+      "id": "RULE-MOBILE-001",
+      "category": "Mobile",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ / ಕಿತ್ತಳೆ ಬುಟ್ಟಿ",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ವೈಯಕ್ತಿಕ ಡೇಟಾ ಅಳಿಸಿ. ಬ್ಯಾಟರಿಯನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ. ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+      "safety_warnings": "ಉಪಕರಣಗಳನ್ನು ಒಡೆಯಬೇಡಿ ಅಥವಾ ಸುಡಬೇಡಿ. ಒಳಗಿರುವ ಸೀಸ, ಪಾದರಸ ವಿಷಕಾರಿ.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Kiosks",
+        "Electronics Retailer Take-Back",
+        "Registered Recycler"
+      ],
+      "prohibited_pathways": [
+        "Curbside Dustbin",
+        "Landfill Dumpsite"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಇ-ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದ್ದರೆ ದುರಸ್ತಿ ಮಾಡಿ ಅಗತ್ಯವಿರುವವರಿಗೆ ದಾನ ಮಾಡಿ."
+      ],
+      "cleaning_tips": "ನೀರು ಬಳಸಬೇಡಿ. ಒಣ ಬಟ್ಟೆಯಿಂದ ಮಾತ್ರ ಒರೆಸಿ.",
+      "environmental_impact": "ಇ-ತ್ಯಾಜ್ಯದಿಂದ ಚಿನ್ನ, ಬೆಳ್ಳಿ, ತಾಮ್ರ ಮರುಪಡೆಯಬಹುದು ಮತ್ತು ಪರಿಸರ ಮಾಲಿನ್ಯ ತಡೆಯಬಹುದು.",
+      "condition_notes": {
+        "broken": "ಒಡೆದ ಉಪಕರಣಗಳನ್ನು ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇಟ್ಟು ಎಚ್ಚರಿಕೆಯಿಂದ ನೀಡಿ."
+      }
+    },
+    {
+      "id": "RULE-MOUSE-001",
+      "category": "Mouse",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ / ಕಿತ್ತಳೆ ಬುಟ್ಟಿ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ವೈಯಕ್ತಿಕ ಡೇಟಾ ಅಳಿಸಿ. ಬ್ಯಾಟರಿಯನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ. ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+      "safety_warnings": "ಉಪಕರಣಗಳನ್ನು ಒಡೆಯಬೇಡಿ ಅಥವಾ ಸುಡಬೇಡಿ. ಒಳಗಿರುವ ಸೀಸ, ಪಾದರಸ ವಿಷಕಾರಿ.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Municipal General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಇ-ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದ್ದರೆ ದುರಸ್ತಿ ಮಾಡಿ ಅಗತ್ಯವಿರುವವರಿಗೆ ದಾನ ಮಾಡಿ."
+      ],
+      "cleaning_tips": "ನೀರು ಬಳಸಬೇಡಿ. ಒಣ ಬಟ್ಟೆಯಿಂದ ಮಾತ್ರ ಒರೆಸಿ.",
+      "environmental_impact": "ಇ-ತ್ಯಾಜ್ಯದಿಂದ ಚಿನ್ನ, ಬೆಳ್ಳಿ, ತಾಮ್ರ ಮರುಪಡೆಯಬಹುದು ಮತ್ತು ಪರಿಸರ ಮಾಲಿನ್ಯ ತಡೆಯಬಹುದು.",
+      "condition_notes": {
+        "broken": "ಒಡೆದ ಉಪಕರಣಗಳನ್ನು ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇಟ್ಟು ಎಚ್ಚರಿಕೆಯಿಂದ ನೀಡಿ."
+      }
+    },
+    {
+      "id": "RULE-ORGANIC-001",
+      "category": "organic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಹಸಿ ಸಾವಯವ ತ್ಯಾಜ್ಯ ಬುಟ್ಟಿ (ಹಸಿರು) / ಹೋಮ್ ಕಾಂಪೋಸ್ಟಿಂಗ್",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ಪ್ಲಾಸ್ಟಿಕ್ ಕವರ್‌ಗಳು, ರಬ್ಬರ್ ಬ್ಯಾಂಡ್‌ಗಳನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ ಕೇವಲ ತರಕಾರಿ/ಆಹಾರ ಹಾಕಿ.",
+      "safety_warnings": "ಪ್ಲಾಸ್ಟಿಕ್ ಅಥವಾ ಅಪಾಯಕಾರಿ ವಸ್ತುಗಳನ್ನು ಹಸಿರು ಬುಟ್ಟಿಗೆ ಹಾಕಬೇಡಿ.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ಮನೆಯಲ್ಲೇ ಜೈವಿಕ ಗೊಬ್ಬರ (ಕಾಂಪೋಸ್ಟ್) ಅಥವಾ ಬಯೋ-ಕಿಚನ್ ಗಾರ್ಡನ್ ಫರ್ಟಿಲೈಜರ್ ತಯಾರಿಸಿ."
+      ],
+      "cleaning_tips": "ತೊಳೆಯುವ ಅಗತ್ಯವಿಲ್ಲ. ನೇರವಾಗಿ ಹಸಿರು ಬುಟ್ಟಿಗೆ ಹಾಕಿ.",
+      "environmental_impact": "ಕಾಂಪೋಸ್ಟಿಂಗ್ ಮೂಲಕ ಭೂಮಿಯ ಫಲವತ್ತತೆ ಹೆಚ್ಚುತ್ತದೆ ಮತ್ತು ಮಿಥೇನ್ ಅನಿಲ ಉತ್ಪತ್ತಿ ತಪ್ಪುತ್ತದೆ.",
+      "condition_notes": {
+        "wet": "ಹಸಿ ಕಸಕ್ಕೆ ತೇವಾಂಶ ನೈಸರ್ಗಿಕ, ನೇರವಾಗಿ ಹಸಿರು ಬುಟ್ಟಿಗೆ ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-PAPER-001",
+      "category": "paper",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ (ನೀಲಿ ಬುಟ್ಟಿ) / ಕಾಗದದ ಗುಜರಿ ವ್ಯಾಪಾರಿಗಳು",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ಪಿನ್‌ಗಳು ಮತ್ತು ಪ್ಲಾಸ್ಟಿಕ್ ಕವರ್ ತೆಗೆದು ಬಂಡಲ್ ಕಟ್ಟಿ.",
+      "safety_warnings": "ತೇವಾಂಶ ಮತ್ತು ಬೆಂಕಿಯಿಂದ ರಕ್ಷಿಸಿ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Raddi / Kabadiwala Merchants"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ರಫ್ ನೋಟ್ಸ್, ಕ್ರಾಫ್ಟ್ ಅಥವಾ ಕಸದ ಬುಟ್ಟಿಯ ಲೈನರ್ ಆಗಿ ಬಳಸಿ."
+      ],
+      "cleaning_tips": "ಕಾಗದವನ್ನು ತೊಳೆಯಬೇಡಿ. ಒಣಗಿರಬೇಕು.",
+      "environmental_impact": "1 ಟನ್ ಕಾಗದ ಮರುಬಳಕೆಯಿಂದ 17 ಮರಗಳು ಮತ್ತು 26,000 ಲೀಟರ್ ನೀರು ಉಳಿತಾಯವಾಗುತ್ತದೆ.",
+      "condition_notes": {
+        "wet": "ತೇವವಾದ ಕಾಗದ ಮರುಬಳಕೆಯಾಗುವುದಿಲ್ಲ, ಒಣಗಿಸಿ ಅಥವಾ ಕಾಂಪೋಸ್ಟ್‌ಗೆ ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-PCB-001",
+      "category": "PCB",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ / ಕಿತ್ತಳೆ ಬುಟ್ಟಿ",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ವೈಯಕ್ತಿಕ ಡೇಟಾ ಅಳಿಸಿ. ಬ್ಯಾಟರಿಯನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ. ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+      "safety_warnings": "ಉಪಕರಣಗಳನ್ನು ಒಡೆಯಬೇಡಿ ಅಥವಾ ಸುಡಬೇಡಿ. ಒಳಗಿರುವ ಸೀಸ, ಪಾದರಸ ವಿಷಕಾರಿ.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized Central Pollution Control Board (CPCB) Dismantler"
+      ],
+      "prohibited_pathways": [
+        "Informal Scrap Acid Baths",
+        "Open Burning",
+        "Landfills"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಇ-ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದ್ದರೆ ದುರಸ್ತಿ ಮಾಡಿ ಅಗತ್ಯವಿರುವವರಿಗೆ ದಾನ ಮಾಡಿ."
+      ],
+      "cleaning_tips": "ನೀರು ಬಳಸಬೇಡಿ. ಒಣ ಬಟ್ಟೆಯಿಂದ ಮಾತ್ರ ಒರೆಸಿ.",
+      "environmental_impact": "ಇ-ತ್ಯಾಜ್ಯದಿಂದ ಚಿನ್ನ, ಬೆಳ್ಳಿ, ತಾಮ್ರ ಮರುಪಡೆಯಬಹುದು ಮತ್ತು ಪರಿಸರ ಮಾಲಿನ್ಯ ತಡೆಯಬಹುದು.",
+      "condition_notes": {
+        "broken": "ಒಡೆದ ಉಪಕರಣಗಳನ್ನು ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇಟ್ಟು ಎಚ್ಚರಿಕೆಯಿಂದ ನೀಡಿ."
+      }
+    },
+    {
+      "id": "RULE-PLASTIC-001",
+      "category": "plastic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ (ನೀಲಿ ಬುಟ್ಟಿ) / ಪ್ಲಾಸ್ಟಿಕ್ ಸಂಗ್ರಹ ಕೇಂದ್ರ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ಆಹಾರದ ಅವಶೇಷಗಳನ್ನು ತೊಳೆದು ಒಣಗಿಸಿ.",
+      "safety_warnings": "ಪ್ಲಾಸ್ಟಿಕ್ ಅನ್ನು ಸುಡಬೇಡಿ. ಬಿಸಿಲಿನಲ್ಲಿ ಹೆಚ್ಚು ಕಾಲ ಬಿಡಬೇಡಿ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Plastic Collection Kiosk",
+        "Scrap Merchant"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Drains / Water Bodies",
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಪ್ಲಾಸ್ಟಿಕ್ ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2021",
+      "reuse_ideas": [
+        "ಮನೆಯ ಶೇಖರಣಾ ಡಬ್ಬಿಗಳಾಗಿ ಮರುಬಳಸಿ."
+      ],
+      "cleaning_tips": "ನೀರು ಮತ್ತು ಸಾಬೂನಿನಿಂದ ತೊಳೆದು ಒಣಗಿಸಿ.",
+      "environmental_impact": "ಮರುಬಳಕೆಯಿಂದ ಕಸದ ಡಂಪಿಂಗ್ ಯಾರ್ಡ್‌ಗಳ ಹೊರೆ ಕಡಿಮೆಯಾಗುತ್ತದೆ.",
+      "condition_notes": {
+        "empty": "ಖಾಲಿ ಮಾಡಿ ಒಣಗಿಸಿ ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-PET",
+      "category": "plastic",
+      "specific_item": "PET Beverage Bottle (RIC 1)",
+      "material_code": "PET 01",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ (ನೀಲಿ ಬುಟ್ಟಿ) / ಪ್ಲಾಸ್ಟಿಕ್ ಮರುಬಳಕೆ ಕೇಂದ್ರ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ಖಾಲಿ ಮಾಡಿ, ನೀರಿನಿಂದ ತೊಳೆದು, ಜಜ್ಜಿ ಮುಚ್ಚಳವನ್ನು ಮುಚ್ಚಿ.",
+      "safety_warnings": "ಪ್ಲಾಸ್ಟಿಕ್ ಬಾಟಲಿಗಳನ್ನು ಎಂದಿಗೂ ಸುಡಬೇಡಿ, ಇದು ವಿಷಕಾರಿ ಹೊಗೆಯನ್ನು ಹೊರಸೂಸುತ್ತದೆ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Blue Dry Waste Bin",
+        "Bottle Return Kiosk",
+        "Door-to-door Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Littering",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016 ಮತ್ತು ಪ್ಲಾಸ್ಟಿಕ್ ತ್ಯಾಜ್ಯ ನಿಯಮಗಳು 2021",
+      "reuse_ideas": [
+        "ಹನಿ ನೀರಾವರಿ, ಹೂಕುಂಡ ಅಥವಾ ಗೃಹ ಕ್ರಾಫ್ಟ್‌ಗಳಾಗಿ ಮರುಬಳಕೆ ಮಾಡಬಹುದು."
+      ],
+      "cleaning_tips": "ಒಳಭಾಗವನ್ನು ನೀರಿನಿಂದ ಚೆನ್ನಾಗಿ ತೊಳೆದು ಒಣಗಿಸಿ.",
+      "environmental_impact": "PET ಬಾಟಲಿಗಳನ್ನು ಮರುಬಳಸಿ ಬಟ್ಟೆ ನೂಲು ಮತ್ತು ಹೊಸ ಬಾಟಲಿಗಳನ್ನು ತಯಾರಿಸಬಹುದು.",
+      "condition_notes": {
+        "crushed": "ಜಜ್ಜುವುದರಿಂದ ಕಸದ ಬುಟ್ಟಿಯಲ್ಲಿ ಸ್ಥಳ ಉಳಿತಾಯವಾಗುತ್ತದೆ.",
+        "empty": "ಎಲ್ಲಾ ದ್ರವಗಳನ್ನು ಪೂರ್ಣವಾಗಿ ಖಾಲಿ ಮಾಡಿ."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-HDPE",
+      "category": "plastic",
+      "specific_item": "HDPE Rigid Bottle / Jug (RIC 2)",
+      "material_code": "HDPE 02",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ (ನೀಲಿ ಬುಟ್ಟಿ) / ಅಧಿಕೃತ ಪ್ಲಾಸ್ಟಿಕ್ ಕಲೆಕ್ಟರ್",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ಶಾಂಪೂ ಅಥವಾ ಡಿಟರ್ಜೆಂಟ್ ಅವಶೇಷವನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ನೀರಿನಿಂದ ತೊಳೆಯಿರಿ.",
+      "safety_warnings": "ರಾಸಾಯನಿಕಗಳ ಬಾಟಲಿಯಾಗಿದ್ದರೆ ಕೈಗವಸುಗಳನ್ನು ಧರಿಸಿ ಸ್ವಚ್ಛಗೊಳಿಸಿ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಪ್ಲಾಸ್ಟಿಕ್ ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2021",
+      "reuse_ideas": [
+        "ತೋಟಗಾರಿಕೆ ಕಂಟೈನರ್ ಅಥವಾ ಉಪಕರಣಗಳ ಪೆಟ್ಟಿಗೆಯಾಗಿ ಬಳಸಿ."
+      ],
+      "cleaning_tips": "ಬೆಚ್ಚಗಿನ ನೀರಿನಿಂದ ತೊಳೆದು ಒಣಗಿಸಿ.",
+      "environmental_impact": "HDPE ಅತ್ಯಂತ ಬಾಳಿಕೆ ಬರುವ ಪ್ಲಾಸ್ಟಿಕ್ ಆಗಿದ್ದು ಪೈಪ್‌ಗಳು ಮತ್ತು ಕುರ್ಚಿಗಳಾಗಿ ಮರುಬಳಕೆಯಾಗುತ್ತದೆ.",
+      "condition_notes": {
+        "empty": "ಖಾಲಿ ಮಾಡಿ ಚೆನ್ನಾಗಿ ತೊಳೆದು ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-MLP",
+      "category": "plastic",
+      "specific_item": "Multi-Layer Plastic Pouch (RIC 7)",
+      "material_code": "OTHER 07",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ / ಸಿಮೆಂಟ್ ಕಾರ್ಖಾನೆಗಳಿಗೆ ಇಂಧನವಾಗಿ (RDF)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "ಒಳಗಿರುವ ಆಹಾರವನ್ನು ಸಂಪೂರ್ಣವಾಗಿ ತೆಗೆದು ಒಣಗಿಸಿ.",
+      "safety_warnings": "ತೆರೆದ ಜಾಗದಲ್ಲಿ ಸುಡಬೇಡಿ. ಚರಂಡಿಗಳಲ್ಲಿ ಎಸೆಯಬೇಡಿ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Cement Kiln Co-Processing",
+        "Road Construction Bitumen Blend"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Organic Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಪ್ಲಾಸ್ಟಿಕ್ ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2021 (EPR)",
+      "reuse_ideas": [
+        "ಮನೆಯಲ್ಲಿ ಪರಿಸರ-ಇಟ್ಟಿಗೆ (Eco-brick) ತಯಾರಿಸಲು ಬಳಸಬಹುದು."
+      ],
+      "cleaning_tips": "ಒಳಭಾಗವನ್ನು ಒರೆಸಿ ಒಣಗಿಸಿ.",
+      "environmental_impact": "MLP ಕೊಳೆಯಲು 500+ ವರ್ಷಗಳು ಬೇಕು, ರಸ್ತೆ ನಿರ್ಮಾಣಕ್ಕೆ ಮತ್ತು ಇಂಧನಕ್ಕೆ ಬಳಸಲಾಗುತ್ತದೆ.",
+      "condition_notes": {
+        "greasy": "ಆಹಾರದ ಜಿಡ್ಡನ್ನು ಸ್ವಚ್ಛಗೊಳಿಸಿ ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-PLAYER-001",
+      "category": "Player",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ / ಕಿತ್ತಳೆ ಬುಟ್ಟಿ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ವೈಯಕ್ತಿಕ ಡೇಟಾ ಅಳಿಸಿ. ಬ್ಯಾಟರಿಯನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ. ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+      "safety_warnings": "ಉಪಕರಣಗಳನ್ನು ಒಡೆಯಬೇಡಿ ಅಥವಾ ಸುಡಬೇಡಿ. ಒಳಗಿರುವ ಸೀಸ, ಪಾದರಸ ವಿಷಕಾರಿ.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility"
+      ],
+      "prohibited_pathways": [
+        "Household General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಇ-ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದ್ದರೆ ದುರಸ್ತಿ ಮಾಡಿ ಅಗತ್ಯವಿರುವವರಿಗೆ ದಾನ ಮಾಡಿ."
+      ],
+      "cleaning_tips": "ನೀರು ಬಳಸಬೇಡಿ. ಒಣ ಬಟ್ಟೆಯಿಂದ ಮಾತ್ರ ಒರೆಸಿ.",
+      "environmental_impact": "ಇ-ತ್ಯಾಜ್ಯದಿಂದ ಚಿನ್ನ, ಬೆಳ್ಳಿ, ತಾಮ್ರ ಮರುಪಡೆಯಬಹುದು ಮತ್ತು ಪರಿಸರ ಮಾಲಿನ್ಯ ತಡೆಯಬಹುದು.",
+      "condition_notes": {
+        "broken": "ಒಡೆದ ಉಪಕರಣಗಳನ್ನು ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇಟ್ಟು ಎಚ್ಚರಿಕೆಯಿಂದ ನೀಡಿ."
+      }
+    },
+    {
+      "id": "RULE-PRINTER-001",
+      "category": "Printer",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ / ಕಿತ್ತಳೆ ಬುಟ್ಟಿ",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ವೈಯಕ್ತಿಕ ಡೇಟಾ ಅಳಿಸಿ. ಬ್ಯಾಟರಿಯನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ. ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+      "safety_warnings": "ಉಪಕರಣಗಳನ್ನು ಒಡೆಯಬೇಡಿ ಅಥವಾ ಸುಡಬೇಡಿ. ಒಳಗಿರುವ ಸೀಸ, ಪಾದರಸ ವಿಷಕಾರಿ.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Brand Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Dumping with General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಇ-ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದ್ದರೆ ದುರಸ್ತಿ ಮಾಡಿ ಅಗತ್ಯವಿರುವವರಿಗೆ ದಾನ ಮಾಡಿ."
+      ],
+      "cleaning_tips": "ನೀರು ಬಳಸಬೇಡಿ. ಒಣ ಬಟ್ಟೆಯಿಂದ ಮಾತ್ರ ಒರೆಸಿ.",
+      "environmental_impact": "ಇ-ತ್ಯಾಜ್ಯದಿಂದ ಚಿನ್ನ, ಬೆಳ್ಳಿ, ತಾಮ್ರ ಮರುಪಡೆಯಬಹುದು ಮತ್ತು ಪರಿಸರ ಮಾಲಿನ್ಯ ತಡೆಯಬಹುದು.",
+      "condition_notes": {
+        "broken": "ಒಡೆದ ಉಪಕರಣಗಳನ್ನು ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇಟ್ಟು ಎಚ್ಚರಿಕೆಯಿಂದ ನೀಡಿ."
+      }
+    },
+    {
+      "id": "RULE-TELEVISION-001",
+      "category": "Television",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ / ಕಿತ್ತಳೆ ಬುಟ್ಟಿ",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ವೈಯಕ್ತಿಕ ಡೇಟಾ ಅಳಿಸಿ. ಬ್ಯಾಟರಿಯನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ. ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+      "safety_warnings": "ಉಪಕರಣಗಳನ್ನು ಒಡೆಯಬೇಡಿ ಅಥವಾ ಸುಡಬೇಡಿ. ಒಳಗಿರುವ ಸೀಸ, ಪಾದರಸ ವಿಷಕಾರಿ.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Depot",
+        "Manufacturer Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Manual Screen Smashing",
+        "Informal Scrap Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಇ-ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದ್ದರೆ ದುರಸ್ತಿ ಮಾಡಿ ಅಗತ್ಯವಿರುವವರಿಗೆ ದಾನ ಮಾಡಿ."
+      ],
+      "cleaning_tips": "ನೀರು ಬಳಸಬೇಡಿ. ಒಣ ಬಟ್ಟೆಯಿಂದ ಮಾತ್ರ ಒರೆಸಿ.",
+      "environmental_impact": "ಇ-ತ್ಯಾಜ್ಯದಿಂದ ಚಿನ್ನ, ಬೆಳ್ಳಿ, ತಾಮ್ರ ಮರುಪಡೆಯಬಹುದು ಮತ್ತು ಪರಿಸರ ಮಾಲಿನ್ಯ ತಡೆಯಬಹುದು.",
+      "condition_notes": {
+        "broken": "ಒಡೆದ ಉಪಕರಣಗಳನ್ನು ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇಟ್ಟು ಎಚ್ಚರಿಕೆಯಿಂದ ನೀಡಿ."
+      }
+    },
+    {
+      "id": "RULE-TRASH-001",
+      "category": "trash",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಮರುಬಳಕೆಯಾಗದ ತ್ಯಾಜ್ಯ (ಕಪ್ಪು ಬುಟ್ಟಿ) / ಲ್ಯಾಂಡ್‌ಫಿಲ್",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "ಯಾವುದೇ ಮರುಬಳಕೆ ಅಥವಾ ಹಸಿ ಕಸ ಇಲ್ಲ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.",
+      "safety_warnings": "ಬೆಂಕಿ ಹಚ್ಚಬೇಡಿ. ಚರಂಡಿಗಳಲ್ಲಿ ಎಸೆಯಬೇಡಿ.",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "Municipal Inert Waste Collection (Black Bin)"
+      ],
+      "prohibited_pathways": [
+        "Recycling Bins",
+        "Compost"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "reuse_ideas": [
+        "ಮರುಬಳಕೆ ಸಾಧ್ಯವಿಲ್ಲದ ಅಂತಿಮ ನಿಷ್ಕ್ರಿಯ ಕಸ."
+      ],
+      "cleaning_tips": "ಸ್ವಚ್ಛಗೊಳಿಸುವ ಅಗತ್ಯವಿಲ್ಲ.",
+      "environmental_impact": "ವೈಜ್ಞಾನಿಕ ಲ್ಯಾಂಡ್‌ಫಿಲ್‌ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ.",
+      "condition_notes": {
+        "empty": "ಕಪ್ಪು ಬುಟ್ಟಿಗೆ ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-WASHING_MACHINE-001",
+      "category": "Washing Machine",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ / ಕಿತ್ತಳೆ ಬುಟ್ಟಿ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ವೈಯಕ್ತಿಕ ಡೇಟಾ ಅಳಿಸಿ. ಬ್ಯಾಟರಿಯನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ. ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+      "safety_warnings": "ಉಪಕರಣಗಳನ್ನು ಒಡೆಯಬೇಡಿ ಅಥವಾ ಸುಡಬೇಡಿ. ಒಳಗಿರುವ ಸೀಸ, ಪಾದರಸ ವಿಷಕಾರಿ.",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized White-Goods Recycler",
+        "Brand Exchange Schemes"
+      ],
+      "prohibited_pathways": [
+        "Curbside Abandonment"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ಭಾರತ ಇ-ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2022",
+      "reuse_ideas": [
+        "ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದ್ದರೆ ದುರಸ್ತಿ ಮಾಡಿ ಅಗತ್ಯವಿರುವವರಿಗೆ ದಾನ ಮಾಡಿ."
+      ],
+      "cleaning_tips": "ನೀರು ಬಳಸಬೇಡಿ. ಒಣ ಬಟ್ಟೆಯಿಂದ ಮಾತ್ರ ಒರೆಸಿ.",
+      "environmental_impact": "ಇ-ತ್ಯಾಜ್ಯದಿಂದ ಚಿನ್ನ, ಬೆಳ್ಳಿ, ತಾಮ್ರ ಮರುಪಡೆಯಬಹುದು ಮತ್ತು ಪರಿಸರ ಮಾಲಿನ್ಯ ತಡೆಯಬಹುದು.",
+      "condition_notes": {
+        "broken": "ಒಡೆದ ಉಪಕರಣಗಳನ್ನು ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇಟ್ಟು ಎಚ್ಚರಿಕೆಯಿಂದ ನೀಡಿ."
+      }
+    },
+    {
+      "id": "RULE-STREAM-BIODEGRADABLE",
+      "category": "biodegradable",
+      "disposal_method": "ಹಸಿ ಸಾವಯವ ತ್ಯಾಜ್ಯ ಬುಟ್ಟಿ (ಹಸಿರು) / ಹೋಮ್ ಕಾಂಪೋಸ್ಟಿಂಗ್",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ಪ್ಲಾಸ್ಟಿಕ್ ಕವರ್‌ಗಳು, ರಬ್ಬರ್ ಬ್ಯಾಂಡ್‌ಗಳನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ ಕೇವಲ ತರಕಾರಿ/ಆಹಾರ ಹಾಕಿ.",
+      "safety_warnings": "ಪ್ಲಾಸ್ಟಿಕ್ ಅಥವಾ ಅಪಾಯಕಾರಿ ವಸ್ತುಗಳನ್ನು ಹಸಿರು ಬುಟ್ಟಿಗೆ ಹಾಕಬೇಡಿ.",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "cleaning_tips": "ತೊಳೆಯುವ ಅಗತ್ಯವಿಲ್ಲ. ನೇರವಾಗಿ ಹಸಿರು ಬುಟ್ಟಿಗೆ ಹಾಕಿ.",
+      "reuse_ideas": [
+        "ಮನೆಯಲ್ಲೇ ಜೈವಿಕ ಗೊಬ್ಬರ (ಕಾಂಪೋಸ್ಟ್) ಅಥವಾ ಬಯೋ-ಕಿಚನ್ ಗಾರ್ಡನ್ ಫರ್ಟಿಲೈಜರ್ ತಯಾರಿಸಿ."
+      ],
+      "environmental_impact": "ಕಾಂಪೋಸ್ಟಿಂಗ್ ಮೂಲಕ ಭೂಮಿಯ ಫಲವತ್ತತೆ ಹೆಚ್ಚುತ್ತದೆ ಮತ್ತು ಮಿಥೇನ್ ಅನಿಲ ಉತ್ಪತ್ತಿ ತಪ್ಪುತ್ತದೆ.",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "condition_notes": {
+        "wet": "ಹಸಿ ಕಸಕ್ಕೆ ತೇವಾಂಶ ನೈಸರ್ಗಿಕ, ನೇರವಾಗಿ ಹಸಿರು ಬುಟ್ಟಿಗೆ ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-STREAM-RECYCLABLES",
+      "category": "Recyclables",
+      "disposal_method": "ಒಣ ಮರುಬಳಕೆ ತ್ಯಾಜ್ಯ ಬುಟ್ಟಿ (ನೀಲಿ ಬುಟ್ಟಿ)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ತೊಳೆದು, ಒಣಗಿಸಿ, ಪ್ರತ್ಯೇಕಿಸಿ ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಿ.",
+      "safety_warnings": "ಹಸಿ ಕಸದೊಂದಿಗೆ ಬೆರೆಸಬೇಡಿ.",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue Bin)",
+        "Kabadiwala / Scrap Dealer",
+        "Material Recovery Facility"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Open Burning",
+        "Open Littering"
+      ],
+      "cleaning_tips": "ನೀರಿನಿಂದ ಒಮ್ಮೆ ತೊಳೆದು ಒಣಗಿಸಿ.",
+      "reuse_ideas": [
+        "ವಿವಿಧ ಸೃಜನಶೀಲ ಗೃಹೋಪಯೋಗಿ ವಸ್ತುಗಳಾಗಿ ಮರುಬಳಕೆ ಮಾಡಿ."
+      ],
+      "environmental_impact": "ಕಾರ್ಬನ್ ಹೆಜ್ಜೆಗುರುತನ್ನು ಕಡಿಮೆ ಮಾಡುತ್ತದೆ ಮತ್ತು ನೈಸರ್ಗಿಕ ಸಂಪನ್ಮೂಲಗಳನ್ನು ಸಂರಕ್ಷಿಸುತ್ತದೆ.",
+      "source": "ಭಾರತ ಘನತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2016",
+      "condition_notes": {
+        "empty": "ಖಾಲಿ ಮಾಡಿ ಒಣಗಿಸಿ ನೀಲಿ ಬುಟ್ಟಿಗೆ ಹಾಕಿ."
+      }
+    },
+    {
+      "id": "RULE-STREAM-EWASTE",
+      "category": "E-waste",
+      "disposal_method": "ಅಧಿಕೃತ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ / ಕಿತ್ತಳೆ ಬುಟ್ಟಿ",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ವೈಯಕ್ತಿಕ ಡೇಟಾ ಅಳಿಸಿ. ಬ್ಯಾಟರಿಯನ್ನು ಪ್ರತ್ಯೇಕಿಸಿ. ಸುರಕ್ಷಿತವಾಗಿ ಪ್ಯಾಕ್ ಮಾಡಿ.",
+      "safety_warnings": "ಉಪಕರಣಗಳನ್ನು ಒಡೆಯಬೇಡಿ ಅಥವಾ ಸುಡಬೇಡಿ. ಒಳಗಿರುವ ಸೀಸ, ಪಾದರಸ ವಿಷಕಾರಿ.",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Producer Take-Back / EPR Collection Point"
+      ],
+      "prohibited_pathways": [
+        "Household Dustbin",
+        "Open Burning",
+        "Informal Scrap Breaking"
+      ],
+      "cleaning_tips": "ನೀರು ಬಳಸಬೇಡಿ. ಒಣ ಬಟ್ಟೆಯಿಂದ ಮಾತ್ರ ಒರೆಸಿ.",
+      "reuse_ideas": [
+        "ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದ್ದರೆ ದುರಸ್ತಿ ಮಾಡಿ ಅಗತ್ಯವಿರುವವರಿಗೆ ದಾನ ಮಾಡಿ."
+      ],
+      "environmental_impact": "ಇ-ತ್ಯಾಜ್ಯದಿಂದ ಚಿನ್ನ, ಬೆಳ್ಳಿ, ತಾಮ್ರ ಮರುಪಡೆಯಬಹುದು ಮತ್ತು ಪರಿಸರ ಮಾಲಿನ್ಯ ತಡೆಯಬಹುದು.",
+      "source": "ಭಾರತ ಇ-ತ್ಯಾಜ್ಯ ನಿರ್ವಹಣಾ ನಿಯಮಗಳು 2022",
+      "condition_notes": {
+        "broken": "ಒಡೆದ ಉಪಕರಣಗಳನ್ನು ರಟ್ಟಿನ ಪೆಟ್ಟಿಗೆಯಲ್ಲಿ ಇಟ್ಟು ಎಚ್ಚರಿಕೆಯಿಂದ ನೀಡಿ."
+      }
+    },
+    {
+      "id": "RULE-STREAM-HAZARDOUS",
+      "category": "hazardous",
+      "disposal_method": "ಅಪಾಯಕಾರಿ ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ (ಕೆಂಪು ಬುಟ್ಟಿ) / ಮುನ್ಸಿಪಲ್ ಅಪಾಯಕಾರಿ ಕೇಂದ್ರ",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "ಸೋರಿಕೆಯಾಗದಂತೆ ಮೂಲ ಕಂಟೈನರ್‌ನಲ್ಲಿ ಸುರಕ್ಷಿತವಾಗಿ ಮುಚ್ಚಳ ಮುಚ್ಚಿ.",
+      "safety_warnings": "ವಿಷಕಾರಿ ಮತ್ತು ದಹನಕಾರಿ. ಮಕ್ಕಳು ಮತ್ತು ಸಾಕುಪ್ರಾಣಿಗಳಿಂದ ದೂರವಿಡಿ.",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Special Care / Hazardous Waste Collection",
+        "Authorized Hazardous Waste Facility",
+        "Pharmacy / Hospital Take-Back (medicines)"
+      ],
+      "prohibited_pathways": [
+        "Regular Household Bins",
+        "Drains and Toilets",
+        "Open Burning"
+      ],
+      "cleaning_tips": "ತೊಳೆಯಲು ಪ್ರಯತ್ನಿಸಬೇಡಿ. ಸೋರಿಕೆಯಾಗದಂತೆ ನೋಡಿಕೊಳ್ಳಿ.",
+      "reuse_ideas": [
+        "ಅಪಾಯಕಾರಿ ತ್ಯಾಜ್ಯವನ್ನು ಮರುಬಳಕೆ ಮಾಡುವುದು ಸುರಕ್ಷಿತವಲ್ಲ."
+      ],
+      "environmental_impact": "ಮಣ್ಣು ಮತ್ತು ನೀರನ್ನು ತೀವ್ರವಾಗಿ ಕಲುಷಿತಗೊಳಿಸುವುದನ್ನು ತಪ್ಪಿಸುತ್ತದೆ.",
+      "source": "ಭಾರತ ಅಪಾಯಕಾರಿ ಮತ್ತು ಇತರ ತ್ಯಾಜ್ಯಗಳ ನಿಯಮಗಳು 2016",
+      "condition_notes": {
+        "broken": "ರಾಸಾಯನಿಕ ನಿರೋಧಕ ಪ್ಲಾಸ್ಟಿಕ್ ಚೀಲದಲ್ಲಿ ಹಾಕಿ ಕೆಂಪು ಬುಟ್ಟಿಗೆ ನೀಡಿ."
+      }
+    }
+  ]
+}

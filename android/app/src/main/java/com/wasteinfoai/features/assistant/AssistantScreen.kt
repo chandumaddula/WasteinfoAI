@@ -39,6 +39,7 @@ import androidx.core.content.ContextCompat
 import com.wasteinfoai.R
 import androidx.compose.ui.res.stringResource
 import com.wasteinfoai.ai.llm.ModelDownloadState
+import com.wasteinfoai.core.language.LanguageManager
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +55,7 @@ fun AssistantScreen(
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    var showAiConfigDialog by remember { mutableStateOf(false) }
 
     // Audio recording permission launcher
     val audioPermissionLauncher = rememberLauncherForActivityResult(
@@ -102,7 +104,9 @@ fun AssistantScreen(
                         Column {
                             Text(stringResource(R.string.assistant_title), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
                             Text(
-                                if (uiState.isModelDownloaded) "On-Device Llama 3.2 AI" else stringResource(R.string.assistant_subtitle),
+                                if (uiState.isGeminiConfigured) "⚡ Gemini 1.5 Flash (Humanized AI)"
+                                else if (uiState.isModelDownloaded) "On-Device Llama 3.2 AI"
+                                else stringResource(R.string.assistant_subtitle),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -115,6 +119,13 @@ fun AssistantScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showAiConfigDialog = true }) {
+                        Icon(
+                            Icons.Default.AutoAwesome,
+                            contentDescription = "AI Mode Settings",
+                            tint = if (uiState.isGeminiConfigured) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                     var showLanguageMenu by remember { mutableStateOf(false) }
                     Box {
                         IconButton(onClick = { showLanguageMenu = true }) {
@@ -124,41 +135,15 @@ fun AssistantScreen(
                             expanded = showLanguageMenu,
                             onDismissRequest = { showLanguageMenu = false }
                         ) {
-                            DropdownMenuItem(
-                                text = { Text("English") },
-                                onClick = {
-                                    viewModel.setLanguage("en")
-                                    showLanguageMenu = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("हिन्दी (Hindi)") },
-                                onClick = {
-                                    viewModel.setLanguage("hi")
-                                    showLanguageMenu = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("తెలుగు (Telugu)") },
-                                onClick = {
-                                    viewModel.setLanguage("te")
-                                    showLanguageMenu = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("தமிழ் (Tamil)") },
-                                onClick = {
-                                    viewModel.setLanguage("ta")
-                                    showLanguageMenu = false
-                                }
-                            )
-                            DropdownMenuItem(
-                                text = { Text("मराठी (Marathi)") },
-                                onClick = {
-                                    viewModel.setLanguage("mr")
-                                    showLanguageMenu = false
-                                }
-                            )
+                            LanguageManager.SUPPORTED_LANGUAGES.forEach { lang ->
+                                DropdownMenuItem(
+                                    text = { Text(lang.displayName) },
+                                    onClick = {
+                                        viewModel.setLanguage(lang.code)
+                                        showLanguageMenu = false
+                                    }
+                                )
+                            }
                         }
                     }
                     IconButton(onClick = { viewModel.clearChat() }) {
@@ -437,6 +422,77 @@ fun AssistantScreen(
             }
         }
     }
+
+    if (showAiConfigDialog) {
+        var apiKeyInput by remember { mutableStateOf(viewModel.getGeminiApiKey()) }
+        AlertDialog(
+            onDismissRequest = { showAiConfigDialog = false },
+            icon = { Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+            title = { Text("Bottle AI Reasoning Engine") },
+            text = {
+                Column {
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = if (uiState.isGeminiConfigured) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(10.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = if (uiState.isGeminiConfigured) "⚡ Status: Gemini 1.5 Flash Active" else "📦 Status: Offline Rule-Grounded Mode",
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Text(
+                        text = "To enable humanized, conversational AI answers for any question, enter your Google Gemini API key below. When blank or offline, Bottle AI uses verified statutory rules.",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+
+                    OutlinedTextField(
+                        value = apiKeyInput,
+                        onValueChange = { apiKeyInput = it },
+                        label = { Text("Gemini API Key") },
+                        placeholder = { Text("AIzaSy...") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.saveGeminiApiKey(apiKeyInput)
+                        showAiConfigDialog = false
+                    }
+                ) {
+                    Text("Save Key")
+                }
+            },
+            dismissButton = {
+                if (uiState.isGeminiConfigured) {
+                    TextButton(
+                        onClick = {
+                            viewModel.clearGeminiApiKey()
+                            apiKeyInput = ""
+                            showAiConfigDialog = false
+                        }
+                    ) {
+                        Text("Clear Key", color = MaterialTheme.colorScheme.error)
+                    }
+                } else {
+                    TextButton(onClick = { showAiConfigDialog = false }) {
+                        Text("Close")
+                    }
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -597,7 +653,7 @@ fun BottleChatBubble(
                         color = MaterialTheme.colorScheme.primaryContainer
                     ) {
                         Text(
-                            text = "Llama 3.2",
+                            text = message.modelBadge ?: "Gemini AI",
                             style = MaterialTheme.typography.labelSmall,
                             modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
                         )

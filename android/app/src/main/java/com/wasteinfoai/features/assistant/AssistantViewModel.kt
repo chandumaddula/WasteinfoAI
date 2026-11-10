@@ -27,7 +27,8 @@ data class ChatMessage(
     val isUser: Boolean,
     val timestamp: Long = System.currentTimeMillis(),
     val isHazardous: Boolean = false,
-    val isLlm: Boolean = false
+    val isLlm: Boolean = false,
+    val modelBadge: String? = null
 )
 
 data class AssistantUiState(
@@ -40,7 +41,8 @@ data class AssistantUiState(
     val isListening: Boolean = false,
     val speechError: String? = null,
     val isModelDownloaded: Boolean = false,
-    val modelDownloadState: ModelDownloadState = ModelDownloadState.Idle
+    val modelDownloadState: ModelDownloadState = ModelDownloadState.Idle,
+    val isGeminiConfigured: Boolean = false
 )
 
 class AssistantViewModel(
@@ -49,19 +51,21 @@ class AssistantViewModel(
     private val scanRepository: ScanRepository? = null,
     private val llmModelManager: LlmModelManager? = null,
     private val speechInputHelper: SpeechInputHelper? = null,
-    private val languageManager: com.wasteinfoai.core.language.LanguageManager? = null
+    private val languageManager: com.wasteinfoai.core.language.LanguageManager? = null,
+    private val cloudClient: com.wasteinfoai.ai.llm.CloudAssistantClient? = null
 ) : ViewModel() {
 
     private val activeLanguageCode: String
         get() = languageManager?.currentLanguage?.value ?: "en"
 
-    private val _uiState = MutableStateFlow(AssistantUiState())
+    private val _uiState = MutableStateFlow(AssistantUiState(isGeminiConfigured = cloudClient?.isGeminiConfigured() == true))
     val uiState: StateFlow<AssistantUiState> = _uiState.asStateFlow()
 
     private val dialogueBuffer = DialogueBuffer(maxMessages = 6)
     private var currentGenerationJob: Job? = null
 
     init {
+        _uiState.update { it.copy(isGeminiConfigured = cloudClient?.isGeminiConfigured() == true) }
         // Observe model download status if manager is available
         llmModelManager?.let { mgr ->
             viewModelScope.launch {
@@ -129,6 +133,10 @@ class AssistantViewModel(
                     "te" -> "నమస్కారం! నేను బాటిల్ AI, మీ ఆఫ్‌లైన్ వ్యర్థాల సహాయకుడిని. $itemName సురక్షిత నిర్వహణ లేదా పునర్వినియోగంలో నేను మీకు ఎలా సహాయపడగలను?"
                     "ta" -> "வணக்கம்! நான் பாட்டில் AI, உங்கள் ஆஃப்லைன் கழிவு உதவியாளர். $itemName ஐ பாதுகாப்பாக நிர்வகிக்க நான் எவ்வாறு உதவ முடியும்?"
                     "mr" -> "नमस्कार! मी बॉटल AI आहे, तुमचा ऑफलाइन कचरा सहाय्यक. मी $itemName चे सुरक्षित व्यवस्थापन किंवा पुनर्वापर करण्यात आपल्याला कशी मदत करू शकतो?"
+                    "kn" -> "ನಮಸ್ಕಾರ! ನಾನು ಬಾಟಲ್ AI, ನಿಮ್ಮ ಆಫ್‌ಲೈನ್ ತ್ಯಾಜ್ಯ ಮತ್ತು ಮರುಬಳಕೆ ಸಹಾಯಕ. $itemName ಅನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ನಿರ್ವಹಿಸಲು ಅಥವಾ ಮರುಬಳಕೆ ಮಾಡಲು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"
+                    "ml" -> "നമസ്കാരം! ഞാൻ ബോട്ടിൽ AI, നിങ്ങളുടെ ഓഫ്‌ലൈൻ മാലിന്യ സംസ്കരണ & പുനരുപയോഗ സഹായി. $itemName സുരക്ഷിതമായി കൈകാര്യം ചെയ്യാനോ പുനരുപയോഗിക്കാനോ ഞാൻ എങ്ങനെ സഹായിക്കണം?"
+                    "bn" -> "নমস্কার! আমি বটল এআই, আপনার অফলাইন বর্জ্য ও পুনর্ব্যবহার সহকারী। $itemName নিরাপদে পরিচালনা বা পুনর্ব্যবহার করতে আমি কীভাবে সাহায্য করতে পারি?"
+                    "gu" -> "નમસ્તે! હું બૉટલ AI છું, તમારો ઑફલાઇન કચરો અને રિસાયક્લિંગ સહાયક. $itemName નો સુરક્ષિત નિકાલ કે પુનઃઉપયોગ કરવામાં હું તમારી શી મદદ કરી શકું?"
                     else -> "Hi! I'm Bottle AI, your offline waste & recycling assistant. How can I help you safely manage or upcycle $itemName?"
                 }
                 val botGreeting = ChatMessage(text = greeting, isUser = false)
@@ -182,7 +190,8 @@ class AssistantViewModel(
                 text = response.text,
                 isUser = false,
                 isHazardous = response.isHazardous,
-                isLlm = response.isLlmGenerated
+                isLlm = response.isLlmGenerated,
+                modelBadge = response.modelBadge
             )
             dialogueBuffer.addMessage(finalBotMsg)
 
@@ -194,10 +203,23 @@ class AssistantViewModel(
                 state.copy(
                     messages = updated,
                     isGenerating = false,
-                    suggestedChips = newChips
+                    suggestedChips = newChips,
+                    isGeminiConfigured = cloudClient?.isGeminiConfigured() == true
                 )
             }
         }
+    }
+
+    fun getGeminiApiKey(): String = cloudClient?.getApiKey() ?: ""
+
+    fun saveGeminiApiKey(key: String) {
+        cloudClient?.saveApiKey(key)
+        _uiState.update { it.copy(isGeminiConfigured = cloudClient?.isGeminiConfigured() == true) }
+    }
+
+    fun clearGeminiApiKey() {
+        cloudClient?.clearApiKey()
+        _uiState.update { it.copy(isGeminiConfigured = false) }
     }
 
     fun stopGeneration() {
@@ -218,6 +240,10 @@ class AssistantViewModel(
             "te" -> "నమస్కారం! నేను బాటిల్ AI. $itemName పారవేయడం, శుభ్రపరచడం లేదా పునర్వినియోగంలో నేను ఎలా సహాయపడగలను?"
             "ta" -> "வணக்கம்! நான் பாட்டில் AI. $itemName ஐ அகற்ற அல்லது மறுசுழற்சி செய்ய நான் எவ்வாறு உதவ முடியும்?"
             "mr" -> "नमस्कार! मी बॉटल AI आहे. $itemName ची विल्हेवाट, स्वच्छता किंवा पुनर्वापरात मी कशी मदत करू?"
+            "kn" -> "ನಮಸ್ಕಾರ! ನಾನು ಬಾಟಲ್ AI. $itemName ನ ವಿಲೇವಾರಿ, ಸ್ವಚ್ಛತೆ ಅಥವಾ ಮರುಬಳಕೆಯಲ್ಲಿ ನಾನು ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"
+            "ml" -> "നമസ്കാരം! ഞാൻ ബോട്ടിൽ AI. $itemName സംസ്കരണം, വൃത്തിയാക്കൽ അല്ലെങ്കിൽ പുനരുപയോഗത്തിൽ ഞാൻ എങ്ങനെ സഹായിക്കണം?"
+            "bn" -> "নমস্কার! আমি বটল এআই। $itemName এর নিষ্পত্তি, পরিষ্কার বা পুনর্ব্যবহারে কীভাবে সাহায্য করতে পারি?"
+            "gu" -> "નમસ્તે! હું બૉટલ AI છું. $itemName ના નિકાલ, સફાઈ કે પુનઃઉપયોગમાં હું શી મદદ કરું?"
             else -> "Hi! I'm Bottle AI. How can I help you dispose, clean, or upcycle $itemName?"
         }
         val botGreeting = ChatMessage(text = greeting, isUser = false)
@@ -343,6 +369,30 @@ class AssistantViewModel(
                         "📍 जवळचे डेपो कुठे आहे?",
                         "सुरक्षित वाहतूक कशी करावी?"
                     )
+                    "kn" -> listOf(
+                        "⚠️ ಇದನ್ನು ಮುಟ್ಟುವುದು ಅಪಾಯಕಾರಿಯೇ?",
+                        "🔥 ಬೆಂಕಿ ಹೊತ್ತಿಕೊಂಡರೆ ಅಥವಾ ಸೋರಿದರೆ ಏನು ಮಾಡಬೇಕು?",
+                        "📍 ಹತ್ತಿರದ ಅಪಾಯಕಾರಿ ತ್ಯಾಜ್ಯ ಡಿಪೋ ಎಲ್ಲಿದೆ?",
+                        "ಇದನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಸಾಗಿಸುವುದು ಹೇಗೆ?"
+                    )
+                    "ml" -> listOf(
+                        "⚠️ ഇത് തൊടുന്നത് വിഷകരമാണോ?",
+                        "🔥 തീപിടിക്കുകയോ ചോരുകയോ ചെയ്താൽ എന്ത് ചെയ്യണം?",
+                        "📍 അടുത്തുള്ള അപകടകരമായ മാലിന്യ ഡിപ്പോ എവിടെയാണ്?",
+                        "ഇത് എങ്ങനെ സുരക്ഷിതമായി കൊണ്ടുപോകാം?"
+                    )
+                    "bn" -> listOf(
+                        "⚠️ এটি স্পর্শ করা কি বিপজ্জনক?",
+                        "🔥 এটি লিক হলে বা আগুন লাগলে কি করবেন?",
+                        "📍 নিকটতম বিপজ্জনক বর্জ্য ডিপো কোথায়?",
+                        "এটি নিরাপদে কীভাবে পরিবহন করবেন?"
+                    )
+                    "gu" -> listOf(
+                        "⚠️ શું આને સ્પર્શ કરવો જોખમી છે?",
+                        "🔥 જો તે લીક થાય કે આગ લાગે તો શું?",
+                        "📍 નજીકનો જોખમી કચરો ડેપો ક્યાં છે?",
+                        "આને સુરક્ષિત રીતે કેવી રીતે લઈ જવું?"
+                    )
                     else -> listOf(
                         "⚠️ Is $itemName toxic to touch?",
                         "🔥 What if it leaks or catches fire?",
@@ -377,6 +427,30 @@ class AssistantViewModel(
                         "जवळचे ई-कचरा संकलन केंद्र कुठे आहे?",
                         "हे तुटलेले किंवा नादुरुस्त असल्यास?"
                     )
+                    "kn" -> listOf(
+                        "ಇದರ ಬ್ಯಾಟರಿಯನ್ನು ಏನು ಮಾಡಬೇಕು?",
+                        "ಇದನ್ನು ದುರಸ್ತಿ ಮಾಡಬಹುದೇ ಅಥವಾ ಮರುಬಳಕೆ ಮಾಡಬಹುದೇ?",
+                        "ಹತ್ತಿರದ ಇ-ತ್ಯಾಜ್ಯ ಸಂಗ್ರಹ ಕೇಂದ್ರ ಎಲ್ಲಿದೆ?",
+                        "ಇದು ಒಡೆದಿದ್ದರೆ ಅಥವಾ ಹಾಳಾಗಿದ್ದರೆ ಏನು ಮಾಡಬೇಕು?"
+                    )
+                    "ml" -> listOf(
+                        "ഇതിന്റെ ബാറ്ററി എന്തു ചെയ്യണം?",
+                        "ഇത് അറ്റകുറ്റപ്പണി നടത്തി ഉപയോഗിക്കാമോ?",
+                        "ഏറ്റവും അടുത്തുള്ള ഇ-മാലിന്യ കേന്ദ്രം എവിടെയാണ്?",
+                        "ഇത് കേടുവന്നതാണെങ്കിൽ എന്തുചെയ്യണം?"
+                    )
+                    "bn" -> listOf(
+                        "এর ব্যাটারির কি করতে হবে?",
+                        "এটি কি মেরামত বা পুনরায় ব্যবহার করা যাবে?",
+                        "নিকটতম ই-বর্জ্য সংগ্রহ কেন্দ্র কোথায়?",
+                        "এটি ভাঙা বা ক্ষতিগ্রস্ত হলে কি করবেন?"
+                    )
+                    "gu" -> listOf(
+                        "આની બેટરીનું શું કરવું?",
+                        "શું આને રિપેર કે પુનઃઉપયોગ કરી શકાય?",
+                        "નજીકનું ઇ-કચરો સંગ્રહ કેન્દ્ર ક્યાં છે?",
+                        "જો આ તૂટેલું કે ક્ષતિગ્રસ્ત હોય તો?"
+                    )
                     else -> listOf(
                         "What about its battery?",
                         "Can it be repaired or refurbished?",
@@ -410,6 +484,30 @@ class AssistantViewModel(
                         "हे कुजण्यासाठी किती वेळ लागतो?",
                         "हे कोणत्या रंगाच्या कुंडीत टाकावे?",
                         "यामुळे कीटक किंवा दुर्गंधी येऊ शकते का?"
+                    )
+                    "kn" -> listOf(
+                        "ಇದನ್ನು ಮನೆಯಲ್ಲೇ ಕಾಂಪೋಸ್ಟ್ ಮಾಡಬಹುದೇ?",
+                        "ಇದು ಕೊಳೆಯಲು ಎಷ್ಟು ಸಮಯ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ?",
+                        "ಇದು ಯಾವ ಬಣ್ಣದ ಬುಟ್ಟಿಗೆ ಸೇರುತ್ತದೆ?",
+                        "ಇದರಿಂದ ಕೀಟಗಳು ಅಥವಾ ವಾಸನೆ ಬರುತ್ತದೆಯೇ?"
+                    )
+                    "ml" -> listOf(
+                        "ഇത് വീട്ടിൽ തന്നെ കമ്പോസ്റ്റ് ചെയ്യാമോ?",
+                        "ഇത് മണ്ണിൽ ചേരാൻ എത്ര സമയം വേണം?",
+                        "ഇത് ഏത് നിറത്തിലുള്ള തൊട്ടിയിലാണ് ഇടേണ്ടത്?",
+                        "ഇത് കീടങ്ങളെയോ ദുർഗന്ധത്തെയോ ആകർഷിക്കുമോ?"
+                    )
+                    "bn" -> listOf(
+                        "আমি কি এটি বাড়িতে কম্পোস্ট করতে পারি?",
+                        "এটি পচতে কত সময় লাগে?",
+                        "এটি কোন রঙের পাত্রে যাবে?",
+                        "এটি থেকে কি গন্ধ বা পোকা হতে পারে?"
+                    )
+                    "gu" -> listOf(
+                        "શું હું આને ઘરે ખાતર બનાવી શકું?",
+                        "આને ઓગળવામાં કેટલો સમય લાગે છે?",
+                        "આ કયા રંગના ડબ્બામાં જાય છે?",
+                        "શું આનાથી જીવજંતુ કે દુર્ગંધ આવી શકે?"
                     )
                     else -> listOf(
                         "Can I compost this at home?",
@@ -448,6 +546,34 @@ class AssistantViewModel(
                         "हे कोणत्या रंगाच्या कचराकुंडीत जाते?",
                         "जर ते तुटलेले असेल तर?",
                         "याचा पर्यावरणीय प्रभाव काय आहे?"
+                    )
+                    "kn" -> listOf(
+                        "ನಾನು ಇದನ್ನು ಮರುಬಳಕೆ ಮಾಡಬಹುದೇ?",
+                        "ವಿಲೇವಾರಿ ಮಾಡುವ ಮುನ್ನ ಇದನ್ನು ಹೇಗೆ ಸ್ವಚ್ಛಗೊಳಿಸಬೇಕು?",
+                        "ಇದು ಯಾವ ಬಣ್ಣದ ಬುಟ್ಟಿಗೆ ಸೇರುತ್ತದೆ?",
+                        "ಇದು ಒಡೆದಿದ್ದರೆ ಏನು ಮಾಡಬೇಕು?",
+                        "ಪರಿಸರದ ಮೇಲೆ ಇದರ ಪರಿಣಾಮವೇನು?"
+                    )
+                    "ml" -> listOf(
+                        "എനിക്ക് ഇത് പുനരുപയോഗിക്കാൻ കഴിയുമോ?",
+                        "സംസ്കരിക്കുന്നതിന് മുമ്പ് ഇത് എങ്ങനെ വൃത്തിയാക്കണം?",
+                        "ഇത് ഏത് നിറത്തിലുള്ള തൊട്ടിയിലാണ് ഇടേണ്ടത്?",
+                        "ഇത് പൊട്ടിയതാണെങ്കിൽ എന്തു ചെയ്യണം?",
+                        "പരിസ്ഥിതിയിൽ ഇതിന്റെ പ്രത്യാഘാതം എന്താണ്?"
+                    )
+                    "bn" -> listOf(
+                        "আমি কি এটি পুনর্ব্যবহার করতে পারি?",
+                        "নিষ্পত্তির আগে এটি কীভাবে পরিষ্কার করব?",
+                        "এটি কোন রঙের পাত্রে যাবে?",
+                        "যদি এটি ভাঙা থাকে তবে কি করণীয়?",
+                        "পরিবেশে এর প্রভাব কী?"
+                    )
+                    "gu" -> listOf(
+                        "શું હું આનો પુનઃઉપયોગ કરી શકું?",
+                        "નિકાલ પહેલાં આને કેવી રીતે સાફ કરવું?",
+                        "આ કયા રંગના ડબ્બામાં જાય છે?",
+                        "જો આ તૂટેલું હોય તો શું?",
+                        "પર્યાવરણ પર આની શી અસર થાય છે?"
                     )
                     else -> listOf(
                         "Can I reuse or upcycle $itemName?",

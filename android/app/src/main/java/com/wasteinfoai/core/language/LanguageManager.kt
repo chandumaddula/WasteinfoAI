@@ -29,6 +29,10 @@ data class SupportedLanguage(
  * 3. Telugu (te) — తెలుగు
  * 4. Tamil (ta) — தமிழ்
  * 5. Marathi (mr) — मराठी
+ * 6. Kannada (kn) — ಕನ್ನಡ
+ * 7. Malayalam (ml) — മലയാളം
+ * 8. Bengali (bn) — বাংলা
+ * 9. Gujarati (gu) — ગુજરાતી
  */
 class LanguageManager(
     private val context: Context,
@@ -78,6 +82,38 @@ class LanguageManager(
                 displayName = "मराठी (Marathi)",
                 speechLocaleTag = "mr-IN",
                 ttsLocale = Locale("mr", "IN")
+            ),
+            SupportedLanguage(
+                code = "kn",
+                englishName = "Kannada",
+                nativeName = "ಕನ್ನಡ",
+                displayName = "ಕನ್ನಡ (Kannada)",
+                speechLocaleTag = "kn-IN",
+                ttsLocale = Locale("kn", "IN")
+            ),
+            SupportedLanguage(
+                code = "ml",
+                englishName = "Malayalam",
+                nativeName = "മലയാളം",
+                displayName = "മലയാളം (Malayalam)",
+                speechLocaleTag = "ml-IN",
+                ttsLocale = Locale("ml", "IN")
+            ),
+            SupportedLanguage(
+                code = "bn",
+                englishName = "Bengali",
+                nativeName = "বাংলা",
+                displayName = "বাংলা (Bengali)",
+                speechLocaleTag = "bn-IN",
+                ttsLocale = Locale("bn", "IN")
+            ),
+            SupportedLanguage(
+                code = "gu",
+                englishName = "Gujarati",
+                nativeName = "ગુજરાતી",
+                displayName = "ગુજરાતી (Gujarati)",
+                speechLocaleTag = "gu-IN",
+                ttsLocale = Locale("gu", "IN")
             )
         )
 

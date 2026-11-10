@@ -1,0 +1,936 @@
+{
+  "version": "2.0.0",
+  "updated_at": "2026-10-20T00:00:00Z",
+  "description": "Verified Hierarchical Waste Disposal Rules (BN)",
+  "rules": [
+    {
+      "id": "RULE-BATTERY-001",
+      "category": "Battery",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য কেন্দ্র / বিপজ্জনক বর্জ্য (লাল পাত্র)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "শর্ট সার্কিট এড়াতে টার্মিনালে নন-কন্ডাক্টিভ টেপ লাগান। শুকনো প্লাস্টিক পাত্রে রাখুন।",
+      "safety_warnings": "আগুন ও রাসায়নিক ক্ষরণের তীব্র ঝুঁকি। সাধারণ আবর্জনা বা নীল/সবুজ পাত্রে ফেলবেন না। তাপে রাখবেন না।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized E-Waste Center",
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Household Compost (Green)",
+        "Dry Recyclables (Blue)",
+        "Open Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬ ও ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "রাসায়নিক ক্ষয় ও আগুনের ঝুঁকির কারণে ব্যাটারি নিরাপদে পুনরায় ব্যবহার করা যায় না।"
+      ],
+      "cleaning_tips": "জল দিয়ে ধোবেন না। ধুলো থাকলে শুকনো কাপড় দিয়ে হালকাভাবে মুছুন। জলে ডোবাবেন না।",
+      "environmental_impact": "ভারী ধাতু (সীসা, ক্যাডমিয়াম, লিথিয়াম) ভূগর্ভস্থ জলে মিশে পরিবেশের মারাত্মক ক্ষতি করে।",
+      "condition_notes": {
+        "broken": "বিপদ: ফেটে যাওয়া ব্যাটারি থেকে অ্যাসিড বের হয়। খালি হাতে স্পর্শ করবেন না। বালি বা সুরক্ষিত পাত্রে রাখুন।",
+        "crushed": "মারাত্মক আগুনের ঝুঁকি: চ্যাপ্টা ব্যাটারিতে অভ্যন্তরীণ শর্ট-সার্কিট ঘটে আগুন লাগতে পারে।",
+        "wet": "সম্পূর্ণ শুকনো রাখুন। লিথিয়াম সেলে জল ঢুকলে রাসায়নিক বিক্রিয়া ঘটে বিস্ফোরণ হতে পারে।",
+        "empty": "ডিসচার্জ হওয়া ব্যাটারিতেও বিদ্যুৎ অবশিষ্ট থাকে। সর্বদা টার্মিনালে টেপ লাগিয়ে ফেলুন।",
+        "full": "শর্ট সার্কিট এড়াতে চার্জ থাকা ব্যাটারি ধাতব বস্তু থেকে দূরে রাখুন।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-LI-ION",
+      "category": "Battery",
+      "specific_item": "Rechargeable Lithium-Ion Battery",
+      "material_code": "BATTERY_LI_ION",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য কেন্দ্র / বিপজ্জনক বর্জ্য (লাল পাত্র)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "শর্ট সার্কিট এড়াতে টার্মিনালে নন-কন্ডাক্টিভ টেপ লাগান। শুকনো প্লাস্টিক পাত্রে রাখুন।",
+      "safety_warnings": "আগুন ও রাসায়নিক ক্ষরণের তীব্র ঝুঁকি। সাধারণ আবর্জনা বা নীল/সবুজ পাত্রে ফেলবেন না। তাপে রাখবেন না।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Collection Point",
+        "Manufacturer Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Curbside Bins",
+        "Municipal Waste Truck Compactor"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬ ও ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "রাসায়নিক ক্ষয় ও আগুনের ঝুঁকির কারণে ব্যাটারি নিরাপদে পুনরায় ব্যবহার করা যায় না।"
+      ],
+      "cleaning_tips": "জল দিয়ে ধোবেন না। ধুলো থাকলে শুকনো কাপড় দিয়ে হালকাভাবে মুছুন। জলে ডোবাবেন না।",
+      "environmental_impact": "ভারী ধাতু (সীসা, ক্যাডমিয়াম, লিথিয়াম) ভূগর্ভস্থ জলে মিশে পরিবেশের মারাত্মক ক্ষতি করে।",
+      "condition_notes": {
+        "broken": "বিপদ: ফেটে যাওয়া ব্যাটারি থেকে অ্যাসিড বের হয়। খালি হাতে স্পর্শ করবেন না। বালি বা সুরক্ষিত পাত্রে রাখুন।",
+        "crushed": "মারাত্মক আগুনের ঝুঁকি: চ্যাপ্টা ব্যাটারিতে অভ্যন্তরীণ শর্ট-সার্কিট ঘটে আগুন লাগতে পারে।",
+        "wet": "সম্পূর্ণ শুকনো রাখুন। লিথিয়াম সেলে জল ঢুকলে রাসায়নিক বিক্রিয়া ঘটে বিস্ফোরণ হতে পারে।",
+        "empty": "ডিসচার্জ হওয়া ব্যাটারিতেও বিদ্যুৎ অবশিষ্ট থাকে। সর্বদা টার্মিনালে টেপ লাগিয়ে ফেলুন।",
+        "full": "শর্ট সার্কিট এড়াতে চার্জ থাকা ব্যাটারি ধাতব বস্তু থেকে দূরে রাখুন।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-BATTERY-ALKALINE",
+      "category": "Battery",
+      "specific_item": "Alkaline AA / AAA / 9V Battery",
+      "material_code": "BATTERY_ALKALINE",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য কেন্দ্র / বিপজ্জনক বর্জ্য (লাল পাত্র)",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "শর্ট সার্কিট এড়াতে টার্মিনালে নন-কন্ডাক্টিভ টেপ লাগান। শুকনো প্লাস্টিক পাত্রে রাখুন।",
+      "safety_warnings": "আগুন ও রাসায়নিক ক্ষরণের তীব্র ঝুঁকি। সাধারণ আবর্জনা বা নীল/সবুজ পাত্রে ফেলবেন না। তাপে রাখবেন না।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)",
+        "Battery Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Dry Paper/Plastic Bin (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬ ও ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "রাসায়নিক ক্ষয় ও আগুনের ঝুঁকির কারণে ব্যাটারি নিরাপদে পুনরায় ব্যবহার করা যায় না।"
+      ],
+      "cleaning_tips": "জল দিয়ে ধোবেন না। ধুলো থাকলে শুকনো কাপড় দিয়ে হালকাভাবে মুছুন। জলে ডোবাবেন না।",
+      "environmental_impact": "ভারী ধাতু (সীসা, ক্যাডমিয়াম, লিথিয়াম) ভূগর্ভস্থ জলে মিশে পরিবেশের মারাত্মক ক্ষতি করে।",
+      "condition_notes": {
+        "broken": "বিপদ: ফেটে যাওয়া ব্যাটারি থেকে অ্যাসিড বের হয়। খালি হাতে স্পর্শ করবেন না। বালি বা সুরক্ষিত পাত্রে রাখুন।",
+        "crushed": "মারাত্মক আগুনের ঝুঁকি: চ্যাপ্টা ব্যাটারিতে অভ্যন্তরীণ শর্ট-সার্কিট ঘটে আগুন লাগতে পারে।",
+        "wet": "সম্পূর্ণ শুকনো রাখুন। লিথিয়াম সেলে জল ঢুকলে রাসায়নিক বিক্রিয়া ঘটে বিস্ফোরণ হতে পারে।",
+        "empty": "ডিসচার্জ হওয়া ব্যাটারিতেও বিদ্যুৎ অবশিষ্ট থাকে। সর্বদা টার্মিনালে টেপ লাগিয়ে ফেলুন।",
+        "full": "শর্ট সার্কিট এড়াতে চার্জ থাকা ব্যাটারি ধাতব বস্তু থেকে দূরে রাখুন।"
+      }
+    },
+    {
+      "id": "RULE-CARDBOARD-001",
+      "category": "cardboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "শুকনো পুনর্ব্যবহার (নীল পাত্র) / কাগজ পুনর্ব্যবহারকারী",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "প্লাস্টিক টেপ ও স্ট্যাপলার পিন খুলে কার্ডবোর্ড চ্যাপ্টা করে ভাঁজ করুন।",
+      "safety_warnings": "আর্দ্রতা ও আগুন থেকে দূরে শুকনো জায়গায় সংরক্ষণ করুন।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Door-to-door Kabadiwala Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Rain-Exposed Open Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "জিনিসপত্র সংরক্ষণ, পার্সেল পাঠানো বা ঘরোয়া কাজে পুনরায় ব্যবহার করুন।"
+      ],
+      "cleaning_tips": "ধুলো ঝেড়ে নিন। জল দিয়ে ধোবেন না।",
+      "environmental_impact": "কার্ডবোর্ড পুনর্ব্যবহার করলে গাছ কাটা রোধ হয় ও বিদ্যুৎ বাঁচে।",
+      "condition_notes": {
+        "wet": "শুকিয়ে নিন। পচে গেলে জৈব পাত্রে ফেলুন।",
+        "crushed": "ভাঁজ করে বেঁধে নীল পাত্রে দিন।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-SOILED",
+      "category": "cardboard",
+      "specific_item": "Greasy / Food-Soiled Cardboard",
+      "material_code": "PAP 20",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "গৃহস্থালি কম্পোস্ট / ভেজা জৈব বর্জ্যের পাত্র (সবুজ পাত্র)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "প্লাস্টিক টেপ খুলে ছোট ছোট টুকরো করে কম্পোস্টে ফেলুন।",
+      "safety_warnings": "তেলতেলে কার্ডবোর্ড নীল পাত্রে ফেলবেন না, এতে অন্য কাগজ নষ্ট হয়ে যায়।",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "General Municipal Refuse (Black Bin)",
+        "Industrial Composting if uncoated"
+      ],
+      "prohibited_pathways": [
+        "Dry Paper Recyclables (Blue)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "কম্পোস্ট তৈরির জন্য বাদামী জৈব উপাদান হিসেবে ব্যবহার করুন।"
+      ],
+      "cleaning_tips": "তেলতেলে কার্ডবোর্ড জল দিয়ে ধোয়ার চেষ্টা করবেন না।",
+      "environmental_impact": "কম্পোস্টে সহজে পচে গিয়ে জৈব সার তৈরি করে।",
+      "condition_notes": {
+        "greasy": "তেলতেলে অংশ কম্পোস্টে ফেলুন, পুনর্ব্যবহারে দেবেন না।",
+        "wet": "খাবারের দাগ থাকলে কম্পোস্টে দিন।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-CARDBOARD-TETRAPAK",
+      "category": "cardboard",
+      "specific_item": "Aseptic Liquid Carton (Tetra Pak)",
+      "material_code": "C/PAP 84",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "শুকনো পুনর্ব্যবহার (নীল পাত্র) / টেট্রা প্যাক সংগ্রহ কেন্দ্র",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "সম্পূর্ণ খালি করে, জল দিয়ে ধুয়ে চ্যাপ্টা করে শুকিয়ে নিন।",
+      "safety_warnings": "ভেতরে দুধের অবশিষ্টাংশ যাতে না থাকে, দুর্গন্ধ রোধ করুন।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Tetra Pak Authorized Recycler"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "ছোট চারাগাছ লাগাতে বা ক্রাফটের কাজে ব্যবহার করতে পারেন।"
+      ],
+      "cleaning_tips": "ভেতরটা জল দিয়ে ভালো করে ধুয়ে শুকিয়ে নিন।",
+      "environmental_impact": "কাগজ, অ্যালুমিনিয়াম ও পলিথিন আলাদা করে পুনর্ব্যবহারযোগ্য বোর্ড তৈরি হয়।",
+      "condition_notes": {
+        "empty": "সম্পূর্ণ খালি করে চ্যাপ্টা করুন।",
+        "crushed": "জায়গা বাঁচাতে চ্যাপ্টা করে নীল পাত্রে ফেলুন।"
+      }
+    },
+    {
+      "id": "RULE-GLASS-001",
+      "category": "glass",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "শুকনো পুনর্ব্যবহার (নীল পাত্র) / কাঁচ সংগ্রহ কেন্দ্র",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "জল দিয়ে ধুয়ে শুকিয়ে নিন। ঢাকনা আলাদা করে ফেলুন।",
+      "safety_warnings": "ভাঙা এড়াতে সাবধানে নাড়াচাড়া করুন।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Merchant / Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)",
+        "Unwrapped Glass in Trash"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "মশলা রাখা, ফুলদানি বা আলোকসজ্জায় পুনরায় ব্যবহার করুন।"
+      ],
+      "cleaning_tips": "কুসুম গরম জল ও সাবান দিয়ে ধুয়ে লেবেল তুলে নিন।",
+      "environmental_impact": "কাঁচ পুনর্ব্যবহার করলে কাঁচামাল ও প্রচুর শক্তি সাশ্রয় হয়।",
+      "condition_notes": {
+        "empty": "তরল পুরোপুরি খালি করে ধুয়ে শুকিয়ে নিন।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-GLASS-BROKEN",
+      "category": "glass",
+      "specific_item": "Broken Glass / Shards",
+      "material_code": "GL 70",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "কাগজে মুড়িয়ে শুকনো বর্জ্যে জমা দিন / বিশেষ নিষ্পত্তি",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "পুরু কাগজ বা কার্ডবোর্ডে মুড়িয়ে ওপরে 'ভাঙা কাঁচ' লিখে দিন।",
+      "safety_warnings": "পরিচ্ছন্নতাকর্মীদের হাত কাটার মারাত্মক ঝুঁকি। খোলা পাত্রে সরাসরি ফেলবেন না।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Wrapped Domestic Hazardous Waste (Red Bin)"
+      ],
+      "prohibited_pathways": [
+        "Loose in Plastic Carry Bags",
+        "Loose in Curbside Bins"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "ভাঙা কাঁচ মোজাইক শিল্পকর্মে ব্যবহার করা যেতে পারে তবে চরম সতর্কতা প্রয়োজন।"
+      ],
+      "cleaning_tips": "ভাঙা কাঁচ হাত দিয়ে ধোয়ার চেষ্টা করবেন না।",
+      "environmental_impact": "কাঁচের মান না হারিয়ে এটি অনন্তকাল পুনর্ব্যবহার করা যায়।",
+      "condition_notes": {
+        "broken": "পুরু বাক্সে বা কাগজে সুরক্ষিতভাবে মুড়ে রাখুন।"
+      }
+    },
+    {
+      "id": "RULE-KEYBOARD-001",
+      "category": "Keyboard",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য সংগ্রহ কেন্দ্র / কমলা পাত্র",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ব্যক্তিগত ডেটা মুছে নিন। ব্যাটারি আলাদা করুন। নিরাপদে প্যাক করুন।",
+      "safety_warnings": "যন্ত্রাংশ ভাঙবেন না বা পোড়াবেন না। ভেতরের বিষাক্ত পদার্থ ক্ষতিকর।",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility",
+        "Manufacturer EPR Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Municipal Garbage Dump",
+        "Open Scrap Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "চলনক্ষম হলে মেরামত করে কাউকে দান করুন।"
+      ],
+      "cleaning_tips": "জল ব্যবহার করবেন না। শুকনো কাপড় দিয়ে মুছুন।",
+      "environmental_impact": "সোনা, রূপো ও তামা পুনরুদ্ধার করা যায় এবং দূষণ রোধ হয়।",
+      "condition_notes": {
+        "broken": "ভাঙা অংশ বাক্সে সাবধানে ভরে হস্তান্তর করুন।"
+      }
+    },
+    {
+      "id": "RULE-METAL-001",
+      "category": "metal",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "শুকনো পুনর্ব্যবহার (নীল পাত্র) / ধাতব স্ক্র্যাপ সংগ্রাহক",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "খাবারের দাগ ধুয়ে শুকিয়ে নিন। ধারালো কোণ থাকলে মুড়ে দিন।",
+      "safety_warnings": "মরিচা ধরা বা ধারালো ধাতুর কোণ থেকে আঘাত লাগতে পারে।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Metal Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "স্ক্র্যাপ ধাতু পুনরায় কাজের উপযোগী জিনিস বানাতে ব্যবহার করুন।"
+      ],
+      "cleaning_tips": "তেল বা গ্রিজ থাকলে মুছে পরিষ্কার করুন।",
+      "environmental_impact": "ধাতু পুনর্ব্যবহারের ফলে খনিজ উত্তোলন ও কার্বন নির্গমন কমে।",
+      "condition_notes": {
+        "empty": "সম্পূর্ণ খালি করে পরিষ্কার করুন।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-ALU-CAN",
+      "category": "metal",
+      "specific_item": "Aluminum Beverage Can",
+      "material_code": "ALU 41",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "শুকনো পুনর্ব্যবহার (নীল পাত্র) / স্ক্র্যাপ বিক্রেতা",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "জল দিয়ে ধুয়ে, জায়গা বাঁচাতে পা দিয়ে চ্যাপ্টা করে নিন।",
+      "safety_warnings": "ক্যানের ধারালো অংশে হাত কাটতে পারে, সাবধানে ধরুন।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Scrap Recyclers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste Bin (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "কলমদানি, ঘর সাজানোর জিনিস হিসেবে রূপান্তর করুন।"
+      ],
+      "cleaning_tips": "মিষ্টি পানীয়ের অবশিষ্টাংশ দূর করতে ধুয়ে শুকিয়ে নিন।",
+      "environmental_impact": "অ্যালুমিনিয়াম পুনর্ব্যবহার নতুন তৈরির চেয়ে ৯৫% কম শক্তি ব্যবহার করে।",
+      "condition_notes": {
+        "crushed": "চ্যাপ্টা করে নীল পাত্রে ফেলুন।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-METAL-AEROSOL",
+      "category": "metal",
+      "specific_item": "Aerosol Spray Container",
+      "material_code": "FE 40",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "বিপজ্জনক বর্জ্য (লাল পাত্র) / বিশেষ ধাতু সংগ্রহ",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "ক্যান সম্পূর্ণ খালি কিনা নিশ্চিত করুন। ফুটো করবেন না।",
+      "safety_warnings": "চাপযুক্ত গ্যাস থাকায় রোদে বা আগুনে বিস্ফোরণের মারাত্মক ঝুঁকি রয়েছে।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Domestic Hazardous Waste Bin (Red)"
+      ],
+      "prohibited_pathways": [
+        "Municipal Truck Compactor",
+        "Open Fire",
+        "Puncturing"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "নিরাপত্তা ঝুঁকির কারণে অ্যারোসল ক্যান পুনরায় ব্যবহার করবেন না।"
+      ],
+      "cleaning_tips": "জল দিয়ে ধোবেন না। বাইরের অংশ শুকনো কাপড় দিয়ে মুছুন।",
+      "environmental_impact": "সঠিকভাবে নিষ্পত্তি না করলে ক্ষতিকর গ্যাস বায়ুমণ্ডলে মেশে।",
+      "condition_notes": {
+        "empty": "নোজল চেপে সম্পূর্ণ খালি করুন।",
+        "crushed": "কখনও অ্যারোসল ক্যান চ্যাপ্টা করবেন না।"
+      }
+    },
+    {
+      "id": "RULE-MICROWAVE-001",
+      "category": "Microwave",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য সংগ্রহ কেন্দ্র / কমলা পাত্র",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ব্যক্তিগত ডেটা মুছে নিন। ব্যাটারি আলাদা করুন। নিরাপদে প্যাক করুন।",
+      "safety_warnings": "যন্ত্রাংশ ভাঙবেন না বা পোড়াবেন না। ভেতরের বিষাক্ত পদার্থ ক্ষতিকর।",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycling Center",
+        "Appliance Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Informal Disassembly",
+        "Standard Garbage"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "চলনক্ষম হলে মেরামত করে কাউকে দান করুন।"
+      ],
+      "cleaning_tips": "জল ব্যবহার করবেন না। শুকনো কাপড় দিয়ে মুছুন।",
+      "environmental_impact": "সোনা, রূপো ও তামা পুনরুদ্ধার করা যায় এবং দূষণ রোধ হয়।",
+      "condition_notes": {
+        "broken": "ভাঙা অংশ বাক্সে সাবধানে ভরে হস্তান্তর করুন।"
+      }
+    },
+    {
+      "id": "RULE-MOBILE-001",
+      "category": "Mobile",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য সংগ্রহ কেন্দ্র / কমলা পাত্র",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ব্যক্তিগত ডেটা মুছে নিন। ব্যাটারি আলাদা করুন। নিরাপদে প্যাক করুন।",
+      "safety_warnings": "যন্ত্রাংশ ভাঙবেন না বা পোড়াবেন না। ভেতরের বিষাক্ত পদার্থ ক্ষতিকর।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "E-Waste Kiosks",
+        "Electronics Retailer Take-Back",
+        "Registered Recycler"
+      ],
+      "prohibited_pathways": [
+        "Curbside Dustbin",
+        "Landfill Dumpsite"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "চলনক্ষম হলে মেরামত করে কাউকে দান করুন।"
+      ],
+      "cleaning_tips": "জল ব্যবহার করবেন না। শুকনো কাপড় দিয়ে মুছুন।",
+      "environmental_impact": "সোনা, রূপো ও তামা পুনরুদ্ধার করা যায় এবং দূষণ রোধ হয়।",
+      "condition_notes": {
+        "broken": "ভাঙা অংশ বাক্সে সাবধানে ভরে হস্তান্তর করুন।"
+      }
+    },
+    {
+      "id": "RULE-MOUSE-001",
+      "category": "Mouse",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য সংগ্রহ কেন্দ্র / কমলা পাত্র",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ব্যক্তিগত ডেটা মুছে নিন। ব্যাটারি আলাদা করুন। নিরাপদে প্যাক করুন।",
+      "safety_warnings": "যন্ত্রাংশ ভাঙবেন না বা পোড়াবেন না। ভেতরের বিষাক্ত পদার্থ ক্ষতিকর।",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Depot"
+      ],
+      "prohibited_pathways": [
+        "Municipal General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "চলনক্ষম হলে মেরামত করে কাউকে দান করুন।"
+      ],
+      "cleaning_tips": "জল ব্যবহার করবেন না। শুকনো কাপড় দিয়ে মুছুন।",
+      "environmental_impact": "সোনা, রূপো ও তামা পুনরুদ্ধার করা যায় এবং দূষণ রোধ হয়।",
+      "condition_notes": {
+        "broken": "ভাঙা অংশ বাক্সে সাবধানে ভরে হস্তান্তর করুন।"
+      }
+    },
+    {
+      "id": "RULE-ORGANIC-001",
+      "category": "organic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "ভেজা জৈব বর্জ্যের পাত্র (সবুজ পাত্র) / কম্পোস্টিং",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "প্লাস্টিক ও রাবার ব্যান্ড বাদ দিয়ে শুধু সবজি ও খাবার ফেলুন।",
+      "safety_warnings": "প্লাস্টিক বা বিপজ্জনক বস্তু সবুজ পাত্রে ফেলবেন না।",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "বাড়িতেই জৈব সার (কম্পোস্ট) তৈরি করুন।"
+      ],
+      "cleaning_tips": "ধোয়ার প্রয়োজন নেই। সরাসরি সবুজ পাত্রে ফেলুন।",
+      "environmental_impact": "মাটির উর্বরতা বাড়ায় এবং ক্ষতিকর মিথেন গ্যাস তৈরি বন্ধ করে।",
+      "condition_notes": {
+        "wet": "ভেজা ভাব স্বাভাবিক, সরাসরি সবুজ পাত্রে ফেলুন।"
+      }
+    },
+    {
+      "id": "RULE-PAPER-001",
+      "category": "paper",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "শুকনো পুনর্ব্যবহার (নীল পাত্র) / কাগজ সংগ্রাহক",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "পিন ও প্লাস্টিক কভার সরিয়ে বান্ডিল বাঁধুন।",
+      "safety_warnings": "আর্দ্রতা ও আগুন থেকে সাবধানে রাখুন।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Raddi / Kabadiwala Merchants"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "রাফ খাতা, ঠোঙা বা ডাস্টবিন লাইনার হিসেবে ব্যবহার করুন।"
+      ],
+      "cleaning_tips": "ধোবেন না। শুকনো রাখুন।",
+      "environmental_impact": "১ টন কাগজ পুনর্ব্যবহারে ১৭টি গাছ ও ২৬,০০০ লিটার জল বাঁচে।",
+      "condition_notes": {
+        "wet": "ভেজা কাগজ শুকিয়ে দিন বা কম্পোস্টে ফেলুন।"
+      }
+    },
+    {
+      "id": "RULE-PCB-001",
+      "category": "PCB",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য সংগ্রহ কেন্দ্র / কমলা পাত্র",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ব্যক্তিগত ডেটা মুছে নিন। ব্যাটারি আলাদা করুন। নিরাপদে প্যাক করুন।",
+      "safety_warnings": "যন্ত্রাংশ ভাঙবেন না বা পোড়াবেন না। ভেতরের বিষাক্ত পদার্থ ক্ষতিকর।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Authorized Central Pollution Control Board (CPCB) Dismantler"
+      ],
+      "prohibited_pathways": [
+        "Informal Scrap Acid Baths",
+        "Open Burning",
+        "Landfills"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "চলনক্ষম হলে মেরামত করে কাউকে দান করুন।"
+      ],
+      "cleaning_tips": "জল ব্যবহার করবেন না। শুকনো কাপড় দিয়ে মুছুন।",
+      "environmental_impact": "সোনা, রূপো ও তামা পুনরুদ্ধার করা যায় এবং দূষণ রোধ হয়।",
+      "condition_notes": {
+        "broken": "ভাঙা অংশ বাক্সে সাবধানে ভরে হস্তান্তর করুন।"
+      }
+    },
+    {
+      "id": "RULE-PLASTIC-001",
+      "category": "plastic",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "শুকনো পুনর্ব্যবহার (নীল পাত্র) / প্লাস্টিক কেন্দ্র",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "খাবারের অবশিষ্টাংশ ধুয়ে শুকিয়ে নিন।",
+      "safety_warnings": "প্লাস্টিক পোড়াবেন না। রোদে ফেলে রাখবেন না।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Plastic Collection Kiosk",
+        "Scrap Merchant"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Drains / Water Bodies",
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "প্লাস্টিক বর্জ্য ব্যবস্থাপনা নিয়ম ২০২১",
+      "reuse_ideas": [
+        "ঘরোয়া সংরক্ষণের পাত্র হিসেবে ব্যবহার করুন।"
+      ],
+      "cleaning_tips": "জল ও সাবান দিয়ে ধুয়ে শুকিয়ে নিন।",
+      "environmental_impact": "পুনর্ব্যবহার করলে ডাম্পিং গ্রাউন্ডের বোঝা কমে।",
+      "condition_notes": {
+        "empty": "শুকনো করে নীল পাত্রে ফেলুন।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-PET",
+      "category": "plastic",
+      "specific_item": "PET Beverage Bottle (RIC 1)",
+      "material_code": "PET 01",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "শুকনো পুনর্ব্যবহার (নীল পাত্র) / প্লাস্টিক সংগ্রহ কেন্দ্র",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "খালি করে, ধুয়ে, চ্যাপ্টা করে ছিপি আটকে দিন।",
+      "safety_warnings": "প্লাস্টিক কখনোই পোড়াবেন না, এতে বিষাক্ত ধোঁয়া ছড়ায়।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Blue Dry Waste Bin",
+        "Bottle Return Kiosk",
+        "Door-to-door Kabadiwala"
+      ],
+      "prohibited_pathways": [
+        "Littering",
+        "Burning"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য নিয়ম ২০১৬ ও প্লাস্টিক বর্জ্য নিয়ম ২০২১",
+      "reuse_ideas": [
+        "গাছে জল দেওয়া, ফুলের টব বা ঘরোয়া ক্রাফটে ব্যবহার করুন।"
+      ],
+      "cleaning_tips": "ভেতরটা জল দিয়ে ভালো করে ধুয়ে শুকিয়ে নিন।",
+      "environmental_impact": "PET বোতল পুনর্ব্যবহার করে কাপড়ের সুতো ও নতুন বোতল তৈরি হয়।",
+      "condition_notes": {
+        "crushed": "চ্যাপ্টা করলে আবর্জনার পাত্রে জায়গা বাঁচে।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-HDPE",
+      "category": "plastic",
+      "specific_item": "HDPE Rigid Bottle / Jug (RIC 2)",
+      "material_code": "HDPE 02",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "শুকনো পুনর্ব্যবহার (নীল পাত্র) / প্লাস্টিক সংগ্রাহক",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "শ্যাম্পু বা ডিটারজেন্টের অবশিষ্টাংশ জল দিয়ে ধুয়ে ফেলুন।",
+      "safety_warnings": "রাসায়নিকের বোতল হলে গ্লাভস পরে পরিষ্কার করুন।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue)",
+        "Scrap Dealers"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "প্লাস্টিক বর্জ্য ব্যবস্থাপনা নিয়ম ২০২১",
+      "reuse_ideas": [
+        "বাগানের পাত্র বা ছোটখাটো জিনিস রাখার পাত্র হিসেবে ব্যবহার করুন।"
+      ],
+      "cleaning_tips": "কুসুম গরম জল দিয়ে ধুয়ে শুকিয়ে নিন।",
+      "environmental_impact": "HDPE অত্যন্ত টেকসই প্লাস্টিক যা পাইপ ও আসবাবে পুনর্ব্যবহৃত হয়।",
+      "condition_notes": {
+        "empty": "সম্পূর্ণ খালি করে ধুয়ে ফেলুন।"
+      }
+    },
+    {
+      "id": "RULE-ITEM-PLASTIC-MLP",
+      "category": "plastic",
+      "specific_item": "Multi-Layer Plastic Pouch (RIC 7)",
+      "material_code": "OTHER 07",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "শুকনো বর্জ্য / সিমেন্ট কারখানার জ্বালানী (RDF)",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "ভেতরের খাবার সম্পূর্ণ বের করে শুকনো করে নিন।",
+      "safety_warnings": "খোলা জায়গায় পোড়াবেন না। ড্রেনে ফেলবেন না।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Bin (Blue)",
+        "Cement Kiln Co-Processing",
+        "Road Construction Bitumen Blend"
+      ],
+      "prohibited_pathways": [
+        "Open Burning",
+        "Organic Wet Waste (Green)"
+      ],
+      "review_status": "VERIFIED",
+      "source": "প্লাস্টিক বর্জ্য ব্যবস্থাপনা নিয়ম ২০২১",
+      "reuse_ideas": [
+        "ইকো-ব্রিক (Eco-brick) তৈরিতে ব্যবহার করতে পারেন।"
+      ],
+      "cleaning_tips": "ভেতরটা মুছে শুকিয়ে নিন।",
+      "environmental_impact": "রাস্তা তৈরিতে ও জ্বালানী হিসেবে পুনর্ব্যবহার করা হয়।",
+      "condition_notes": {
+        "greasy": "খাবারের তেলতেলে ভাব মুছে পরিষ্কার করুন।"
+      }
+    },
+    {
+      "id": "RULE-PLAYER-001",
+      "category": "Player",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য সংগ্রহ কেন্দ্র / কমলা পাত্র",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ব্যক্তিগত ডেটা মুছে নিন। ব্যাটারি আলাদা করুন। নিরাপদে প্যাক করুন।",
+      "safety_warnings": "যন্ত্রাংশ ভাঙবেন না বা পোড়াবেন না। ভেতরের বিষাক্ত পদার্থ ক্ষতিকর।",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "E-Waste Collection Facility"
+      ],
+      "prohibited_pathways": [
+        "Household General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "চলনক্ষম হলে মেরামত করে কাউকে দান করুন।"
+      ],
+      "cleaning_tips": "জল ব্যবহার করবেন না। শুকনো কাপড় দিয়ে মুছুন।",
+      "environmental_impact": "সোনা, রূপো ও তামা পুনরুদ্ধার করা যায় এবং দূষণ রোধ হয়।",
+      "condition_notes": {
+        "broken": "ভাঙা অংশ বাক্সে সাবধানে ভরে হস্তান্তর করুন।"
+      }
+    },
+    {
+      "id": "RULE-PRINTER-001",
+      "category": "Printer",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য সংগ্রহ কেন্দ্র / কমলা পাত্র",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ব্যক্তিগত ডেটা মুছে নিন। ব্যাটারি আলাদা করুন। নিরাপদে প্যাক করুন।",
+      "safety_warnings": "যন্ত্রাংশ ভাঙবেন না বা পোড়াবেন না। ভেতরের বিষাক্ত পদার্থ ক্ষতিকর।",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Brand Take-Back"
+      ],
+      "prohibited_pathways": [
+        "Dumping with General Waste"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "চলনক্ষম হলে মেরামত করে কাউকে দান করুন।"
+      ],
+      "cleaning_tips": "জল ব্যবহার করবেন না। শুকনো কাপড় দিয়ে মুছুন।",
+      "environmental_impact": "সোনা, রূপো ও তামা পুনরুদ্ধার করা যায় এবং দূষণ রোধ হয়।",
+      "condition_notes": {
+        "broken": "ভাঙা অংশ বাক্সে সাবধানে ভরে হস্তান্তর করুন।"
+      }
+    },
+    {
+      "id": "RULE-TELEVISION-001",
+      "category": "Television",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য সংগ্রহ কেন্দ্র / কমলা পাত্র",
+      "is_recyclable": true,
+      "is_hazardous": true,
+      "preparation_instructions": "ব্যক্তিগত ডেটা মুছে নিন। ব্যাটারি আলাদা করুন। নিরাপদে প্যাক করুন।",
+      "safety_warnings": "যন্ত্রাংশ ভাঙবেন না বা পোড়াবেন না। ভেতরের বিষাক্ত পদার্থ ক্ষতিকর।",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized E-Waste Depot",
+        "Manufacturer Brand Exchange"
+      ],
+      "prohibited_pathways": [
+        "Manual Screen Smashing",
+        "Informal Scrap Dumps"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "চলনক্ষম হলে মেরামত করে কাউকে দান করুন।"
+      ],
+      "cleaning_tips": "জল ব্যবহার করবেন না। শুকনো কাপড় দিয়ে মুছুন।",
+      "environmental_impact": "সোনা, রূপো ও তামা পুনরুদ্ধার করা যায় এবং দূষণ রোধ হয়।",
+      "condition_notes": {
+        "broken": "ভাঙা অংশ বাক্সে সাবধানে ভরে হস্তান্তর করুন।"
+      }
+    },
+    {
+      "id": "RULE-TRASH-001",
+      "category": "trash",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অপুনর্ব্যবহারযোগ্য বর্জ্য (কালো পাত্র) / ল্যান্ডফিল",
+      "is_recyclable": false,
+      "is_hazardous": false,
+      "preparation_instructions": "কোনো পুনর্ব্যবহারযোগ্য বা ভেজা বর্জ্য নেই তা নিশ্চিত করুন।",
+      "safety_warnings": "আগুন লাগাবেন না। নর্দমায় ফেলবেন না।",
+      "target_bin_color": "BLACK",
+      "accepted_pathways": [
+        "Municipal Inert Waste Collection (Black Bin)"
+      ],
+      "prohibited_pathways": [
+        "Recycling Bins",
+        "Compost"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "reuse_ideas": [
+        "পুনর্ব্যবহার অযোগ্য চূড়ান্ত বর্জ্য।"
+      ],
+      "cleaning_tips": "পরিষ্কার করার প্রয়োজন নেই।",
+      "environmental_impact": "বৈজ্ঞানিক ল্যান্ডফিলে পাঠানো হয়।",
+      "condition_notes": {
+        "empty": "কালো পাত্রে ফেলুন।"
+      }
+    },
+    {
+      "id": "RULE-WASHING_MACHINE-001",
+      "category": "Washing Machine",
+      "jurisdiction": "INDIA_SWM_2016",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য সংগ্রহ কেন্দ্র / কমলা পাত্র",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ব্যক্তিগত ডেটা মুছে নিন। ব্যাটারি আলাদা করুন। নিরাপদে প্যাক করুন।",
+      "safety_warnings": "যন্ত্রাংশ ভাঙবেন না বা পোড়াবেন না। ভেতরের বিষাক্ত পদার্থ ক্ষতিকর।",
+      "target_bin_color": "SPECIAL_DEPOT",
+      "accepted_pathways": [
+        "Authorized White-Goods Recycler",
+        "Brand Exchange Schemes"
+      ],
+      "prohibited_pathways": [
+        "Curbside Abandonment"
+      ],
+      "review_status": "VERIFIED",
+      "source": "ভারত ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "reuse_ideas": [
+        "চলনক্ষম হলে মেরামত করে কাউকে দান করুন।"
+      ],
+      "cleaning_tips": "জল ব্যবহার করবেন না। শুকনো কাপড় দিয়ে মুছুন।",
+      "environmental_impact": "সোনা, রূপো ও তামা পুনরুদ্ধার করা যায় এবং দূষণ রোধ হয়।",
+      "condition_notes": {
+        "broken": "ভাঙা অংশ বাক্সে সাবধানে ভরে হস্তান্তর করুন।"
+      }
+    },
+    {
+      "id": "RULE-STREAM-BIODEGRADABLE",
+      "category": "biodegradable",
+      "disposal_method": "ভেজা জৈব বর্জ্যের পাত্র (সবুজ পাত্র) / কম্পোস্টিং",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "প্লাস্টিক ও রাবার ব্যান্ড বাদ দিয়ে শুধু সবজি ও খাবার ফেলুন।",
+      "safety_warnings": "প্লাস্টিক বা বিপজ্জনক বস্তু সবুজ পাত্রে ফেলবেন না।",
+      "target_bin_color": "GREEN",
+      "accepted_pathways": [
+        "Wet Waste Collection (Green Bin)",
+        "Home / Community Composter",
+        "Biomethanation Plant"
+      ],
+      "prohibited_pathways": [
+        "Dry Waste (Blue)",
+        "Plastic Bags",
+        "Open Littering"
+      ],
+      "cleaning_tips": "ধোয়ার প্রয়োজন নেই। সরাসরি সবুজ পাত্রে ফেলুন।",
+      "reuse_ideas": [
+        "বাড়িতেই জৈব সার (কম্পোস্ট) তৈরি করুন।"
+      ],
+      "environmental_impact": "মাটির উর্বরতা বাড়ায় এবং ক্ষতিকর মিথেন গ্যাস তৈরি বন্ধ করে।",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "condition_notes": {
+        "wet": "ভেজা ভাব স্বাভাবিক, সরাসরি সবুজ পাত্রে ফেলুন।"
+      }
+    },
+    {
+      "id": "RULE-STREAM-RECYCLABLES",
+      "category": "Recyclables",
+      "disposal_method": "শুকনো পুনর্ব্যবহারযোগ্য পাত্র (নীল পাত্র)",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ধুয়ে, শুকিয়ে, আলাদা করে নীল পাত্রে ফেলুন।",
+      "safety_warnings": "ভেজা বর্জ্যের সাথে মেশাবেন না।",
+      "target_bin_color": "BLUE",
+      "accepted_pathways": [
+        "Dry Waste Collection (Blue Bin)",
+        "Kabadiwala / Scrap Dealer",
+        "Material Recovery Facility"
+      ],
+      "prohibited_pathways": [
+        "Wet Waste (Green)",
+        "Open Burning",
+        "Open Littering"
+      ],
+      "cleaning_tips": "জল দিয়ে ধুয়ে শুকিয়ে নিন।",
+      "reuse_ideas": [
+        "সৃজনশীল গৃহস্থালি কাজে পুনরায় ব্যবহার করুন।"
+      ],
+      "environmental_impact": "কার্বন পদচিহ্ন কমায় এবং প্রাকৃতিক সম্পদ রক্ষা করে।",
+      "source": "ভারত কঠিন বর্জ্য ব্যবস্থাপনা নিয়ম ২০১৬",
+      "condition_notes": {
+        "empty": "শুকিয়ে নীল পাত্রে দিন।"
+      }
+    },
+    {
+      "id": "RULE-STREAM-EWASTE",
+      "category": "E-waste",
+      "disposal_method": "অনুমোদিত ই-বর্জ্য সংগ্রহ কেন্দ্র / কমলা পাত্র",
+      "is_recyclable": true,
+      "is_hazardous": false,
+      "preparation_instructions": "ব্যক্তিগত ডেটা মুছে নিন। ব্যাটারি আলাদা করুন। নিরাপদে প্যাক করুন।",
+      "safety_warnings": "যন্ত্রাংশ ভাঙবেন না বা পোড়াবেন না। ভেতরের বিষাক্ত পদার্থ ক্ষতিকর।",
+      "target_bin_color": "ORANGE",
+      "accepted_pathways": [
+        "Authorized E-Waste Recycler",
+        "Producer Take-Back / EPR Collection Point"
+      ],
+      "prohibited_pathways": [
+        "Household Dustbin",
+        "Open Burning",
+        "Informal Scrap Breaking"
+      ],
+      "cleaning_tips": "জল ব্যবহার করবেন না। শুকনো কাপড় দিয়ে মুছুন।",
+      "reuse_ideas": [
+        "চলনক্ষম হলে মেরামত করে কাউকে দান করুন।"
+      ],
+      "environmental_impact": "সোনা, রূপো ও তামা পুনরুদ্ধার করা যায় এবং দূষণ রোধ হয়।",
+      "source": "ভারত ই-বর্জ্য ব্যবস্থাপনা নিয়ম ২০২২",
+      "condition_notes": {
+        "broken": "ভাঙা অংশ বাক্সে সাবধানে ভরে হস্তান্তর করুন।"
+      }
+    },
+    {
+      "id": "RULE-STREAM-HAZARDOUS",
+      "category": "hazardous",
+      "disposal_method": "বিপজ্জনক বর্জ্য সংগ্রহ (লাল পাত্র) / মিউনিসিপ্যাল কেন্দ্র",
+      "is_recyclable": false,
+      "is_hazardous": true,
+      "preparation_instructions": "ক্ষরণ এড়াতে মূল পাত্রে শক্তভাবে মুখ আটকে রাখুন।",
+      "safety_warnings": "বিষাক্ত ও দাহ্য। শিশু ও পোষা প্রাণীদের থেকে দূরে রাখুন।",
+      "target_bin_color": "RED",
+      "accepted_pathways": [
+        "Special Care / Hazardous Waste Collection",
+        "Authorized Hazardous Waste Facility",
+        "Pharmacy / Hospital Take-Back (medicines)"
+      ],
+      "prohibited_pathways": [
+        "Regular Household Bins",
+        "Drains and Toilets",
+        "Open Burning"
+      ],
+      "cleaning_tips": "ধোয়ার চেষ্টা করবেন না।",
+      "reuse_ideas": [
+        "বিপজ্জনক বর্জ্য পুনরায় ব্যবহার করা উচিত নয়।"
+      ],
+      "environmental_impact": "মাটি ও জলের মারাত্মক দূষণ রোধ করে।",
+      "source": "ভারত বিপজ্জনক বর্জ্য নিয়ম ২০১৬",
+      "condition_notes": {
+        "broken": "প্লাস্টিক ব্যাগে মুড়ে লাল পাত্রে দিন।"
+      }
+    }
+  ]
+}

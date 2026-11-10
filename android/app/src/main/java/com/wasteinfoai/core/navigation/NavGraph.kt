@@ -300,7 +300,8 @@ fun AppNavGraph(
                     scanRepository = container.scanRepository,
                     llmModelManager = container.llmModelManager,
                     speechInputHelper = container.speechInputHelper,
-                    languageManager = container.languageManager
+                    languageManager = container.languageManager,
+                    cloudClient = container.cloudAssistantClient
                 )
             }
             AssistantScreen(
