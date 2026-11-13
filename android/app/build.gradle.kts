@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -22,7 +24,14 @@ android {
         buildConfigField("String", "LLM_TOKENIZER_DOWNLOAD_URL", "\"https://huggingface.co/datasets/wasteinfoAI/models/resolve/main/tokenizer.bin\"")
         buildConfigField("String", "CLOUD_ASSISTANT_URL", "\"\"")
 
+        val localProps = Properties().apply {
+            val f = rootProject.file("local.properties")
+            if (f.exists()) {
+                f.inputStream().use { load(it) }
+            }
+        }
         val geminiApiKey = (project.findProperty("GEMINI_API_KEY") as? String)
+            ?: localProps.getProperty("GEMINI_API_KEY")
             ?: System.getenv("GEMINI_API_KEY")
             ?: ""
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")

@@ -42,6 +42,12 @@ class OfflineResponder {
         if (isFarewell(query)) return buildFarewellResponse(lang)
         if (isSegregationOverviewQuery(query)) return buildSegregationOverviewResponse(lang)
 
+        // Knowledge, Definitions, Types & Environmental Inquiries
+        val subject = detectSubjectMaterial(query, rawItem)
+        if (isTypesOrCountQuery(query)) return buildTypesResponse(subject, lang)
+        if (isDefinitionQuery(query)) return buildDefinitionResponse(subject, lang)
+        if (isImpactOrAlternativeQuery(query)) return buildImpactOrAlternativeResponse(subject, lang)
+
         if (rule == null) {
             return buildFriendlyFallbackResponse(lang, query)
         }
@@ -50,6 +56,11 @@ class OfflineResponder {
         val isHazardous = safety.isHazardous || rule.isHazardous
         val warning = rule.safetyWarnings.takeIf { it.isNotBlank() } ?: safety.primaryWarning
         val targetBin = CategoryLocalization.getBinColorDisplayName(rule.targetBinColor, lang)
+
+        // Direct Disposal Question ("where to throw", "how to dispose")
+        if (isDisposalQuery(query)) {
+            return buildDirectDisposalResponse(itemName, rule, targetBin, isHazardous, warning, lang)
+        }
 
         // 1. Condition Follow-Up Check ("what if it's broken / greasy / crushed / wet?")
         // Detection runs on what the USER typed. The item name must never be injected first: "Food Storage Glass Jar"
@@ -1065,6 +1076,367 @@ class OfflineResponder {
                 q.contains("વિઘટન") || q.contains("ઓગળતા")
     }
 
+    private fun detectSubjectMaterial(query: String, rawItem: String): String {
+        val q = query.trim().lowercase()
+        val item = rawItem.trim().lowercase()
+
+        return when {
+            q.contains("plastic") || q.contains("प्लास्टिक") || q.contains("ప్లాస్టిక్") ||
+                    q.contains("பிளாஸ்டிக்") || q.contains("ಪ್ಲಾಸ್ಟಿಕ್") || q.contains("പ്ലാസ്റ്റിക്") ||
+                    q.contains("প্লাস্টিক") || q.contains("પ્લાસ્ટિક") || item.contains("plastic") -> "plastic"
+
+            q.contains("e-waste") || q.contains("ewaste") || q.contains("electronic") || q.contains("phone") ||
+                    q.contains("mobile") || q.contains("laptop") || q.contains("charger") || q.contains("ई-कचरा") ||
+                    q.contains("ఇ-వ్యర్థ") || q.contains("மின்-கழிவு") || item.contains("ewaste") || item.contains("electronic") -> "ewaste"
+
+            q.contains("organic") || q.contains("wet waste") || q.contains("food") || q.contains("vegetable") ||
+                    q.contains("fruit") || q.contains("compost") || q.contains("गीला") || q.contains("తడి") ||
+                    q.contains("ஈர") || item.contains("organic") || item.contains("biodegradable") -> "organic"
+
+            q.contains("glass") || q.contains("bottle") || q.contains("कांच") || q.contains("గాజు") ||
+                    q.contains("கண்ணாடி") || item.contains("glass") -> "glass"
+
+            q.contains("paper") || q.contains("cardboard") || q.contains("box") || q.contains("कागज") ||
+                    q.contains("కాగితం") || q.contains("காகிதம்") || item.contains("paper") || item.contains("cardboard") -> "paper"
+
+            q.contains("metal") || q.contains("aluminum") || q.contains("tin") || q.contains("can") ||
+                    q.contains("धातु") || q.contains("లోహం") || item.contains("metal") -> "metal"
+
+            q.contains("battery") || q.contains("chemical") || q.contains("बैटरी") || q.contains("బ్యాటరీ") ||
+                    item.contains("hazard") || item.contains("battery") -> "hazardous"
+
+            else -> if (item.isNotBlank()) item else "plastic"
+        }
+    }
+
+    private fun isTypesOrCountQuery(query: String): Boolean {
+        val q = query.trim().lowercase()
+        val en = listOf(
+            "how many types", "types of", "kinds of", "categories of",
+            "different types", "resin code", "recycling codes", "classification of", "subtypes"
+        )
+        val indic = listOf(
+            "प्रकार", "कितने प्रकार", "श्रेणियां",
+            "రకాలు", "ఎన్ని రకాలు", "వర్గాలు",
+            "வகைகள்", "எத்தனை வகை",
+            "किती प्रकार",
+            "ವಿಧಗಳು", "ಎಷ್ಟು ವಿಧ",
+            "തരങ്ങൾ", "എത്ര തരം",
+            "প্রকার", "কত প্রকার",
+            "પ્રકાર", "કેટલા પ્રકાર"
+        )
+        return en.any { q.contains(it) } || indic.any { q.contains(it) }
+    }
+
+    private fun isDefinitionQuery(query: String): Boolean {
+        val q = query.trim().lowercase()
+        val en = listOf("what is", "what are", "define", "definition of", "explain", "meaning of", "tell me about")
+        val indic = listOf(
+            "क्या है", "क्या होता है", "परिभाषा",
+            "అంటే ఏమిటి", "అంటే ఏంటి", "వివరించు",
+            "என்றால் என்ன", "விளக்கம்",
+            "म्हणजे काय", "काय आहे",
+            "ಎಂದರೇನು", "ವಿವರಣೆ",
+            "എന്നാൽ എന്താണ്",
+            "কী", "বলতে কি বোঝায়",
+            "શું છે", "એટલે શું"
+        )
+        return en.any { q.contains(it) } || indic.any { q.contains(it) }
+    }
+
+    private fun isImpactOrAlternativeQuery(query: String): Boolean {
+        val q = query.trim().lowercase()
+        val en = listOf(
+            "why is it bad", "why is plastic bad", "harmful", "danger", "hazard",
+            "why bad", "effects of", "impact of", "alternatives to", "alternative",
+            "substitute", "microplastic", "pollution", "ocean", "damage"
+        )
+        val indic = listOf(
+            "नुकसान", "हानिकारक", "विकल्प", "बुरा क्यों",
+            "నష్టాలు", "ప్రమాదం", "ప్రత్యామ్నాయాలు", "ఎందుకు హానికరం",
+            "தீமைகள்", "மாற்று",
+            "पर्याय",
+            "ಅಪಾಯ", "ಪರ್ಯಾಯ",
+            "ദോഷങ്ങൾ", "പകരമായി",
+            "ক্ষতিকর", "বিকল্প",
+            "વિકલ્પ"
+        )
+        return en.any { q.contains(it) } || indic.any { q.contains(it) }
+    }
+
+    private fun isDisposalQuery(query: String): Boolean {
+        val q = query.trim().lowercase()
+        val en = listOf(
+            "where to throw", "which bin", "how to dispose", "where should i",
+            "how to discard", "where do i put", "disposal method", "throw it"
+        )
+        val indic = listOf(
+            "कहाँ फेंक", "किस डिब्बे", "कैसे फेंक", "निपटान",
+            "ఎక్కడ వేయాలి", "ఏ డబ్బా", "ఎలా పారవేయాలి",
+            "எங்கு போட", "எந்த தொட்டி", "எப்படி அகற்ற",
+            "कुठे टाका", "कोणत्या कुंडीत",
+            "ಎಲ್ಲಿ ಹಾಕಬೇಕು", "ಯಾವ ಬುಟ್ಟಿ",
+            "എവിടെ ഇടണം", "ഏത് തൊട്ടി",
+            "কোথায় ফেলব", "কোন পাত্র",
+            "ક્યાં નાખવું", "કયા ડબ્બા"
+        )
+        return en.any { q.contains(it) } || indic.any { q.contains(it) }
+    }
+
+    private fun buildDirectDisposalResponse(
+        itemName: String,
+        rule: DisposalRule,
+        targetBin: String,
+        isHazardous: Boolean,
+        warning: String,
+        lang: String
+    ): String {
+        val emoji = getBinEmoji(rule.targetBinColor)
+        return when (lang) {
+            "te" -> buildString {
+                append("$emoji $itemName ని $targetBin లో వేయాలి.\n\n")
+                if (isHazardous) append("⚠️ భద్రతా హెచ్చరిక: $warning\n\n")
+                append("• పారవేత మార్గం: ${rule.disposalMethod}\n")
+                if (rule.preparationInstructions.isNotBlank()) append("• సులభమైన తయారీ: ${rule.preparationInstructions}\n")
+                if (rule.prohibitedPathways.isNotEmpty()) append("• చేయకూడనివి: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
+                append("పరిసరాలను పరిశుభ్రంగా ఉంచడంలో భాగస్వామ్యం అయినందుకు ధన్యవాదాలు! 😊")
+            }.trim()
+            "hi" -> buildString {
+                append("$emoji $itemName को $targetBin में डालें।\n\n")
+                if (isHazardous) append("⚠️ सुरक्षा चेतावनी: $warning\n\n")
+                append("• निपटान मार्ग: ${rule.disposalMethod}\n")
+                if (rule.preparationInstructions.isNotBlank()) append("• आवश्यक तैयारी: ${rule.preparationInstructions}\n")
+                if (rule.prohibitedPathways.isNotEmpty()) append("• क्या न करें: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
+                append("स्वच्छता में सहयोग देने के लिए धन्यवाद! 😊")
+            }.trim()
+            "ta" -> buildString {
+                append("$emoji $itemName ஐ $targetBin யில் போடவும்.\n\n")
+                if (isHazardous) append("⚠️ எச்சரிக்கை: $warning\n\n")
+                append("• அகற்றும் வழிமுறை: ${rule.disposalMethod}\n")
+                if (rule.preparationInstructions.isNotBlank()) append("• எளிய வழிகள்: ${rule.preparationInstructions}\n")
+                if (rule.prohibitedPathways.isNotEmpty()) append("• செய்யக்கூடாதவை: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
+                append("தூய்மைக்கு ஒத்துழைத்ததற்கு நன்றி! 😊")
+            }.trim()
+            "mr" -> buildString {
+                append("$emoji $itemName हे $targetBin मध्ये टाकावे.\n\n")
+                if (isHazardous) append("⚠️ सुरक्षा सूचना: $warning\n\n")
+                append("• विल्हेवाट पद्धत: ${rule.disposalMethod}\n")
+                if (rule.preparationInstructions.isNotBlank()) append("• सोप्या पायऱ्या: ${rule.preparationInstructions}\n")
+                if (rule.prohibitedPathways.isNotEmpty()) append("• काय करू नये: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
+                append("परिसर स्वच्छ ठेवल्याबद्दल धन्यवाद! 😊")
+            }.trim()
+            "kn" -> buildString {
+                append("$emoji $itemName ಅನ್ನು $targetBin ನಲ್ಲಿ ವಿಲೇವಾರಿ ಮಾಡಿ.\n\n")
+                if (isHazardous) append("⚠️ ಸುರಕ್ಷತಾ ಎಚ್ಚರಿಕೆ: $warning\n\n")
+                append("• ವಿಲೇವಾರಿ ಮಾರ್ಗ: ${rule.disposalMethod}\n")
+                if (rule.preparationInstructions.isNotBlank()) append("• ಸಿದ್ಧತೆ: ${rule.preparationInstructions}\n")
+                if (rule.prohibitedPathways.isNotEmpty()) append("• ಮಾಡಬಾರದ ಕಾರ್ಯಗಳು: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
+                append("ಪರಿಸರ ರಕ್ಷಣೆಗೆ ಸಹಕರಿಸಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು! 😊")
+            }.trim()
+            "ml" -> buildString {
+                append("$emoji $itemName $targetBin ൽ നിക്ഷേപിക്കുക.\n\n")
+                if (isHazardous) append("⚠️ സുരക്ഷാ മുന്നറിയിപ്പ്: $warning\n\n")
+                append("• സംസ്കരണ രീതി: ${rule.disposalMethod}\n")
+                if (rule.preparationInstructions.isNotBlank()) append("• നിർദ്ദേശങ്ങൾ: ${rule.preparationInstructions}\n")
+                if (rule.prohibitedPathways.isNotEmpty()) append("• ഒഴിവാക്കേണ്ടവ: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
+                append("നന്ദി! 😊")
+            }.trim()
+            "bn" -> buildString {
+                append("$emoji $itemName $targetBin এ ফেলুন।\n\n")
+                if (isHazardous) append("⚠️ নিরাপত্তা সতর্কতা: $warning\n\n")
+                append("• নিষ্পত্তি পদ্ধতি: ${rule.disposalMethod}\n")
+                if (rule.preparationInstructions.isNotBlank()) append("• প্রস্তুতি: ${rule.preparationInstructions}\n")
+                if (rule.prohibitedPathways.isNotEmpty()) append("• যা করবেন না: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
+                append("পরিবেশ পরিষ্কার রাখার জন্য ধন্যবাদ! 😊")
+            }.trim()
+            "gu" -> buildString {
+                append("$emoji $itemName ને $targetBin માં નાખો.\n\n")
+                if (isHazardous) append("⚠️ સુરક્ષા ચેતવણી: $warning\n\n")
+                append("• નિકાલ પદ્ધતિ: ${rule.disposalMethod}\n")
+                if (rule.preparationInstructions.isNotBlank()) append("• તૈયારી: ${rule.preparationInstructions}\n")
+                if (rule.prohibitedPathways.isNotEmpty()) append("• શું ન કરવું: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
+                append("સ્વચ્છતા જાળવવા બદલ આભાર! 😊")
+            }.trim()
+            else -> buildString {
+                append("$emoji $itemName belongs in the **$targetBin**.\n\n")
+                if (isHazardous) append("⚠️ Safety Advisory: $warning\n\n")
+                append("• Disposal Pathway: ${rule.disposalMethod}\n")
+                if (rule.preparationInstructions.isNotBlank()) append("• Preparation: ${rule.preparationInstructions}\n")
+                if (rule.prohibitedPathways.isNotEmpty()) append("• Please avoid: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
+                append("Thank you for segregating your waste responsibly! 😊")
+            }.trim()
+        }
+    }
+
+    private fun buildTypesResponse(subject: String, lang: String): String {
+        return if (subject == "plastic") {
+            when (lang) {
+                "hi" -> """
+                    प्लास्टिक को मुख्य रूप से 7 श्रेणियों (रेज़िन आइडेंटिफिकेशन कोड 1 से 7) में बांटा गया है:
+
+                    1️⃣ PET (#1 - Polyethylene Terephthalate): पानी और कोल्ड ड्रिंक की बोतलें (पुनर्चक्रण योग्य, नीले डिब्बे में डालें)।
+                    2️⃣ HDPE (#2 - High-Density Polyethylene): दूध की बोतलें, शैम्पू व डिटर्जेंट के डिब्बे (मजबूत और रीसायकल करने योग्य)।
+                    3️⃣ PVC (#3 - Polyvinyl Chloride): पाइप, केबल कवर, दवाइयों के ब्लिस्टर पैक (रीसायकल करना कठिन)।
+                    4️⃣ LDPE (#4 - Low-Density Polyethylene): किराने की थैलियां, पैकेजिंग फिल्म (सॉफ्ट प्लास्टिक)।
+                    5️⃣ PP (#5 - Polypropylene): बोतल के ढक्कन, फूड कंटेनर, स्ट्रॉ (गर्मी प्रतिरोधी और रीसायकल करने योग्य)।
+                    6️⃣ PS (#6 - Polystyrene / थर्माकोल): डिस्पोजेबल कप, थर्माकोल पैकिंग (कचरे में जल्दी नहीं गलता)।
+                    7️⃣ OTHER (#7): मल्टी-लेयर पाउच, पॉलीकार्बोनेट (रीसायकलिंग के लिए सबसे जटिल)।
+
+                    💡 आसान पहचान: प्लास्टिक के नीचे बने छोटे त्रिकोण के अंदर लिखे नंबर (1 से 7) को देखकर आप उसका प्रकार जान सकते हैं!
+                """.trimIndent()
+                "te" -> """
+                    ప్లాస్టిక్‌లు ప్రధానంగా 7 రకాలుగా వర్గీకరించబడ్డాయి (రెసిన్ ఐడెంటిఫికేషన్ కోడ్స్ 1 నుండి 7):
+
+                    1️⃣ PET (#1 - Polyethylene Terephthalate): తాగునీటి మరియు కూల్ డ్రింక్ బాటిళ్లు (నీలం డబ్బాలో రీసైకిల్ అవుతాయి).
+                    2️⃣ HDPE (#2 - High-Density Polyethylene): షాంపూ బాటిళ్లు, పాల డబ్బాలు, డిటర్జెంట్ కంటైనర్లు (దృఢమైనవి & రీసైకిల్ చేయవచ్చు).
+                    3️⃣ PVC (#3 - Polyvinyl Chloride): పైపులు, వైరింగ్ కేబుల్స్, బ్లిస్టర్ ప్యాక్‌లు (రీసైక్లింగ్ కష్టం).
+                    4️⃣ LDPE (#4 - Low-Density Polyethylene): పచారీ సంచులు, ష్రింక్ ర్యాప్స్ (మృదువైన ప్లాస్టిక్).
+                    5️⃣ PP (#5 - Polypropylene): బాటిల్ మూతలు, ఆహార నిల్వ డబ్బాలు, ఔషధ సీసాలు (వేడిని తట్టుకుంటాయి & రీసైకిల్ చేయదగినవి).
+                    6️⃣ PS (#6 - Polystyrene / థర్మాకోల్): డిస్పోజబుల్ కప్పులు, ప్యాకింగ్ ఫోమ్ (చాలా అరుదుగా రీసైకిల్ అవుతాయి).
+                    7️⃣ ఇతరాలు (#7 - OTHER): చిప్స్ మల్టీ-లేయర్ ప్యాకెట్లు, పాలీకార్బోనేట్ (మెకానికల్ రీసైక్లింగ్ అత్యంత కష్టం).
+
+                    💡 గమనిక: ప్లాస్టిక్ వస్తువు అడుగు భాగంలో ఉన్న రీసైక్లింగ్ త్రిభుజం గుర్తులోని నంబర్ (1 నుండి 7) చూసి దాని రకాన్ని సులభంగా గుర్తించవచ్చు!
+                """.trimIndent()
+                "ta" -> """
+                    பிளாஸ்டிக் பொருட்கள் உலகளவில் 7 வகைகளாக (ரெசின் குறியீடுகள் 1 முதல் 7 வரை) பிரிக்கப்பட்டுள்ளன:
+
+                    1️⃣ PET (#1): குடிநீர் மற்றும் குளிர்பான பாட்டில்கள் (எளிதில் மறுசுழற்சி செய்யக்கூடியது).
+                    2️⃣ HDPE (#2): ஷாம்பு பாட்டில்கள், பால் கேன்கள் (மறுசுழற்சிக்கு உகந்தது).
+                    3️⃣ PVC (#3): குழாய்கள், வயர் உறைகள் (மறுசுழற்சி செய்வது கடினம்).
+                    4️⃣ LDPE (#4): காய்கறி பைகள், பேக்கிங் கவர்கள் (மென்மையான பிளாஸ்டிக்).
+                    5️⃣ PP (#5): பாட்டில் மூடிகள், உணவு சேமிப்பு பெட்டிகள் (வெப்பத்தைத் தாங்கக்கூடியது).
+                    6️⃣ PS (#6): தெர்மாகோல், ஒருமுறை பயன்படுத்தும் கப்புகள்.
+                    7️⃣ OTHER (#7): மல்டி-லேயர் சிப்ஸ் பாக்கெட்டுகள், பிற பிளாஸ்டிக்.
+
+                    💡 குறிப்பு: பிளாஸ்டிக் பொருளின் அடியில் உள்ள முக்கோண சின்னத்தில் இருக்கும் எண்ணைப் பார்த்து வகையைக் கண்டறியலாம்!
+                """.trimIndent()
+                else -> """
+                    There are 7 primary types of plastics, standardized globally by their Resin Identification Codes (RIC 1 to 7):
+
+                    1️⃣ PET (#1 - Polyethylene Terephthalate): Clear water & beverage bottles, food jars. Widely recycled in the Blue Bin.
+                    2️⃣ HDPE (#2 - High-Density Polyethylene): Milk jugs, shampoo and detergent bottles. Sturdy and easily recycled.
+                    3️⃣ PVC (#3 - Polyvinyl Chloride): Pipes, vinyl flooring, blister packaging. Hard to recycle; keep separate.
+                    4️⃣ LDPE (#4 - Low-Density Polyethylene): Grocery carrier bags, squeeze bottles, shrink wraps.
+                    5️⃣ PP (#5 - Polypropylene): Bottle caps, yogurt tubs, take-out containers, medicine bottles. Heat resistant and recyclable.
+                    6️⃣ PS (#6 - Polystyrene / Styrofoam): Disposable cutlery, cups, foam packaging. Brittle and rarely recycled curbside.
+                    7️⃣ OTHER (#7): Multi-layer snack packaging, polycarbonate, bioplastics. Most complex to recycle.
+
+                    💡 Pro Tip: Look for the small triangular recycling symbol with a number inside (1 to 7) stamped on the base of your plastic item!
+                """.trimIndent()
+            }
+        } else if (subject == "ewaste") {
+            """
+                Electronic waste (E-Waste) is categorized into 5 major statutory categories:
+
+                1️⃣ Small IT & Telecom: Smartphones, chargers, power banks, computer mice, cables.
+                2️⃣ Screens & Monitors: Televisions, laptops, computer monitors, tablets.
+                3️⃣ Temperature Exchange Equipment: Refrigerators, air conditioners, water coolers.
+                4️⃣ Lighting & Lamps: Fluorescent tube lights, CFL bulbs, LED lamps.
+                5️⃣ Large Household Appliances: Washing machines, microwaves, dishwashers.
+
+                🟠 Remember: All e-waste belongs in the **Orange Bin** or authorized take-back centers—never in regular household trash!
+            """.trimIndent()
+        } else {
+            "Waste items are classified into 5 primary municipal streams in India: 🟢 Wet Organic, 🔵 Dry Recyclables (Plastic, Paper, Glass, Metal), 🟠 E-Waste, 🔴 Domestic Hazardous, and ⚫ Inert Non-Recyclable Refuse."
+        }
+    }
+
+    private fun buildDefinitionResponse(subject: String, lang: String): String {
+        return if (subject == "plastic") {
+            when (lang) {
+                "hi" -> """
+                    प्लास्टिक क्या है?
+
+                    प्लास्टिक एक हल्का, अत्यधिक टिकाऊ और मानव निर्मित (सिंथेटिक) पदार्थ है जो मुख्य रूप से पेट्रोलियम और प्राकृतिक गैस से प्राप्त पॉलिमर (लंबी आणविक श्रृंखलाओं) से बनाया जाता है।
+
+                    यह नमी प्रतिरोधी, सस्ता और लचीला होने के कारण हमारे दैनिक जीवन में बहुत व्यापक रूप से उपयोग होता है। हालांकि, इसके रासायनिक बंधन प्राकृतिक रूप से नहीं टूटते, जिसके कारण एक प्लास्टिक वस्तु को नष्ट होने में 400 से 1000 वर्ष तक लग सकते हैं।
+
+                    जब हम साफ और सूखे प्लास्टिक को **नीले डिब्बे (Blue Bin)** में डालते हैं, तो इसे रीसाइक्लिंग कारखानों में भेजकर नए उपयोगी उत्पाद बनाए जा सकते हैं! 🌍
+                """.trimIndent()
+                "te" -> """
+                    ప్లాస్టిక్ అంటే ఏమిటి?
+
+                    ప్లాస్టిక్ అనేది పెట్రోలియం మరియు సహజ వాయువులను శుద్ధి చేయడం ద్వారా పొందిన పాలిమర్ల (పొడవైన అణు గొలుసులు) నుండి తయారు చేయబడిన కృత్రిమ సింథటిక్ పదార్థం.
+
+                    ఇది తేలికగా, దృఢంగా, నీటిని నిరోధించేదిగా మరియు చౌకగా లభించడం వల్ల నిత్యజీవితంలో విస్తృతంగా ఉపయోగించబడుతుంది. అయితే, దీనిలోని బంధాలు ప్రకృతిలో సహజంగా కుళ్ళిపోవు; ఒక ప్లాస్టిక్ ముక్క భూమిలో కరిగిపోవడానికి 400 నుండి 1000 సంవత్సరాలు పడుతుంది.
+
+                    పొడి ప్లాస్టిక్‌ను **నీలం డబ్బా (Blue Bin)** లో వేయడం ద్వారా దానిని రీసైక్లింగ్ ఫ్యాక్టరీలకు పంపి కొత్త వస్తువులుగా మార్చవచ్చు! 🌍
+                """.trimIndent()
+                else -> """
+                    What is Plastic?
+
+                    Plastic is a lightweight, durable, and highly versatile synthetic material composed of polymers—long, repeating chains of molecules primarily derived from refined crude oil and natural gas.
+
+                    Because plastic is waterproof, inexpensive, and easily molded into any shape, it transformed modern food preservation, medicine, and packaging. However, because synthetic carbon-carbon bonds do not exist naturally in nature, bacteria and fungi cannot break them down. A single plastic container can take 400 to 1,000 years to decompose, fragmenting into microscopic particles called microplastics.
+
+                    Keeping your dry plastic clean and placing it in the **Blue Bin** allows recyclers to melt it down into new goods, saving raw crude oil and keeping our waterways clean! 🌍
+                """.trimIndent()
+            }
+        } else if (subject == "ewaste") {
+            """
+                What is E-Waste?
+
+                E-waste (Electronic Waste) includes any electrical or electronic device with a power plug, battery, or circuit board that has reached the end of its useful life—such as smartphones, chargers, laptops, wires, and circuit components.
+
+                Electronics contain valuable recyclable metals (copper, silver, gold) alongside hazardous heavy metals (lead, mercury, cadmium). Discarding them in regular trash leads to toxic soil and water contamination. Always drop e-waste in the **Orange Bin**! ⚡
+            """.trimIndent()
+        } else if (subject == "organic") {
+            """
+                What is Organic Waste?
+
+                Organic (wet) waste consists of biological material derived from plants or animals—such as kitchen food scraps, vegetable and fruit peels, tea leaves, and garden trimmings.
+
+                Unlike plastics, organic matter decomposes naturally within weeks and can be converted into rich, chemical-free compost or biogas. Always discard in the **Green Bin** without any plastic wrapping! 🌱
+            """.trimIndent()
+        } else {
+            "Waste materials are categorized according to their origin, chemical composition, and biodegradability to protect our health and resources."
+        }
+    }
+
+    private fun buildImpactOrAlternativeResponse(subject: String, lang: String): String {
+        return when (lang) {
+            "hi" -> """
+                प्लास्टिक पर्यावरण के लिए हानिकारक क्यों है और इसके क्या विकल्प हैं?
+
+                ⚠️ मुख्य प्रभाव:
+                • माइक्रोप्लास्टिक: प्लास्टिक कभी पूरी तरह गायब नहीं होता; यह छोटे-छोटे टुकड़ों में टूटकर हमारे पीने के पानी और भोजन चक्र में प्रवेश कर जाता है।
+                • लैंडफिल का बोझ: यह कचरे के ढेरों में सैकड़ों साल तक पड़ा रहता है और जमीन में बारिश का पानी रिसने से रोकता है।
+                • विषाक्त धुआं: प्लास्टिक को खुले में जलाने से हवा में कैंसर पैदा करने वाला जहरीला धुआं फैलता है।
+
+                🌱 आसान पर्यावरण-अनुकूल विकल्प:
+                • प्लास्टिक की पन्नियों के बजाय सूती या जूट का थैला इस्तेमाल करें।
+                • सिंगल-यूज बोतलों की जगह स्टील या कांच की पानी की बोतल रखें।
+                • गर्म खाना रखने के लिए स्टील के टिफिन का उपयोग करें।
+            """.trimIndent()
+            "te" -> """
+                ప్లాస్టిక్ పర్యావరణానికి ఎందుకు హానికరం మరియు ప్రత్యామ్నాయాలు ఏమిటి?
+
+                ⚠️ ప్రధాన ప్రభావాలు:
+                • మైక్రోప్లాస్టిక్స్: ప్లాస్టిక్ పూర్తిగా నశించదు; అది కంటికి కనిపించని సూక్ష్మ రేణువులుగా మారి మనం తాగే నీరు, ఆహారంలోకి చేరుతుంది.
+                • నేల కాలుష్యం: వందల సంవత్సరాల పాటు భూమిలో ఉండి వర్షపు నీరు భూగర్భంలోకి ఇంకకుండా అడ్డుకుంటుంది.
+                • విషపూరిత పొగ: ప్లాస్టిక్‌ను కాల్చడం వల్ల గాలిలోకి ప్రమాదకరమైన క్యాన్సర్ కారక వాయువులు విడుదలవుతాయి.
+
+                🌱 సులభమైన ప్రత్యామ్నాయాలు:
+                • ప్లాస్టిక్ కవర్ల స్థానంలో నూలు లేదా జనపనార (Jute) సంచులు వాడండి.
+                • స్టీల్ లేదా గాజు నీటి సీసాలను ఉపయోగించండి.
+                • వేడి ఆహారం కోసం స్టీల్ బాక్సులను ఉపయోగించండి.
+            """.trimIndent()
+            else -> """
+                Why is plastic waste harmful and what are the best alternatives?
+
+                ⚠️ Environmental Concerns:
+                • Microplastics: Plastic never truly disappears; it fragments into microscopic particles that contaminate our soil, drinking water, and marine life.
+                • Landfill Burden: Takes up valuable landfill space for centuries and prevents natural rainwater from replenishing groundwater aquifers.
+                • Toxic Emissions: Burning plastics releases carcinogenic dioxins and furan fumes into the air.
+
+                🌱 Simple Eco-Friendly Alternatives:
+                • Carry reusable cotton or jute tote bags instead of single-use polybags.
+                • Use a stainless steel, copper, or glass bottle for drinking water.
+                • Choose steel or glass containers for storing hot food and groceries.
+            """.trimIndent()
+        }
+    }
+
     private fun getBinEmoji(binColor: String): String = when (binColor.uppercase(Locale.US)) {
         "GREEN" -> "🟢"
         "BLUE" -> "🔵"
@@ -1688,28 +2060,39 @@ class OfflineResponder {
             }.trim()
 
             else -> buildString {
-                append("Hello there! Regarding $itemName:\n\n")
-                if (isHazardous) {
-                    append("⚠️ Important Safety Warning:\n$warning\n\n")
-                }
-                append("Which bin does it go into?\n")
-                append("• $targetBin (${rule.disposalMethod}).\n\n")
+                if (!isDetail) {
+                    append("For $itemName, it belongs in the **$targetBin** (${rule.disposalMethod}).\n\n")
+                    if (rule.preparationInstructions.isNotBlank()) {
+                        append("💡 Quick tip: ${rule.preparationInstructions}\n\n")
+                    }
+                    if (isHazardous) {
+                        append("⚠️ Safety Note: $warning\n\n")
+                    }
+                    append("Feel free to ask me about its resin type, environmental impact, or upcycling ideas! 😊")
+                } else {
+                    append("Hello there! Regarding $itemName:\n\n")
+                    if (isHazardous) {
+                        append("⚠️ Important Safety Warning:\n$warning\n\n")
+                    }
+                    append("Which bin does it go into?\n")
+                    append("• $targetBin (${rule.disposalMethod}).\n\n")
 
-                if (!rule.environmentalImpact.isNullOrBlank()) {
-                    append("Why is this important?\n")
-                    append("• ${rule.environmentalImpact}\n\n")
-                }
+                    if (!rule.environmentalImpact.isNullOrBlank()) {
+                        append("Why is this important?\n")
+                        append("• ${rule.environmentalImpact}\n\n")
+                    }
 
-                if (rule.preparationInstructions.isNotBlank()) {
-                    append("Simple steps for you:\n")
-                    append("• ${rule.preparationInstructions}\n\n")
-                }
+                    if (rule.preparationInstructions.isNotBlank()) {
+                        append("Simple steps for you:\n")
+                        append("• ${rule.preparationInstructions}\n\n")
+                    }
 
-                if (rule.prohibitedPathways.isNotEmpty()) {
-                    append("Please avoid: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
-                }
+                    if (rule.prohibitedPathways.isNotEmpty()) {
+                        append("Please avoid: ${rule.prohibitedPathways.joinToString("; ")}\n\n")
+                    }
 
-                append("Feel free to ask me about any other items you'd like to segregate! 😊")
+                    append("Feel free to ask me about any other items you'd like to segregate! 😊")
+                }
             }.trim()
         }
     }
