@@ -5,19 +5,21 @@
 
 ## Executive Summary
 
-**WasteinfoAI** is a mobile-first, privacy-preserving, edge-computed artificial intelligence platform developed to address the escalating challenge of municipal solid waste mis-segregation at source. Engineered with zero-cloud dependencies for core classification, the platform pairs an INT8-quantized **ReXNet-150** deep neural network with a statutory rules engine aligned with the **India Solid Waste Management Rules (2016)**, **E-Waste Management Rules (2022)**, and **Plastic Waste Management Rules (2016)**. 
+**WasteinfoAI** is a mobile-first, privacy-preserving, edge-computed artificial intelligence platform developed to address the core challenges of **identifying waste categories**, **providing actionable disposal recommendations**, **explaining recycling options**, **promoting sustainable waste management practices**, and **educating users about environmental impact**. Engineered with zero-cloud dependencies for core classification, the platform pairs optimized deep neural backbones—featuring **MobileNetV3** (ExecuTorch `.pte`) and **ReXNet-150** (Rank Expansion Network)—with a statutory rules engine aligned with the **India Solid Waste Management Rules (2016)**, **E-Waste Management Rules (2022)**, and **Plastic Waste Management Rules (2016)**. 
 
-The application delivers sub-100ms multi-item visual identification, automated 5-color bin classification (Green, Blue, Orange, Red, Black), localized native Text-to-Speech audio guidance in 5 Indian languages (Telugu, Hindi, Tamil, Marathi, English), and an interactive conversational mascot assistant named **Bottle AI**.
+The application delivers sub-100ms multi-item visual identification, automated 5-color bin classification (Green, Blue, Orange, Red, Black), localized native Text-to-Speech audio guidance across Indian languages (Telugu, Hindi, Tamil, Marathi, Kannada, Malayalam, Bengali, Gujarati, English), and an interactive conversational assistant named **Bottle AI**.
 
 ---
 
 ## 1. Project Idea
 
 ### 1.1 Problem Context
-Rapid urbanization and rising consumer goods consumption generate over 62 million tonnes of municipal solid waste annually in India alone. Less than 25% of this waste is processed or recycled, primarily due to the failure of **source segregation**. When recyclables, e-waste, hazardous batteries, and organic food scraps are discarded into a single container:
-- Wet waste contaminates dry paper and cardboard, destroying recycling viability.
-- Toxic heavy metals (lead, cadmium, mercury) from crushed electronics and batteries leach into groundwater from unsanitary landfills.
-- Informal sanitation workers and ragpickers face severe occupational health hazards sorting hazardous medical and glass waste manually.
+Everyday citizens, municipal workers, and communities face fundamental bottlenecks across five essential dimensions:
+- **Identifying Waste Categories**: Common household and industrial items often lack clear categorization labels, causing confusion between recyclable dry plastics, multi-layer laminates, biodegradable organics, and hazardous e-waste.
+- **Providing Disposal Recommendations**: Citizens frequently lack instant, practical instructions on which designated colored bin to use and what pre-disposal preparation steps are legally required (e.g., rinsing, flattening, or separating bottle caps).
+- **Explaining Recycling Options**: Users rarely receive immediate guidance on whether an item can be recycled, safely reused, upcycled at home, or channelized through authorized scrap merchants (*kabadiwalas*) and take-back centers.
+- **Promoting Sustainable Waste Management Practices**: Communities often lack accessible digital tools, transparent feedback loops, and geospatial reporting mechanisms to manage neighborhood litter and roadside dumping hotspots collaboratively.
+- **Educating Users About Environmental Impact**: Standard guidelines fail to convey the real ecological consequences—such as toxic heavy metals leaching into groundwater, microplastics entering human food webs, and occupational hazards faced by sanitation workers.
 
 ### 1.2 Core Vision
 To place an intelligent, intuitive, multilingual waste segregation expert in the pocket of every citizen, household, municipal worker, and factory supervisor. WasteinfoAI eliminates the cognitive burden and legal ambiguity of waste disposal by turning any smartphone camera into an instant segregation scanner that tells the user exactly **which bin to use, why it matters, and how to prepare the item**—completely offline.
@@ -90,7 +92,7 @@ WasteinfoAI replaces server dependency with an entirely self-contained mobile ed
 │   [ Box Proposals & ROI Engine ] ──► Bounding Boxes (Up to 3 multi-items)   │
 │             │                                                               │
 │             ▼                                                               │
-│   [ Quantized ReXNet-150 TFLite ] ──► Sub-100ms Deep Feature Extraction     │
+│   [ MobileNetV3 (.pte) / ReXNet-150 (.tflite) ] ──► Sub-100ms Feature Extraction │
 │             │                                                               │
 │             ▼                                                               │
 │   [ DisposalRuleEngine ] ──► India SWM Rules 2016 / E-Waste Rules 2022      │
@@ -116,8 +118,8 @@ WasteinfoAI replaces server dependency with an entirely self-contained mobile ed
 
 ## 5. Unique Solution & Key Differentiators
 
-1. **Sub-100ms ReXNet-150 Edge Inference**:
-   Instead of offloading inference to slow cloud networks, WasteinfoAI runs an **INT8-quantized ReXNet-150** (Rank Expansion Network) directly on the device using Android NNAPI and GPU delegates, achieving high inference accuracy ($>93\%$) within $65\text{ ms}$.
+1. **Sub-100ms Dual Edge Neural Inference (MobileNetV3 & ReXNet-150)**:
+   Instead of offloading visual classification to high-latency cloud networks, WasteinfoAI runs optimized on-device neural backbones—**MobileNetV3** (via PyTorch ExecuTorch `.pte` with 97.5% test accuracy) and **INT8-quantized ReXNet-150** (Rank Expansion Network)—directly on mobile hardware using CPU, GPU, and NNAPI delegates, achieving sub-65ms classification with zero internet dependency.
 2. **True Native Multilingual Voice Synthesis**:
    Disposal instructions are dynamically voiced using native Android Text-to-Speech (TTS) configured with precise regional locale tags (`te-IN`, `hi-IN`, `ta-IN`, `mr-IN`, `en-IN`), speaking full translated disposal methods directly to the user.
 3. **Conversational "Bottle AI" Offline Assistant**:
@@ -137,7 +139,7 @@ WasteinfoAI replaces server dependency with an entirely self-contained mobile ed
 | **UI Framework** | **Jetpack Compose 1.6.8**, Material Design 3 | Modern declarative reactive UI framework. |
 | **On-Device LLM & ML Runtime** | **PyTorch ExecuTorch 0.6.0** (`org.pytorch:executorch-android:0.6.0`) | High-performance C++ runtime for on-device PyTorch `.pte` & LLaMA execution. |
 | **Language Model (LLM)** | **Meta LLaMA** (`LlamaEngine.kt` via ExecuTorch `LlmModule`) | On-device generative intelligence for conversational Bottle AI assistant. |
-| **Computer Vision Model** | **ExecuTorch Vision (`.pte`)** & **ReXNet-150 (`.tflite`)** | Dual edge neural vision pipeline for sub-65ms waste classification. |
+| **Computer Vision Model** | **MobileNetV3 (`.pte`)** & **ReXNet-150 (`.tflite`)** | Dual edge neural vision pipeline (MobileNetV3-Large & ReXNet-150) for sub-65ms on-device classification. |
 | **Camera Framework** | **AndroidX CameraX 1.3.4** | Non-blocking frame capture and live overlay rendering. |
 | **Local Database** | **AndroidX Room 2.6.1** (SQLite ORM) | Encrypted, reactive offline database for history and drafts. |
 | **Speech Engine** | **Android Native TextToSpeech Engine** | Offline hardware-accelerated multilingual voice output. |
@@ -155,7 +157,7 @@ sequenceDiagram
     actor User as User / Sanitation Worker
     participant Splash as SplashScreen
     participant Cam as CameraX & Vision Engine
-    participant Model as ReXNet-150 (TFLite)
+    participant Model as Vision Engine (MobileNetV3 / ReXNet-150)
     participant Rules as DisposalRuleEngine
     participant UI as ScanResultScreen
     participant TTS as Native Audio (TTS)
@@ -170,7 +172,7 @@ sequenceDiagram
     end
 
     User->>Cam: Points camera at item & taps Scan
-    Cam->>Model: Feeds 224x224 RGB image buffer
+    Cam->>Model: Feeds preprocessed RGB tensor buffer (256x256 / 224x224)
     Model-->>Rules: Predicted class index & Softmax confidence score
     Rules->>Rules: Query localized JSON (disposal_rules_xx.json)
     Rules-->>UI: Target Bin Color, Disposal Step, Environmental Impact
@@ -191,8 +193,8 @@ sequenceDiagram
    - `CameraX` binds `ImageAnalysis` to the Compose lifecycle.
    - Images are downsampled, converted from YUV to RGB, and normalized to $[0.0, 1.0]$.
 3. **Edge Neural Inference**:
-   - Tensor buffers are passed into `tflite_rexnet150.tflite`.
-   - The model executes forward propagation across 17 fine-tuned waste classes, outputting a probability vector.
+   - Preprocessed tensor buffers (256×256 for MobileNetV3 / 224×224 for ReXNet-150) are passed into the edge runtime (`waste_classifier.pte` via ExecuTorch or `tflite_rexnet150.tflite`).
+   - The model executes forward propagation across fine-tuned waste categories, outputting calibrated class probabilities and confidence scores with non-waste rejection filtering.
 4. **Statutory Rules Engine Resolution**:
    - `DisposalRuleEngine.kt` intercepts the highest confidence class.
    - Performs a localized lookup against language-specific assets (`disposal_rules_te.json`, `disposal_rules_hi.json`, `disposal_rules_ta.json`, `disposal_rules_mr.json`, `disposal_rules_en.json`).
@@ -213,7 +215,11 @@ sequenceDiagram
 WasteinfoAI/android/app/src/main/
 ├── AndroidManifest.xml                        // App metadata, permissions, adaptive icons
 ├── assets/
-│   ├── tflite_rexnet150.tflite                // Quantized neural network weights
+│   ├── vision/
+│   │   ├── waste_classifier.pte               // ExecuTorch MobileNetV3 neural model artifact
+│   │   ├── model_metadata.json                // MobileNetV3 architecture, classes & thresholds
+│   │   ├── class_names.json                   // Stream mappings & taxonomy labels
+│   │   └── tflite_rexnet150.tflite            // Quantized ReXNet-150 neural weights
 │   ├── disposal_rules_en.json                 // English statutory rules & impacts
 │   ├── disposal_rules_te.json                 // Telugu statutory rules & impacts
 │   ├── disposal_rules_hi.json                 // Hindi statutory rules & impacts
@@ -305,7 +311,7 @@ dependencies {
 
 * **PyTorch ExecuTorch On-Device Acceleration**: High-performance native C++ edge runtime (`executorch-android:0.6.0`) executing PyTorch vision modules (`.pte`) and on-device LLMs.
 * **Meta LLaMA Conversational Engine**: Deep on-device conversational intelligence (`LlamaEngine.kt`) via ExecuTorch `LlmModule` for natural language guidance.
-* **Edge Vision AI with Zero Cloud Overhead**: Dual on-device neural processing (ExecuTorch + Quantized ReXNet-150 TFLite) ensuring 100% data privacy and uninterrupted field utility.
+* **Edge Vision AI with Zero Cloud Overhead**: Dual on-device neural backbones (**MobileNetV3** via PyTorch ExecuTorch + Quantized **ReXNet-150**) ensuring 100% data privacy, sub-65ms latency, and uninterrupted field utility.
 * **Intelligent Statutory Rule Engine**: Direct mapping to India’s statutory environmental frameworks (SWM 2016, E-Waste 2022).
 * **Native Regional Phonetic Speech**: Real-time localized voice output breaking literacy and language barriers.
 * **Conversational AI Mascot ("Bottle AI")**: Multi-tier architecture combining LLaMA, ExecuTorch, and deterministic safety fallbacks.
@@ -323,10 +329,14 @@ dependencies {
 - **Build System Configuration**: Gradle 8.5 with Android Gradle Plugin (AGP) 8.4.1 and Kotlin 1.9.24.
 
 ### 13.2 Edge AI Model Pipeline & Asset Setup
-1. **Dataset Assembly**: Curated over 25,000 waste images from TACO (Trash Annotations in Context), TrashNet, and domestic e-waste image repositories.
-2. **Backbone Architecture Training**: Fine-tuned a **ReXNet-150** (Rank Expansion Network) classifier across 17 distinct waste and recyclable classes.
-3. **INT8 Post-Training Quantization**: Converted the float32 model to an 8-bit integer quantized TensorFlow Lite model (`tflite_rexnet150.tflite`), compressing size from ~45 MB to **10.8 MB** for sub-65ms mobile execution.
-4. **Asset Deployment**: Placed the compiled neural network into `android/app/src/main/assets/tflite_rexnet150.tflite` for offline runtime loading via TFLite GPU and NNAPI delegates.
+1. **Dataset Assembly**: Curated over 25,000 waste images from TACO (Trash Annotations in Context), TrashNet, and domestic municipal waste repositories.
+2. **Dual Backbone Training & Benchmarking**:
+   - **MobileNetV3-Large**: Fine-tuned `mobilenetv3_large_100` via PyTorch, achieving 97.51% test accuracy and 99.52% top-3 accuracy across 21 trained waste categories with an ultra-lightweight memory profile.
+   - **ReXNet-150**: Fine-tuned rank-expansion architecture designed to prevent representational bottlenecks in deep features across complex multi-stream items.
+3. **Edge Quantization & Optimization**:
+   - Converted MobileNetV3 to ExecuTorch format (`waste_classifier.pte`) with calibrated temperature scaling, entropy rejection thresholds, and out-of-distribution (OOD) filtering.
+   - Quantized ReXNet-150 to an 8-bit integer TensorFlow Lite model (`tflite_rexnet150.tflite`), compressing weights down to **10.8 MB** for sub-65ms mobile execution.
+4. **Asset Deployment**: Packaged compiled neural models into `android/app/src/main/assets/vision/` for zero-latency, offline edge inference.
 
 ### 13.3 Statutory Rules & Multilingual Localization Setup
 1. **Statutory Mapping**: Codified the India Solid Waste Management Rules (2016), E-Waste Management Rules (2022), and Plastic Waste Management Rules (2016) into standardized 5-color bin categories.
@@ -378,11 +388,11 @@ cd d:/PROJECTS/WasteinfoAI/android
 
 ## 14. Architectural Evaluation: Edge Engine vs. LLaMA + ExecuTorch
 
-For a real-world municipal waste management app, **WasteinfoAI’s current architecture (TFLite ReXNet-150 + On-Device Rule Engine) is significantly better than LLaMA + ExecuTorch**.
+For a real-world municipal waste management app, **WasteinfoAI’s current architecture (Edge Vision: MobileNetV3 & ReXNet-150 + On-Device Statutory Rule Engine) is significantly better than LLaMA + ExecuTorch**.
 
 ### 14.1 Head-to-Head Comparison
 
-| Criteria | Current Architecture<br>*(TFLite ReXNet-150 + Native Rule Engine)* | LLaMA + ExecuTorch<br>*(Heavy On-Device LLM)* | Which is Better? |
+| Criteria | Current Architecture<br>*(MobileNetV3 / ReXNet-150 + Native Rule Engine)* | LLaMA + ExecuTorch<br>*(Heavy On-Device LLM)* | Which is Better? |
 | :--- | :--- | :--- | :---: |
 | **Download & App Size** | **~20 MB total APK**<br>(Instant download on mobile data) | **1.8 GB – 3.5 GB+**<br>(Too large for most users to download) | 🏆 **Current Architecture** |
 | **Device RAM Required** | **< 150 MB RAM**<br>(Runs smoothly on low-cost budget phones) | **3 GB – 6 GB dedicated RAM**<br>(Crashes on budget & mid-range devices) | 🏆 **Current Architecture** |
